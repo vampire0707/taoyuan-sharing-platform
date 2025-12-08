@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title data-i18n="register_page_title">Register - Taoyuan Sharing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div id="navbar">
+    <a href="index.html" data-i18n="home">Home</a>
+
+    <div id="navbar-right" style="display:flex; gap:15px; align-items:center;">
+      <a href="login.html" class="nav-btn" data-i18n="login">Login</a>
+      <a href="register.html" class="nav-btn" data-i18n="register">Register</a>
+
+      <div id="language-switcher">
+        <button data-lang="en">EN</button>
+        <button data-lang="zh">中文</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-container">
+    <h1 data-i18n="register_heading">Create an Account</h1>
+
+    <form id="register-form" class="auth-form">
+      <label for="reg-name" data-i18n="reg_name_label">Your Name</label>
+      <input type="text" id="reg-name" required>
+
+      <label for="reg-password" data-i18n="reg_password_label">Password</label>
+      <input type="password" id="reg-password" required autocomplete="new-password">
+
+      <label for="reg-area" data-i18n="reg_area_label">Select Your Area</label>
+      
+      <select id="reg-area" required>
+        <option value="" data-i18n="area_placeholder">--</option>
+        <option data-i18n="area_ty_center">Taoyuan City Center</option>
+        <option data-i18n="area_pingzhen">Pingzhen</option>
+        <option data-i18n="area_zhongli">Zhongli</option>
+        <option data-i18n="area_bade">Bade</option>
+        <option data-i18n="area_yangmei">Yangmei</option>
+        <option data-i18n="area_guishan">Guishan</option>
+      </select>
+
+
+      <label for="reg-email" data-i18n="reg_email_label">Email</label>
+      <input type="email" id="reg-email" required autocomplete="email">
+
+      <label for="reg-phone" data-i18n="reg_phone_label">Phone Number</label>
+      <input type="tel" id="reg-phone" required>
+
+      <button type="submit" class="auth-btn" data-i18n="register_button">
+        Register
+      </button>
+    </form>
+
+    <p>
+      <span data-i18n="register_have_account">Already have an account?</span>
+      <a href="login.html" data-i18n="go_login">Login here</a>
+    </p>
+    <p>
+      <a href="index.html" data-i18n="back_home">← Back to Home</a>
+    </p>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="register.js"></script>
+</body>
+</html>

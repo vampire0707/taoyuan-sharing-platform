@@ -1,0 +1,592 @@
+/* ===== Global Styles ===== */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #ebc9b8; /* sửa lỗi ## */
+  color: #4a2c12;
+}
+
+/* Navbar */
+#navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background: #ffecd2;
+  font-weight: bold;
+}
+
+#navbar button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-weight: 700;
+}
+
+.nav-btn {
+  padding: 8px 15px;
+  background: #ff7f27;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.nav-btn:hover {
+  background: #e56810;
+}
+
+
+.welcome-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* Welcome Section */
+.welcome-wrapper {
+  margin: 30px auto;
+  max-width: 2000px;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(255, 140, 40, 0.2);
+}
+
+#welcome-section {
+  position: relative;
+  background: url("https://images.unsplash.com/photo-1586738652833-c71f02454563?")
+    center/cover no-repeat;
+  padding: 120px 20px;
+  text-align: center;
+  color: #ffffff;
+  width: 100vw;
+  box-sizing: border-box;
+}
+
+h1#main-title {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  font-weight: 800;
+  text-shadow: 2px 2px 6px rgba(230, 128, 61, 0.7);
+}
+
+p#main-mission {
+  font-size: 1.5rem;
+  font-weight: bold;
+  max-width: 800px;
+  margin: 40px auto 0;
+  text-shadow: 1px 1px 4px rgba(238, 168, 62, 0.6);
+}
+
+hr.welcome-divider {
+  width: 200px;
+  border: 2px solid #ebc9b8;
+  margin: 10px auto 20px;
+  border-radius: 5px;
+}
+
+/* Main container layout */
+.container {
+  display: flex;
+  flex-wrap: wrap; /* 螢幕不夠寬時自動換行 */
+  gap: 20px;
+  max-width: 1200px;
+  margin: 20px auto 40px;
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+/* Cột trái (event + new item) */
+.left-column {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: #ffecd2;
+  min-width: 0;
+}
+
+/* Cột phải */
+.right-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: rgba(231, 208, 165, 0.1);
+  min-width: 0;
+}
+
+/* Thanh ngang */
+.orange-bar {
+  width: 100%;
+  padding: 10px;
+  background-color: #f3853c;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+/* Highlight Box */
+.highlight-box {
+  background: #fff7f0;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(255, 140, 40, 0.2);
+}
+
+/* Section Links Horizontal */
+.section-links {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 15px;
+}
+
+.section-links a {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #eb8d12;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.2s;
+}
+
+.section-links a:hover {
+  color: #d3790e;
+  transform: scale(1.05);
+}
+
+/* ===== Events Slider ===== */
+.orange-bar:hover {
+  background-color: #e65c00; /* đậm hơn khi hover */
+}
+
+.highlight-slider-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  margin: 20px 0;
+}
+
+.highlight-slider {
+  display: flex;
+  gap: 15px;
+  overflow-x: auto;
+  scroll-behavior: auto;
+  padding: 10px 0;
+}
+
+.highlight-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.highlight-slider .item {
+  flex: 0 0 300px;
+  background: #fff9f3;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 3px 8px rgba(255, 140, 40, 0.2);
+  position: relative;
+}
+
+.highlight-slider .item img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.highlight-slider .badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #eb8d12;
+  color: white;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 5px 15px;
+  border-radius: 5px;
+}
+
+.highlight-slider .item .text-below {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.highlight-slider .item .text-below h3 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 5px 0;
+  color: #222;
+}
+
+.highlight-slider .item .text-below p {
+  font-size: 1rem;
+  color: #666;
+  margin: 0;
+}
+
+/* Slider Buttons ◀ / ▶ */
+.slider-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 5px 12px;
+  border-radius: 5px;
+  z-index: 10;
+  transition: background 0.3s;
+}
+
+.slider-btn:hover {
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.slider-btn.left {
+  left: 10px;
+}
+
+.slider-btn.right {
+  right: 10px;
+}
+
+/* Lists */
+#new-items-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 0;
+  margin: 50px 0;
+  list-style: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#new-items-list li {
+  background: #fff9f3;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(255, 140, 40, 0.2);
+  padding: 10px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+#new-items-list li:hover {
+  transform: scale(1.03);
+}
+
+#new-items-list li img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+#new-items-list li strong {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+#new-items-list li span {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Modal styles */
+#item-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+#item-modal .modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+#item-modal img {
+  width: 100%;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  object-fit: cover;
+  max-height: 300px;
+}
+
+#item-modal h2 {
+  margin: 0 0 10px;
+}
+
+#item-modal p {
+  margin: 5px 0;
+  font-size: 1rem;
+  color: #444;
+}
+
+#modal-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: #eb8d12;
+  border: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#modal-close:hover {
+  background-color: #d3790e;
+}
+
+/* Donor Board Styles */
+.donor-board {
+  background: #fff9f3;
+  border-radius: 15px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  padding: 25px;
+  margin-left: 20px; /* cách lề trái */
+  max-width: 400px;
+}
+
+.donor-title {
+  background-color: #e67e22; /* cam đậm */
+  color: white;
+  font-weight: bold;
+  font-size: 22px;
+  text-align: center;
+  padding: 10px 0;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+.donor-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0;
+}
+
+.donor-list li {
+  background: #fde8d0;
+  margin-bottom: 8px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 16px;
+  color: #4a2c12;
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.donor-list li:hover {
+  background: #fcd3a1;
+  transform: translateX(3px);
+}
+
+.heart {
+  margin-right: 6px;
+  color: #e74c3c;
+  font-size: 18px;
+}
+
+.donor-footer {
+  text-align: center;
+  color: #a65b23;
+  font-style: italic;
+  font-size: 15px;
+  margin-top: 10px;
+}
+
+/* Auth Forms */
+#auth-tabs {
+  display: flex;
+  gap: 5px;
+}
+
+#auth-tabs button {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 700;
+  background: #ffd9b3;
+}
+
+#auth-tabs button.active {
+  background: #ff7f27;
+  color: white;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #fff7f0;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(255, 140, 40, 0.2);
+}
+
+form input,
+form select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ffb347;
+}
+
+form button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background: #ff7f27;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+/* QA Board Styles */
+.qa-board {
+  background-color: #fff9f3; /* màu nền trắng hơi vàng nhạt */
+  border-radius: 15px; /* bo góc */
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); /* shadow nhẹ */
+  width: 900px;
+  height: fit-content;
+  padding: 25px; /* khoảng cách bên trong */
+  font-family: "Poppins", sans-serif;
+  line-height: 1.5;
+  color: #333;
+  margin: 10px; /* khoảng cách xung quanh */
+}
+
+/* Tiêu đề chính */
+.qa-board h2 {
+  font-size: 22px;
+  color: #57c8b8; /* màu xanh nhẹ */
+  margin-bottom: 15px;
+}
+
+/* Tiêu đề phụ */
+.qa-board h3 {
+  font-size: 18px;
+  color: #ff91b6; /* màu hồng nhẹ */
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* Paragraph */
+.qa-board p {
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+/* Q&A style */
+.qa-board strong {
+  font-weight: 600;
+}
+
+/* ==== RWD 新增：基礎設定 ==== */
+* {
+  box-sizing: border-box;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ==== 手機版排版：螢幕寬度 <= 768px ==== */
+@media (max-width: 768px) {
+  /* Navbar 改成上下排 */
+  #navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  /* 主內容縮小 padding，方便手機閱讀 */
+  .container {
+    padding: 10px;
+    margin: 10px auto 30px;
+  }
+
+  /* 左右欄變成直排 */
+  .left-column,
+  .right-column {
+    width: 100%;
+  }
+
+  /* Hot items：從 4 欄變 2 欄 */
+  #new-items-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* 標題縮小一點 */
+  h1#main-title {
+    font-size: 2rem;
+  }
+
+  p#main-mission {
+    font-size: 1.1rem;
+  }
+
+  /* QA board 不再固定 900px，改為 100% */
+  .qa-board {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  /* Donor board 在手機吃滿寬 */
+  .donor-board {
+    margin-left: 0;
+    max-width: 100%;
+  }
+}
+
+/* ===== 手機版：讓 Donor Board 與表單上下排列 ===== */
+@media (max-width: 768px) {
+
+  /* 讓兩欄 flex 允許換行 */
+  .right-column > div {
+    flex-wrap: wrap;
+  }
+
+  /* Donor board 在手機占滿寬 */
+  .donor-board {
+    max-width: 100% !important;
+    width: 100%;
+    margin: 0;
+  }
+
+  /* 表單在手機占滿寬 */
+  .form-container {
+    width: 100% !important;
+  }
+}
+

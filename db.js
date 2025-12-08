@@ -1,14 +1,15 @@
-// db.js
-const mysql = require('mysql2');
+require("dotenv").config();
+const mysql = require("mysql2");
 
 const pool = mysql.createPool({
-  host: '127.0.0.1',      // 建議用 127.0.0.1 比 localhost 穩
-  user: 'root',           // 你的 MySQL 帳號
-  password: '',   // 你的 MySQL 密碼
-  database: 'donation_db',
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  port: process.env.DB_PORT,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
 });
 
-module.exports = pool.promise();   // 之後用 async/await
+module.exports = pool.promise();

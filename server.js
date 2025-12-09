@@ -1,6 +1,7 @@
 // server.js
 
-const db = require('./db');
+const db = require('./routes/db');
+
 
 db.query("SELECT 1")
   .then(() => console.log("✅ MySQL 連線成功！"))

@@ -1,4 +1,12 @@
 // server.js
+
+const db = require('./db');
+
+db.query("SELECT 1")
+  .then(() => console.log("✅ MySQL 連線成功！"))
+  .catch(err => console.error("❌ MySQL 連線失敗：", err));
+
+
 const express = require('express');
 const path = require('path');
 const app = express();

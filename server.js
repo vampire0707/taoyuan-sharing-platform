@@ -1,6 +1,7 @@
 // server.js
 
-const db = require('./routes/db');
+const db = require('./db'); 
+
 
 
 db.query("SELECT 1")

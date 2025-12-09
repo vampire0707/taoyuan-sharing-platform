@@ -4,7 +4,9 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const db = require('../db');
 
-// POST /api/auth/register
+// =======================
+//  POST /api/auth/register
+// =======================
 router.post('/register', async (req, res) => {
   try {
     const { username, password, identity, student_id } = req.body;
@@ -23,7 +25,7 @@ router.post('/register', async (req, res) => {
       return res.status(409).json({ message: 'Account already exists.' });
     }
 
-    // 2. 密碼加密
+    // 2. 密碼加密（bcrypt）
     const hashed = await bcrypt.hash(password, 10);
 
     // 3. 寫入 users 資料表
@@ -48,10 +50,12 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// POST /api/auth/login
+// =======================
+//  POST /api/auth/login
+// =======================
 router.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body; // 前端之後可以用 email 當 username 傳上來
+    const { username, password } = req.body; // 前端用 email 當 username 傳上來
 
     if (!username || !password) {
       return res.status(400).json({ message: 'Username and password are required.' });
@@ -69,13 +73,13 @@ router.post('/login', async (req, res) => {
 
     const user = rows[0];
 
-    // 2. 比對密碼
+    // 2. 比對密碼（bcrypt.compare）
     const ok = await bcrypt.compare(password, user.password);
     if (!ok) {
       return res.status(401).json({ message: 'Incorrect password.' });
     }
 
-    // 這裡先簡單回傳成功訊息（之後可以改成 JWT）
+    // 3. 登入成功：先回傳基本資訊（之後要做 JWT 可以再加）
     return res.json({
       message: 'Login success',
       user: {

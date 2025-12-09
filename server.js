@@ -13,6 +13,7 @@ const cors = require('cors');          // ⭐ 新增
 const app = express();
 
 const authRoutes = require('./routes/auth');
+const donationRoutes = require('./routes/donations'); 
 
 // ⭐ 開 CORS，讓 127.0.0.1:5500、Railway、GitHub Pages 都可以呼叫
 app.use(cors({
@@ -33,6 +34,9 @@ app.use(express.static(__dirname));
 
 // 掛上 auth 路由（/api/auth/...）
 app.use('/api/auth', authRoutes);
+
+// 掛上 donations 路由（/api/donations/...）⭐ 新增
+app.use('/api/donations', donationRoutes);
 
 // Railway 會自己給 PORT（沒有就用 3000）
 const PORT = process.env.PORT || 3000;

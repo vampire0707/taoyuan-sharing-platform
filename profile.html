@@ -1,0 +1,30 @@
+<!-- profile.html -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>會員專區 - 桃園共享社區</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 這裡可以沿用你原本的 header / 導覽列 -->
+  <header>
+    <h1>桃園共享社區 - 會員專區</h1>
+    <a href="index.html">回首頁</a>
+  </header>
+
+  <main class="profile-container">
+    <h2 id="welcome-text">歡迎回來！</h2>
+
+    <div class="profile-info">
+      <p><strong>帳號 / Email：</strong><span id="user-email"></span></p>
+      <p><strong>身分：</strong><span id="user-identity"></span></p>
+      <!-- 之後如果要顯示地區、電話，可以再加 -->
+    </div>
+
+    <button id="logout-btn">登出</button>
+  </main>
+
+  <script src="profile.js"></script>
+</body>
+</html>

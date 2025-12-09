@@ -8,9 +8,21 @@ db.query("SELECT 1")
 
 const express = require('express');
 const path = require('path');
+const cors = require('cors');          // ⭐ 新增
+
 const app = express();
 
 const authRoutes = require('./routes/auth');
+
+// ⭐ 開 CORS，讓 127.0.0.1:5500、Railway、GitHub Pages 都可以呼叫
+app.use(cors({
+  origin: [
+    'http://127.0.0.1:5500',
+    'http://localhost:5500',
+    'https://taoyuan-donation-web-production.up.railway.app',
+    // 之後如果有 GitHub Pages 網域也可以加進來
+  ]
+}));
 
 // 讓 Express 可以解析 JSON body
 app.use(express.json());
@@ -22,7 +34,7 @@ app.use(express.static(__dirname));
 // 掛上 auth 路由（/api/auth/...）
 app.use('/api/auth', authRoutes);
 
-// Railway 會給 PORT 環境變數，本機沒有時就用 3000
+// Railway 會自己給 PORT（沒有就用 3000）
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);

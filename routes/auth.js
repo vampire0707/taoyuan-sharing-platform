@@ -1,79 +1,92 @@
 // routes/auth.js
 const express = require('express');
-const bcrypt = require('bcrypt');
-const pool = require('../db');
-
 const router = express.Router();
+const bcrypt = require('bcrypt');
+const db = require('../db');
 
-// 註冊
+// POST /api/auth/register
 router.post('/register', async (req, res) => {
-  console.log("📩 /api/auth/register 收到 body:", req.body);
-  const { username, password, identity, student_id } = req.body;
-
   try {
+    const { username, password, identity, student_id } = req.body;
+
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required.' });
+    }
+
     // 1. 檢查帳號是否已存在
-    const [check] = await pool.query(
+    const [existing] = await db.query(
       'SELECT user_id FROM users WHERE username = ?',
       [username]
     );
-    if (check.length > 0) {
-      return res.status(400).json({ message: '帳號已存在' });
+
+    if (existing.length > 0) {
+      return res.status(409).json({ message: 'Account already exists.' });
     }
 
-    // 2. 密碼加密（rounds 10，速度OK）
-    const hash = await bcrypt.hash(password, 10);
+    // 2. 密碼加密
+    const hashed = await bcrypt.hash(password, 10);
 
-    // 3. 寫入資料庫
-    const [result] = await pool.query(
-      `INSERT INTO users (username, password_hash, identity, student_id)
+    // 3. 寫入 users 資料表
+    const [result] = await db.query(
+      `INSERT INTO users (username, password, identity, student_id)
        VALUES (?, ?, ?, ?)`,
-      [username, hash, identity, student_id || null]
+      [
+        username,
+        hashed,
+        identity || 'external',    // 沒傳就先當 external
+        student_id || null,
+      ]
     );
 
-    res.json({ message: '註冊成功', user_id: result.insertId });
+    return res.status(201).json({
+      message: 'Register success',
+      userId: result.insertId,
+    });
   } catch (err) {
-    console.error('註冊錯誤:', err);
-    res.status(500).json({ message: '伺服器錯誤' });
+    console.error('Register error:', err);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
 
-// 登入
+// POST /api/auth/login
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-
   try {
-    // 1. 用 username 查使用者
-    const [rows] = await pool.query(
-      `SELECT user_id, password_hash, identity, points
-       FROM users
-       WHERE username = ?`,
+    const { username, password } = req.body; // 前端之後可以用 email 當 username 傳上來
+
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required.' });
+    }
+
+    // 1. 找使用者
+    const [rows] = await db.query(
+      'SELECT user_id, username, password, identity FROM users WHERE username = ?',
       [username]
     );
 
     if (rows.length === 0) {
-      return res.status(401).json({ message: '帳號或密碼錯誤' });
+      return res.status(401).json({ message: 'User not found.' });
     }
 
     const user = rows[0];
 
     // 2. 比對密碼
-    const ok = await bcrypt.compare(password, user.password_hash);
+    const ok = await bcrypt.compare(password, user.password);
     if (!ok) {
-      return res.status(401).json({ message: '帳號或密碼錯誤' });
+      return res.status(401).json({ message: 'Incorrect password.' });
     }
 
-    // 這裡之後可以補 JWT or session
-    res.json({
-      message: '登入成功',
+    // 這裡先簡單回傳成功訊息（之後可以改成 JWT）
+    return res.json({
+      message: 'Login success',
       user: {
-        user_id: user.user_id,
+        id: user.user_id,
+        username: user.username,
         identity: user.identity,
-        points: user.points
-      }
+      },
     });
   } catch (err) {
-    console.error('登入錯誤:', err);
-    res.status(500).json({ message: '伺服器錯誤' });
+    console.error('Login error:', err);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
 

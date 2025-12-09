@@ -6,7 +6,6 @@ db.query("SELECT 1")
   .then(() => console.log("✅ MySQL 連線成功！"))
   .catch(err => console.error("❌ MySQL 連線失敗：", err));
 
-
 const express = require('express');
 const path = require('path');
 const app = express();
@@ -23,7 +22,8 @@ app.use(express.static(__dirname));
 // 掛上 auth 路由（/api/auth/...）
 app.use('/api/auth', authRoutes);
 
-const PORT = 3000;
+// Railway 會給 PORT 環境變數，本機沒有時就用 3000
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

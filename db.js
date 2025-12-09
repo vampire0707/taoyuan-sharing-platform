@@ -1,5 +1,5 @@
 // db.js
-require("dotenv").config();
+require("dotenv").config();      // 本機跑 node server.js 時會讀 .env，Railway 上會用它自己的 env
 
 const mysql = require("mysql2");
 

@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>上架捐贈物品</title>
 
-  <!-- ✅ 你的檔名是 styles.css，不是 style.css -->
-  <link rel="stylesheet" href="/styles.css" />
+  <!-- ✅ 確認你專案的檔名是 styles.css -->
+  <link rel="stylesheet" href="./styles.css" />
 
+  <!-- ✅ 上架頁自己的簡單樣式（不依賴主站也能好看） -->
   <style>
-    /* 上架頁面自己的簡潔樣式（不影響你主頁） */
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       margin: 0;
@@ -19,111 +19,98 @@
     .container {
       max-width: 640px;
       margin: 28px auto;
-      padding: 20px;
-      background: #fff;
+      padding: 18px;
+      background: #ffffff;
       border-radius: 14px;
       box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     }
-    h1 {
-      font-size: 1.6rem;
-      margin: 8px 0 18px;
-      text-align: center;
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin: 0;
     }
     .sub {
-      text-align: center;
-      margin-bottom: 18px;
-      opacity: .7;
+      margin: 0 0 14px;
+      color: #666;
       font-size: .95rem;
     }
-    .form-group { margin-bottom: 14px; }
-    label {
-      display: block;
-      margin-bottom: 6px;
-      font-weight: 700;
+    .user-pill {
+      font-size: .9rem;
+      background: #fff3ea;
+      color: #7a3a14;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid #ffd2b8;
+      max-width: 55%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; margin-bottom: 6px; font-weight: 700; }
     input, textarea {
       width: 100%;
       padding: 10px 12px;
       border-radius: 10px;
-      border: 1px solid #ddd;
+      border: 1px solid #d0d0d0;
       font-size: 1rem;
       box-sizing: border-box;
-      background: #fff;
+      outline: none;
     }
     textarea { resize: vertical; min-height: 90px; }
-
-    .row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .actions { display: flex; gap: 10px; margin-top: 12px; }
     button {
-      width: 100%;
-      padding: 12px 14px;
-      font-size: 1.05rem;
+      flex: 1;
+      padding: 12px;
+      font-size: 1rem;
       border: none;
       border-radius: 999px;
       background: #ff7a3c;
       color: #fff;
       font-weight: 800;
       cursor: pointer;
-      transition: transform .06s ease, background .2s ease;
     }
-    button:active { transform: scale(.99); }
-    button:hover { background: #ff5c0a; }
-
+    button.secondary {
+      background: #f2f2f2;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+    button:hover { filter: brightness(0.98); }
     .message {
-      margin-top: 14px;
+      margin-top: 12px;
       font-size: 0.95rem;
       text-align: center;
-      padding: 10px 12px;
-      border-radius: 10px;
-      display: none;
     }
-    .message.success { display:block; background:#e8f5e9; color:#2e7d32; }
-    .message.error { display:block; background:#ffebee; color:#c62828; }
-
-    .top-actions{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      margin-bottom:10px;
-      gap:10px;
-    }
-    .link-btn{
-      background: transparent;
-      border: 1px solid #ddd;
-      color:#333;
-      border-radius: 999px;
-      padding: 8px 12px;
-      cursor:pointer;
-      font-weight:700;
-    }
+    .message.success { color: #2e7d32; }
+    .message.error { color: #c62828; }
 
     @media (max-width: 520px) {
-      .container { margin: 18px 12px; padding: 16px; }
+      .container { margin: 16px 12px; padding: 14px; }
       .row { grid-template-columns: 1fr; }
+      .user-pill { max-width: 65%; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="top-actions">
-      <button class="link-btn" onclick="location.href='/'">← 回首頁</button>
-      <button class="link-btn" id="logoutBtn" type="button">登出</button>
+    <div class="topbar">
+      <h1 class="title">上架捐贈物品</h1>
+      <div id="whoami" class="user-pill" title="">未登入</div>
     </div>
-
-    <h1>上架捐贈物品</h1>
-    <div class="sub" id="welcomeUser">載入使用者中…</div>
-
-    <!-- donor_id 不給使用者填：用 hidden -->
-    <input type="hidden" id="donor_id" />
+    <p class="sub">請填寫物品資訊後送出，上架成功後會顯示 donation id。</p>
 
     <form id="donationForm">
       <div class="form-group">
         <label for="item_name">物品名稱 *</label>
-        <input type="text" id="item_name" required placeholder="例如：二手課本 / 外套 / 便當" />
+        <input type="text" id="item_name" required placeholder="例如：二手課本 / 外套 / 零食" />
       </div>
 
       <div class="row">
@@ -133,13 +120,13 @@
         </div>
         <div class="form-group">
           <label for="area">地區</label>
-          <input type="text" id="area" placeholder="例如：桃園市 中壢區" />
+          <input type="text" id="area" placeholder="例如：桃園市 / 中壢區" />
         </div>
       </div>
 
       <div class="form-group">
         <label for="pickup_location">取貨地點</label>
-        <input type="text" id="pickup_location" placeholder="例如：元智大學 校門口 / 某捷運站" />
+        <input type="text" id="pickup_location" placeholder="例如：元智校門口 / 某捷運站" />
       </div>
 
       <div class="form-group">
@@ -149,99 +136,18 @@
 
       <div class="form-group">
         <label for="description">物品描述</label>
-        <textarea id="description" placeholder="簡單介紹物品狀況、尺寸、有效期限等"></textarea>
+        <textarea id="description" placeholder="物品狀況、尺寸、注意事項…"></textarea>
       </div>
 
-      <button type="submit">送出上架</button>
+      <div class="actions">
+        <button type="button" class="secondary" id="backBtn">回首頁</button>
+        <button type="submit" id="submitBtn">送出上架</button>
+      </div>
 
       <div id="msg" class="message"></div>
     </form>
   </div>
 
-  <script>
-    // ✅ 同網域：Railway 上就會是 https://你的網域/api/...
-    const API_BASE_URL = "";
-
-    function getUser() {
-      try { return JSON.parse(localStorage.getItem("user") || "null"); }
-      catch { return null; }
-    }
-
-    const form = document.getElementById("donationForm");
-    const msgDiv = document.getElementById("msg");
-    const donorInput = document.getElementById("donor_id");
-    const welcomeUser = document.getElementById("welcomeUser");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    // ✅ 自動帶入 donor_id（使用者不需要知道 ID）
-    const user = getUser();
-    if (!user || !user.user_id) {
-      alert("請先登入才能上架商品！");
-      location.href = "/";
-    } else {
-      donorInput.value = user.user_id;
-      welcomeUser.textContent = `目前登入：${user.username || ("User #" + user.user_id)}`;
-    }
-
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("user");
-      alert("已登出");
-      location.href = "/";
-    });
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const donor_id = Number(donorInput.value);
-      const item_name = document.getElementById("item_name").value.trim();
-      const quantity = Number(document.getElementById("quantity").value);
-      const area = document.getElementById("area").value.trim();
-      const pickup_location = document.getElementById("pickup_location").value.trim();
-      const image_url = document.getElementById("image_url").value.trim();
-      const description = document.getElementById("description").value.trim();
-
-      msgDiv.className = "message";
-      msgDiv.style.display = "none";
-      msgDiv.textContent = "";
-
-      if (!donor_id || !item_name || !quantity) {
-        msgDiv.textContent = "❌ 請填寫必填欄位（物品名稱、數量）";
-        msgDiv.classList.add("error");
-        return;
-      }
-
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/donations`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            donor_id,
-            item_name,
-            quantity,
-            area,
-            description,
-            image_url,
-            pickup_location
-          })
-        });
-
-        const data = await res.json().catch(() => ({}));
-
-        if (!res.ok) {
-          throw new Error(data.message || `上架失敗（HTTP ${res.status}）`);
-        }
-
-        msgDiv.textContent = `✅ 上架成功！Donation ID：${data.donationId}`;
-        msgDiv.classList.add("success");
-
-        form.reset();
-        donorInput.value = user.user_id; // reset 後補回去
-      } catch (err) {
-        console.error(err);
-        msgDiv.textContent = "❌ 上架失敗：" + err.message;
-        msgDiv.classList.add("error");
-      }
-    });
-  </script>
+  <script src="./add-donation.js"></script>
 </body>
 </html>

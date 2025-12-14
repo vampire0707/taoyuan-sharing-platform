@@ -1,7 +1,8 @@
 // ===============================
 // Config
 // ===============================
-const API_BASE = ""; // 同網域就留空；如果你要前端在別的網域呼叫 Railway，可改成 "https://taoyuan-donation-web-production.up.railway.app"
+const API_BASE = "https://taoyuan-donation-web-production.up.railway.app";
+ // 同網域就留空；如果你要前端在別的網域呼叫 Railway，可改成 "https://taoyuan-donation-web-production.up.railway.app"
 
 // ===============================
 // Login/Register popup UI (keep)
@@ -321,12 +322,21 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const addDonationBtn = document.getElementById("add-donation-btn");
-  if (addDonationBtn) {
-    addDonationBtn.addEventListener("click", () => {
-      window.location.href = "add-donation.html";
-    });
-  }
+const addDonationBtn = document.getElementById("add-donation-btn");
+if (addDonationBtn) {
+  addDonationBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    const user = getLoggedInUser();
+    if (!user) {
+      alert("Please login first.");
+      wrapper?.classList.add("active-popup");
+      wrapper?.classList.remove("active"); // show login page
+      return;
+    }
+    window.location.href = "add-donation.html";
+  });
+}
+
 
   // ---------------------------
   // Auth: Login/Register form submit => call your API
@@ -359,6 +369,7 @@ document.addEventListener("DOMContentLoaded", () => {
         setLoggedInUser(data.user);
         alert("Login success!");
         wrapper?.classList.remove("active-popup");
+        refreshAuthUI();
       } catch (err) {
         console.error(err);
         alert("Login failed. Please try again.");
@@ -406,4 +417,54 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+  // ---------------------------
+// UI: show login status + logout
+// ---------------------------
+const userBadge = document.getElementById("user-badge");
+const btnLogout = document.getElementById("btn-logout");
+
+function refreshAuthUI() {
+  const user = getLoggedInUser();
+  if (user) {
+    if (userBadge) userBadge.textContent = `Hi, ${user.username || "User"} (ID:${user.id})`;
+    if (btnPopup) btnPopup.style.display = "none";
+    if (btnLogout) btnLogout.style.display = "inline-flex";
+  } else {
+    if (userBadge) userBadge.textContent = "";
+    if (btnPopup) btnPopup.style.display = "inline-flex";
+    if (btnLogout) btnLogout.style.display = "none";
+  }
+}
+refreshAuthUI();
+
+if (btnLogout) {
+  btnLogout.addEventListener("click", (e) => {
+    e.preventDefault();
+    localStorage.removeItem("user");
+    alert("Logged out.");
+    refreshAuthUI();
+  });
+}
+
+// Smooth scroll for navbar anchors
+document.querySelectorAll('a[href^="#"]').forEach((a) => {
+  a.addEventListener("click", (e) => {
+    const href = a.getAttribute("href");
+    if (!href || href === "#") return;
+
+    const target = document.querySelector(href);
+    if (!target) return;
+
+    e.preventDefault();
+
+    // 因為 header fixed，滾動要扣掉 header 高度
+    const header = document.querySelector("header");
+    const headerH = header ? header.offsetHeight : 0;
+
+    const top = target.getBoundingClientRect().top + window.pageYOffset - headerH - 10;
+    window.scrollTo({ top, behavior: "smooth" });
+  });
+});
+
 });

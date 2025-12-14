@@ -15,15 +15,9 @@ const app = express();
 const authRoutes = require('./routes/auth');
 const donationRoutes = require('./routes/donations'); 
 
-// ⭐ 開 CORS，讓 127.0.0.1:5500、Railway、GitHub Pages 都可以呼叫
-app.use(cors({
-  origin: [
-    'http://127.0.0.1:5500',
-    'http://localhost:5500',
-    'https://taoyuan-donation-web-production.up.railway.app',
-    // 之後如果有 GitHub Pages 網域也可以加進來
-  ]
-}));
+// ⭐ 開 CORS
+app.use(cors());
+
 
 // 讓 Express 可以解析 JSON body
 app.use(express.json());

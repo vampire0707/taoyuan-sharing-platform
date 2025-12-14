@@ -1,157 +1,257 @@
-<!DOCTYPE html> 
+<script src="i18n.js"></script>
+<script src="script.js"></script>
+
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title data-i18n="site_title">Taoyuan Sharing Community</title>
-    <link rel="stylesheet" href="style.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  </head>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">   
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taoyuan Sharing Platform </title>
+    <link rel="stylesheet" href="styles.css">
+    
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <body>
-    <!-- Navbar -->
-    <div id="navbar">
-      <a href="index.html" data-i18n="home">Home</a>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
 
-      <div id="navbar-right" style="display:flex; gap:15px; align-items:center;">
-        <a href="login.html" class="nav-btn" data-i18n="login">Login</a>
-        <a href="register.html" class="nav-btn" data-i18n="register">Register</a>
 
-        <div id="language-switcher">
-          <button data-lang="en">EN</button>
-          <button data-lang="zh">中文</button>
-        </div>
-      </div>
-    </div>
 
-    <!-- Welcome Section -->
+</head>
+<body>
+    <header>
+      <h2 class="logo"><a href="#welcome-section" style="color:inherit;text-decoration:none;">🏠 Home</a></h2>
+
+      <nav class="navigation">
+        <a href="#about-section" id="nav-about">About Us</a>
+        <a href="#services-section" id="nav-services">Services</a>
+        <a href="#events-section" id="nav-events">Events</a>
+        <a href="#members-section" id="nav-members">Members</a>
+        <button class="btnLogin-popup">Login</button>
+      </nav>
+    </header>
+
+
     <section id="welcome-section">
       <div class="welcome-content">
-        <h1 id="main-title" data-i18n="welcome_title">
-          Welcome to Taoyuan Sharing Community
-        </h1>
-
+        <h1 id="main-title">Welcome to Taoyuan Sharing Community</h1>
         <hr class="welcome-divider" />
-
-        <p id="main-mission" data-i18n="welcome_mission">
-          Share, Save, Smile — Free Food, Clothes, Books & Useful Items Around You!
+        <p id="main-mission">
+            Share, Save, Smile — Free Food, Clothes, Books & Useful Items Around
+            You!
         </p>
       </div>
     </section>
+      
+    <section id="about-section" style="padding:80px 20px;">
+      <!-- 你想放 About 的內容就放這裡（先簡單也沒關係） -->
+    </section>
 
-    <!-- Main Section -->
-    <div class="container">
-      <!-- Left Column -->
-      <div class="left-column">
-        <div class="orange-bar" id="upcomingBar" data-i18n="upcoming_events">
-          Upcoming Events
+    <section id="services-section" style="padding:80px 20px;">
+      <!-- 你想放 Services 的內容就放這裡 -->
+    </section>
+
+    <section id="events-section" style="padding:80px 20px;">
+      <!-- 你想放 Events 的內容就放這裡 -->
+    </section>
+
+    <section id="members-section" style="padding:80px 20px;">
+      <!-- 你想放 Members 的內容就放這裡 -->
+    </section>
+
+
+    
+    <!-- ⭐⭐⭐ ABOUT US POPUP MODAL ⭐⭐⭐ -->
+<div class="about-popup">
+    <div class="about-box">
+        <span class="about-close">
+            <ion-icon name="close"></ion-icon>
+        </span>
+
+        <div class="about-wrapper">
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?" alt="Sharing Image">
+            </div>
+            <div class="about-content">
+                <h2>🌿 About Taoyuan Sharing</h2>
+                <p>
+                    Welcome to Taoyuan Share! Our platform helps students exchange items, 
+                    services, and support each other in a friendly, safe community.
+                </p>
+                <p>
+                    Our mission is to reduce waste, save money, and build strong connections 
+                    between local and international students.
+                </p>
+                </div>
         </div>
+    </div>
+</div>
 
-        <div id="events-slider" class="highlight-slider"></div>
-      </div>
 
-      <!-- Hot Items Section -->
-      <div class="orange-bar" id="hotItemsBar" data-i18n="hot_items">
-        Hot Items List
-      </div>
+<!-- ⭐⭐⭐ SERVICES POPUP MODAL ⭐⭐⭐ -->
+<div class="services-popup">
+  <div class="services-box">
+    <span class="services-close">✖</span>
 
-      <ul id="new-items-list" class="items-list"></ul>
+    <div class="services-layout">
+      <!-- LEFT: CATEGORIES -->
+      <aside class="category-board">
+        <h2 class="popup-title">Available Items</h2>
 
-      <!-- Modal -->
-      <div id="item-modal" style="display: none">
-        <div class="modal-content">
-          <button id="modal-close">X</button>
-          <img id="modal-img" src="" alt="" />
-          <h2 id="modal-name"></h2>
-          <p id="modal-area"></p>
-          <p id="modal-description"></p>
-          <p id="modal-donor"></p>
-          <p id="modal-pickup"></p>
-        </div>
-      </div>
+        <button class="cat-btn active" data-cat="food">🍎 Food</button>
+        <button class="cat-btn" data-cat="clothes">👕 Clothes</button>
+        <button class="cat-btn" data-cat="books">📚 Books</button>
+        <button class="cat-btn" data-cat="furniture">🪑 Furniture</button>
+        <button class="cat-btn" data-cat="household">🏠 Household</button>
+        <button class="cat-btn" data-cat="others">✨ Others</button>
+        <!-- ADD DONATION -->
+        <button id="add-donation-btn" class="add-donation-btn">
+        ➕ Add Donation
+  </button>
+      </aside>
 
-      <!-- Right Column -->
-      <div class="right-column">
-        <div style="display: flex; gap: 20px">
-          <!-- Donor Board -->
-          <div class="donor-board">
-            <div class="donor-title" data-i18n="donor_board">Donor Board</div>
+      <!-- RIGHT -->
+      <section class="items-area">
+        <!-- ITEMS GRID -->
+        <div id="items-grid" class="items-grid"></div>
 
-            <ul class="donor-list">
-              <li>
-                <span class="heart">❤️</span>
-                <span data-i18n="donor_lin">Mr. Lin — 25 donations</span>
-              </li>
-              <li>
-                <span class="heart">❤️</span>
-                <span data-i18n="donor_chen">Ms. Chen — 18 donations</span>
-              </li>
-              <li>
-                <span class="heart">❤️</span>
-                <span data-i18n="donor_wang">Mr. Wang — 15 donations</span>
-              </li>
-              <li>
-                <span class="heart">❤️</span>
-                <span data-i18n="donor_lee">Ms. Lee — 12 donations</span>
-              </li>
-              <li>
-                <span class="heart">❤️</span>
-                <span data-i18n="donor_tanaka">Mr. Tanaka — 9 donations</span>
-              </li>
-            </ul>
-
-            <p class="donor-footer" data-i18n="donor_footer">
-              We appreciate every kindness 💕
-            </p>
+        <!-- ITEM DETAIL -->
+        <div id="item-detail" class="item-detail hidden">
+          <img id="detail-img">
+          <div>
+            <h3 id="detail-name"></h3>
+            <p id="detail-desc"></p>
+            <p><strong>Status:</strong> <span id="detail-status"></span></p>
+            <p><strong>Pickup Area:</strong> <span id="detail-area"></span></p>
+            <p><strong>Donor:</strong> <span id="detail-donor"></span></p>
           </div>
         </div>
-
-        <!-- QA Board -->
-        <div class="qa-board" style="margin-top:20px;">
-          <h2 data-i18n="about_title">🌿 About Taoyuan Sharing</h2>
-
-          <p data-i18n="about_content">
-            Taoyuan Sharing Old Stuffs is a local community built to encourage people
-            to give new life to old items. Instead of throwing things away, we
-            connect donors with those who truly need them — creating a cycle of
-            kindness across Taoyuan.
-          </p>
-
-          <h3 data-i18n="mission_title">🌸 Our Mission</h3>
-
-          <p data-i18n="mission_content">
-            To build a sustainable and caring society where sharing replaces waste,
-            and every unused item finds a new home filled with gratitude.
-          </p>
-
-          <h3 data-i18n="qa_title">💬 Q&A</h3>
-
-          <p>
-            <strong>Q:</strong>
-            <span data-i18n="qa1_q">
-              Who can join the community?
-            </span>
-            <br />
-            <strong>A:</strong>
-            <span data-i18n="qa1_a">
-              Anyone living in Taoyuan who wants to share or receive old items.
-            </span>
-          </p>
-
-          <p>
-            <strong>Q:</strong>
-            <span data-i18n="qa2_q">How do I donate?</span><br />
-            <strong>A:</strong>
-            <span data-i18n="qa2_a">
-              Simply register and list your available items. We’ll match you with
-              someone in need.
-            </span>
-          </p>
-        </div>
-      </div>
+      </section>
     </div>
+  </div>
+</div>
 
-    <!-- Language + Function Scripts -->
-    <script src="i18n.js"></script>
-    <script src="index.js"></script>
-  </body>
+
+<!-- Events Popup -->
+<div class="events-popup">
+  <div class="events-box">
+    <span class="events-close" title="Close"><ion-icon name="close"></ion-icon></span>
+
+    <!-- Map container -->
+    <div id="events-map"></div>
+    <!-- Event info container -->
+    <div id="event-info" class="event-info" style="display:none;">
+      <img id="event-img" src="" alt="Event Image" />
+      <h3 id="event-title"></h3>
+      <p><strong>📍 Location:</strong> <span id="event-location"></span></p>
+      <p><strong>🕒 Time:</strong> <span id="event-time"></span></p>
+      <p id="event-desc"></p>
+      <button id="btn-directions">Get Directions from Your Place</button>
+
+    </div>
+  </div>
+</div>
+
+
+    <!-- ⭐⭐⭐ LOGIN & REGISTRATION POPUP MODAL ⭐⭐⭐ -->
+
+
+        <div class="wrapper">
+            <span class="icon-close">
+                <ion-icon name="close"></ion-icon>
+            </span>
+
+            <div class="form-box login">
+                <h2>Login</h2>
+                <form action="#">
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                        <input type="email" id="login_email" required>
+                        <label>Email</label>
+                    </div>
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="lock-closed"></ion-icon> </span>
+                        <input type="password" id="login_password" required>
+                        <label>Password</label>
+                    </div>
+                    <div class="remember-forgot">
+                        <label><input type="checkbox">Remember me</label>
+                        <a href="#">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                    <div class="login-register">
+                        <p>Don't have an account? <a href="#" class="register-link">Register</a></p>
+                    </div>
+                </form>
+            </div>
+
+        
+            <div class="form-box register">
+                <h2>Registration</h2>
+                <form action="#">
+                <div class="input-box">
+                    <span class="icon"><ion-icon name="person"></ion-icon>
+                        </span>
+                        <input type="text" id="reg_username" required>
+                        <label>Username</label>
+                    </div>
+<div class="input-box">
+    <span class="icon"><ion-icon name="location"></ion-icon></span>
+    <select required>
+        <option value="" disabled selected>Select Your Area (Taoyuan)</option>
+        <option>Zhongli District</option>
+        <option>Taoyuan District</option>
+        <option>Pingzhen District</option>
+        <option>Longtan District</option>
+        <option>Yangmei District</option>
+        <option>Bade District</option>
+        <option>Guishan District</option>
+        <option>Daxi District</option>
+        <option>Luzhu District</option>
+        <option>Dayuan District</option>
+        <option>Xinwu District</option>
+        <option>Guanyin District</option>
+        <option>Fuxing District</option>
+    </select>
+    <label style="top:-5px;">Area</label>
+</div>
+
+<div class="input-box">
+    <span class="icon"><ion-icon name="call"></ion-icon></span>
+    <input type="tel" id="reg_phone" required pattern="[0-9]{10,}">
+    <label>Phone Number</label>
+</div>
+
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="mail"></ion-icon></span>
+                        <input type="email" id="reg_email" required>
+                        <label>Email</label>
+                    </div>
+
+                    <div class="input-box">
+                        <span class="icon"><ion-icon name="lock-closed"></ion-icon> </span>
+                        <input type="password" id="reg_password" required>
+                        <label>Password</label>
+                    </div>
+
+                    <div class="remember-forgot">
+                        <label><input type="checkbox">I agree to the terms & conditions </label>
+                        <a href="#">Forgot Password?</a>
+                    </div>
+
+                    <button type="submit" class="btn">Register</button>
+                    <div class="login-register">
+                        <p>Already have an account? <a href="#" class="login-link">Login</a></p>
+                    </div>
+                </form>
+            </div>
+
+
+        <script src="script.js"></script>
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+
 </html>
+

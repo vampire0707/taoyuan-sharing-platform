@@ -25,18 +25,19 @@ router.post('/', async (req, res) => {
 
     const [result] = await db.query(
       `INSERT INTO donations
-       (donor_id, item_name, quantity, area, description, image_url, pickup_location)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      (donor_id, item_name, amount, area, description, image_url, pickup_location)
+      VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
         donor_id,
         item_name,
-        Number(quantity),
+        Number(quantity),   // 前端傳 quantity，我們存進 amount 欄位
         area || null,
         description || null,
         image_url || null,
         pickup_location || null
       ]
     );
+
 
     res.status(201).json({
       message: '捐贈商品建立成功',

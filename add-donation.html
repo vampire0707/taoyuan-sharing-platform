@@ -1,63 +1,79 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>上架捐贈物品</title>
+  <title>Add Donation</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body>
-  <div class="container">
-    <h1>上架捐贈物品</h1>
+  <div class="container" style="max-width: 760px;">
+    <div class="highlight-box" style="width:100%; padding:22px; border-radius:16px;">
+      <h1 style="margin: 0 0 14px; text-align:center;">Add Donation Item</h1>
 
-    <form id="donationForm">
-      <!-- 分類（只給前端用） -->
-      <div class="form-group">
-        <label>分類 *</label>
-        <select id="category" required>
-          <option value="">請選擇分類</option>
-          <option value="food">🍎 美食</option>
-          <option value="clothes">👕 服裝</option>
-          <option value="books">📚 書籍</option>
-          <option value="furniture">🪑 家具</option>
-          <option value="household">🏠 家庭</option>
-          <option value="others">✨ 其他</option>
-        </select>
+      <!-- Not logged in warning -->
+      <div id="login-warning" style="display:none; margin: 0 0 12px; padding: 10px 12px; border-radius: 10px; background:#fff3e8;">
+        <strong style="color:#b00020;">❌ You are not logged in. You cannot post a donation.</strong>
+        <div style="margin-top:8px; display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="nav-btn" href="/login.html">Go to Login</a>
+          <a class="nav-btn" href="/index.html">Back to Home</a>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>物品名稱 *</label>
-        <input id="item_name" required />
-      </div>
+      <form id="donationForm">
+        <div class="form-group">
+          <label for="category">Category *</label>
+          <select id="category" required>
+            <option value="" selected disabled>Select a category</option>
+            <option value="food">🍎 Food</option>
+            <option value="clothes">👕 Clothes</option>
+            <option value="books">📚 Books</option>
+            <option value="furniture">🪑 Furniture</option>
+            <option value="household">🏠 Household</option>
+            <option value="others">✨ Others</option>
+          </select>
+        </div>
 
-      <div class="form-group">
-        <label>數量 *</label>
-        <input id="quantity" type="number" min="1" value="1" required />
-      </div>
+        <div class="form-group">
+          <label for="item_name">Item Name *</label>
+          <input id="item_name" required />
+        </div>
 
-      <div class="form-group">
-        <label>地區</label>
-        <input id="area" />
-      </div>
+        <div class="form-group">
+          <label for="quantity">Quantity *</label>
+          <input id="quantity" type="number" min="1" step="1" value="1" required />
+        </div>
 
-      <div class="form-group">
-        <label>取貨地點</label>
-        <input id="pickup_location" />
-      </div>
+        <div class="form-group">
+          <label for="area">Area</label>
+          <input id="area" placeholder="e.g., Taoyuan / Zhongli" />
+        </div>
 
-      <div class="form-group">
-        <label>圖片網址</label>
-        <input id="image_url" type="url" />
-      </div>
+        <div class="form-group">
+          <label for="pickup_location">Pickup Location</label>
+          <input id="pickup_location" placeholder="e.g., Zhongli Station / YZU Main Gate" />
+        </div>
 
-      <div class="form-group">
-        <label>描述</label>
-        <textarea id="description"></textarea>
-      </div>
+        <div class="form-group">
+          <label for="image_url">Image URL</label>
+          <input id="image_url" type="url" placeholder="https://..." />
+        </div>
 
-      <button type="submit">送出上架</button>
-      <div id="msg" class="message"></div>
-    </form>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" placeholder="Condition, size, notes..."></textarea>
+        </div>
+
+        <button id="btn-submit" type="submit">Submit</button>
+
+        <div id="msg" class="message" style="min-height:18px;"></div>
+
+        <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="nav-btn" href="/index.html">⬅ Back to Home</a>
+        </div>
+      </form>
+    </div>
   </div>
 
   <script src="add-donation.js"></script>

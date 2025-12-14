@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登入 / 註冊</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .auth-wrap { max-width: 520px; margin: 40px auto; padding: 20px; background: #fff; border-radius: 14px; }
+    .tabs { display:flex; gap:10px; margin-bottom: 14px; }
+    .tabs button { flex:1; padding:10px; border:0; border-radius:10px; cursor:pointer; font-weight:800; }
+    .tabs button.active { background:#ff7f27; color:#fff; }
+    .auth-form { display:none; }
+    .auth-form.active { display:block; }
+    .msg { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="auth-wrap">
+    <h2 style="margin-top:0;">登入 / 註冊</h2>
+
+    <div class="tabs">
+      <button id="tabLogin" class="active">登入</button>
+      <button id="tabRegister">註冊</button>
+    </div>
+
+    <form id="loginForm" class="auth-form active">
+      <label>Email / Username</label>
+      <input id="loginUsername" type="text" required />
+      <label>Password</label>
+      <input id="loginPassword" type="password" required />
+      <button type="submit">登入</button>
+      <div id="loginMsg" class="msg"></div>
+    </form>
+
+    <form id="regForm" class="auth-form">
+      <label>Email / Username</label>
+      <input id="regUsername" type="text" required />
+      <label>Password</label>
+      <input id="regPassword" type="password" required />
+      <button type="submit">註冊</button>
+      <div id="regMsg" class="msg"></div>
+    </form>
+
+    <p style="opacity:.75;margin-top:14px;">
+      登入成功會自動回首頁。
+    </p>
+  </div>
+
+  <script>
+    const API_BASE = "";
+
+    const tabLogin = document.getElementById("tabLogin");
+    const tabRegister = document.getElementById("tabRegister");
+    const loginForm = document.getElementById("loginForm");
+    const regForm = document.getElementById("regForm");
+
+    tabLogin.onclick = () => {
+      tabLogin.classList.add("active");
+      tabRegister.classList.remove("active");
+      loginForm.classList.add("active");
+      regForm.classList.remove("active");
+    };
+
+    tabRegister.onclick = () => {
+      tabRegister.classList.add("active");
+      tabLogin.classList.remove("active");
+      regForm.classList.add("active");
+      loginForm.classList.remove("active");
+    };
+
+    function setLoggedInUser(user) {
+      localStorage.setItem("user", JSON.stringify(user));
+    }
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("loginUsername").value.trim();
+      const password = document.getElementById("loginPassword").value;
+      const msg = document.getElementById("loginMsg");
+      msg.textContent = "";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Login failed");
+
+        setLoggedInUser(data.user);
+        msg.textContent = "✅ 登入成功，返回首頁...";
+        setTimeout(() => (window.location.href = "/"), 600);
+      } catch (err) {
+        msg.textContent = "❌ " + err.message;
+      }
+    });
+
+    regForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("regUsername").value.trim();
+      const password = document.getElementById("regPassword").value;
+      const msg = document.getElementById("regMsg");
+      msg.textContent = "";
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/register`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password, identity: "external", student_id: null })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || "Register failed");
+
+        msg.textContent = "✅ 註冊成功，請切到登入";
+      } catch (err) {
+        msg.textContent = "❌ " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>

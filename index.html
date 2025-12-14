@@ -22,19 +22,17 @@
     </h2>
 
     <nav class="navigation">
-      <a href="#about-section" id="nav-about">About Us</a>
+      <a href="#about-section" id="nav-about">About</a>
       <a href="#services-section" id="nav-services">Services</a>
       <a href="#events-section" id="nav-events">Events</a>
       <a href="#members-section" id="nav-members">Members</a>
 
       <a class="nav-btn" href="/login.html">Login</a>
       <a class="nav-btn" href="/register.html">Register</a>
-
-      <!-- ✅ 不要再用 popup 了（你要從 index 消除第二張截圖那段） -->
-      <!-- <button class="btnLogin-popup" type="button">Quick Login</button> -->
     </nav>
   </header>
 
+  <!-- ✅ Welcome -->
   <section id="welcome-section">
     <div class="welcome-content">
       <h1 id="main-title">Welcome to Taoyuan Sharing Community</h1>
@@ -43,39 +41,30 @@
         Share, Save, Smile — Free Food, Clothes, Books & Useful Items Around You!
       </p>
 
+      <!-- ✅ 3 feature cards (each has its own button) -->
       <div style="max-width:900px;margin:20px auto 0;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-        <div style="max-width:900px;margin:20px auto 0;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-          <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
-            <strong>♻ Reduce Waste</strong>
-            <div class="feature-desc">Give items a second life instead of throwing away.</div>
-            <a class="feature-btn" href="#services-section">Browse Items</a>
-          </div>
-
-          <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
-            <strong>🤝 Help Students</strong>
-            <div class="feature-desc">Support local & international students in Taoyuan.</div>
-            <a class="feature-btn" href="#members-section">View Ranking</a>
-          </div>
-
-          <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
-            <strong>📍 Easy Pickup</strong>
-            <div class="feature-desc">Show area & pickup location clearly for everyone.</div>
-            <a class="feature-btn" href="#howto-section">How It Works</a>
-          </div>
+        <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
+          <strong>♻ Reduce Waste</strong>
+          <div class="feature-desc">Give items a second life instead of throwing them away.</div>
+          <a class="feature-btn" href="#services-section">Browse Items</a>
         </div>
-        <div class="highlight-box" style="min-width:220px;flex:1;">
+
+        <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
           <strong>🤝 Help Students</strong>
-          <div style="opacity:.8;margin-top:6px;">Support local & international students in Taoyuan.</div>
+          <div class="feature-desc">Support local and international students in Taoyuan.</div>
+          <a class="feature-btn" href="#members-section">View Ranking</a>
         </div>
-        <div class="highlight-box" style="min-width:220px;flex:1;">
+
+        <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
           <strong>📍 Easy Pickup</strong>
-          <div style="opacity:.8;margin-top:6px;">Show area & pickup location clearly for everyone.</div>
+          <div class="feature-desc">Clear pickup area and location for everyone.</div>
+          <a class="feature-btn" href="#howto-section">How It Works</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ✅ 操作指引 -->
+  <!-- ✅ How it works -->
   <section id="howto-section" style="padding:40px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
       <div class="orange-bar">✨ How it works</div>
@@ -87,17 +76,17 @@
         </div>
         <div class="highlight-box" style="flex:1;min-width:220px;">
           <strong>2) Add Donation</strong>
-          <div style="opacity:.85;margin-top:6px;">Fill name, qty, area, pickup, image, description.</div>
+          <div style="opacity:.85;margin-top:6px;">Fill item name, qty, area, pickup, image and description.</div>
         </div>
         <div class="highlight-box" style="flex:1;min-width:220px;">
           <strong>3) Everyone Can Browse</strong>
-          <div style="opacity:.85;margin-top:6px;">All users can see item location + donor.</div>
+          <div style="opacity:.85;margin-top:6px;">All users can view item info and donor.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ✅ 主頁快速登入/註冊（可切換模式） -->
+  <!-- ✅ Quick Access -->
   <section id="simple-auth-section" style="padding:0 20px 40px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
       <div class="orange-bar">🔐 Quick Access</div>
@@ -105,9 +94,7 @@
       <div id="auth-status" style="padding:12px 10px;opacity:.9;">Checking login...</div>
 
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
-        <!-- ✅ 左：登入/註冊切換表單 -->
         <div style="flex:1;min-width:260px;">
-          <!-- 已登入顯示 -->
           <div id="inline-logged-box" class="highlight-box" style="display:none;">
             <strong>✅ You are logged in</strong>
             <div style="margin-top:8px;">
@@ -119,23 +106,21 @@
             </div>
           </div>
 
-          <!-- 未登入顯示 -->
           <form id="inline-auth-form" style="margin:0;">
-            <strong id="inline-auth-title" style="font-size:1.05rem;">線上登入</strong>
+            <strong id="inline-auth-title" style="font-size:1.05rem;">Online Login</strong>
             <input id="inline-auth-email" type="email" placeholder="Email (username)" required />
             <input id="inline-auth-password" type="password" placeholder="Password" required />
-            <button id="inline-auth-submit" type="submit">登入</button>
+            <button id="inline-auth-submit" type="submit">Login</button>
 
             <div style="margin-top:8px;font-size:.95rem;">
-              <span id="inline-switch-text">還沒有帳號？</span>
-              <a href="#" id="inline-switch-mode">註冊</a>
+              <span id="inline-switch-text">Don't have an account?</span>
+              <a href="#" id="inline-switch-mode">Register</a>
             </div>
 
             <div id="inline-auth-msg" style="min-height:18px;font-size:.95rem;margin-top:6px;"></div>
           </form>
         </div>
 
-        <!-- ✅ 右：分頁導向 -->
         <div class="highlight-box" style="flex:1;min-width:260px;">
           <strong style="font-size:1.05rem;">Or use separate pages</strong>
           <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
@@ -144,23 +129,23 @@
             <a class="nav-btn" href="/add-donation.html">Add Donation</a>
           </div>
           <div style="opacity:.8;margin-top:10px;">
-            Tip: After you login once, you stay logged in (saved in localStorage).
+            Tip: After you log in once, you stay logged in (saved in localStorage).
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ✅ 首頁：現有商品區 -->
+  <!-- ✅ New Items -->
   <section id="home-items-section" style="padding:40px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar" id="home-items-title">🧡 New Items </div>
+      <div class="orange-bar" id="home-items-title">🧡 New Items</div>
       <ul id="new-items-list"></ul>
       <div id="home-items-msg" style="padding:10px;opacity:.8;"></div>
     </div>
   </section>
 
-  <!-- ✅ Modal（點商品會跳） -->
+  <!-- ✅ Item Modal -->
   <div id="item-modal">
     <div class="modal-content">
       <button id="modal-close" type="button">✖</button>
@@ -179,8 +164,8 @@
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
       <div class="orange-bar">🌿 About</div>
       <p style="opacity:.9;line-height:1.7;margin-top:12px;">
-        Taoyuan Sharing Platform is a student-friendly community website for exchanging food, clothes, books and useful items.
-        We want to reduce waste and help students save money.
+        Taoyuan Sharing Platform is a student-friendly community website for exchanging food, clothes, books, and useful items.
+        We aim to reduce waste and help students save money.
       </p>
       <div style="margin-top:12px;">
         <button id="about-btn" class="nav-btn" type="button">Open About Popup</button>
@@ -193,7 +178,7 @@
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
       <div class="orange-bar">🧰 Services</div>
       <p style="opacity:.9;line-height:1.7;margin-top:12px;">
-        Browse donated items by category. Click an item to see details like quantity, area and pickup location.
+        Browse donated items by category. Click an item to view details such as quantity, area, and pickup location.
       </p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
         <button id="services-btn" class="nav-btn" type="button">Open Items Board</button>
@@ -215,7 +200,7 @@
     </div>
   </section>
 
-  <!-- ✅ Members / Leaderboard -->
+  <!-- ✅ Members -->
   <section id="members-section" style="padding:80px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
       <div class="orange-bar">🏆 Member Ranking (XP)</div>
@@ -244,7 +229,7 @@
     </div>
   </section>
 
-  <!-- ⭐⭐⭐ ABOUT US POPUP MODAL ⭐⭐⭐ -->
+  <!-- About Popup -->
   <div class="about-popup">
     <div class="about-box">
       <span class="about-close"><ion-icon name="close"></ion-icon></span>
@@ -256,19 +241,17 @@
         <div class="about-content">
           <h2>🌿 About Taoyuan Sharing</h2>
           <p>
-            Welcome to Taoyuan Share! Our platform helps students exchange items,
-            services, and support each other in a friendly, safe community.
+            Welcome to Taoyuan Share! Our platform helps students exchange items, services, and support each other in a friendly, safe community.
           </p>
           <p>
-            Our mission is to reduce waste, save money, and build strong connections
-            between local and international students.
+            Our mission is to reduce waste, save money, and build strong connections between local and international students.
           </p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ⭐⭐⭐ SERVICES POPUP MODAL ⭐⭐⭐ -->
+  <!-- Services Popup -->
   <div class="services-popup">
     <div class="services-box">
       <span class="services-close">✖</span>
@@ -323,7 +306,6 @@
     </div>
   </div>
 
-  <!-- ✅ scripts（只載一次 script.js） -->
   <script src="i18n.js"></script>
   <script src="script.js"></script>
 

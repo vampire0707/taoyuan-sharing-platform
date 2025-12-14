@@ -1,51 +1,58 @@
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>上架捐贈物品</title>
-  <link rel="stylesheet" href="styles.css" />
-</head>
-<body>
-  <div class="container">
-    <h1>上架捐贈物品</h1>
+const API_BASE_URL = ""; // 同網域部署在 Railway -> 留空
 
-    <form id="donationForm">
-      <div class="form-group">
-        <label>物品名稱 *</label>
-        <input id="item_name" required />
-      </div>
+const form = document.getElementById("donationForm");
+const msgDiv = document.getElementById("msg");
 
-      <div class="form-group">
-        <label>數量 *</label>
-        <input id="quantity" type="number" min="1" value="1" required />
-      </div>
+function getLoggedInUser() {
+  try {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
+}
 
-      <div class="form-group">
-        <label>地區</label>
-        <input id="area" />
-      </div>
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-      <div class="form-group">
-        <label>取貨地點</label>
-        <input id="pickup_location" />
-      </div>
+  const user = getLoggedInUser();
+  if (!user?.id) {
+    msgDiv.className = "message error";
+    msgDiv.textContent = "❌ 請先登入再上架";
+    return;
+  }
 
-      <div class="form-group">
-        <label>圖片網址</label>
-        <input id="image_url" type="url" />
-      </div>
+  const payload = {
+    donor_id: Number(user.id),
+    item_name: document.getElementById("item_name").value.trim(),
+    quantity: Number(document.getElementById("quantity").value),
+    area: document.getElementById("area").value.trim(),
+    pickup_location: document.getElementById("pickup_location").value.trim(),
+    image_url: document.getElementById("image_url").value.trim(),
+    description: document.getElementById("description").value.trim(),
+  };
 
-      <div class="form-group">
-        <label>描述</label>
-        <textarea id="description"></textarea>
-      </div>
+  msgDiv.className = "message";
+  msgDiv.textContent = "";
 
-      <button type="submit">送出上架</button>
-      <div id="msg" class="message"></div>
-    </form>
-  </div>
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/donations`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
 
-  <script src="add-donation.js"></script>
-</body>
-</html>
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok) {
+      throw new Error(data.message || `HTTP ${res.status}`);
+    }
+
+    msgDiv.className = "message success";
+    msgDiv.textContent = `✅ 上架成功！Donation ID: ${data.donationId ?? ""}`;
+    form.reset();
+  } catch (err) {
+    console.error(err);
+    msgDiv.className = "message error";
+    msgDiv.textContent = `❌ 上架失敗：${err.message}`;
+  }
+});

@@ -1,55 +1,42 @@
 // add-donation.js
 
-// ✅ 同網域部署（Railway）就用空字串
-// ✅ 本機開發（localhost）就打 localhost:3000
-const API_BASE = (location.hostname === "localhost" || location.hostname === "127.0.0.1")
-  ? "http://localhost:3000"
-  : "";
+(function () {
+  // ✅ 避免重複宣告衝突：用 window 共享
+  window.API_BASE = window.API_BASE || ""; // 同網域就留空
 
-// ------- helpers -------
-function getLoggedInUser() {
-  try {
-    return JSON.parse(localStorage.getItem("user") || "null");
-  } catch {
-    return null;
+  function getUser() {
+    try {
+      return JSON.parse(localStorage.getItem("user") || "null");
+    } catch {
+      return null;
+    }
   }
-}
 
-function setMessage(el, text, type) {
-  el.textContent = text;
-  el.className = "message " + (type || "");
-}
+  const user = getUser();
 
-// ------- main -------
-document.addEventListener("DOMContentLoaded", () => {
-  const whoami = document.getElementById("whoami");
-  const form = document.getElementById("donationForm");
-  const msgDiv = document.getElementById("msg");
-  const backBtn = document.getElementById("backBtn");
-  const submitBtn = document.getElementById("submitBtn");
-
-  const user = getLoggedInUser();
-
-  // ✅ 這裡就是你遇到的「明明登入了但上架說沒登入」的核心：
-  // localStorage 只認「同一個網域(origin)」。
-  // 只要你登入頁跟上架頁不是同一個網域/子網域，就會讀不到 user。
+  // ✅ 沒登入就擋下（你現在遇到的「明明登入卻說沒登入」多半是 localStorage 沒存到或不同網域）
   if (!user || !user.user_id) {
     alert("請先登入才能上架商品！");
-    // 回到首頁（同網域）
-    location.href = "/";
+    // 回首頁（你可以改成 /index.html）
+    window.location.href = "/";
     return;
   }
 
-  whoami.textContent = `已登入：${user.username || "User"} (#${user.user_id})`;
-  whoami.title = whoami.textContent;
+  const who = document.getElementById("who");
+  if (who) who.textContent = `目前登入：${user.username || "User"}（ID: ${user.user_id}）`;
 
-  backBtn.addEventListener("click", () => {
-    location.href = "/";
-  });
+  const form = document.getElementById("donationForm");
+  const msgDiv = document.getElementById("msg");
+
+  function setMsg(text, ok) {
+    if (!msgDiv) return;
+    msgDiv.textContent = text;
+    msgDiv.className = "msg " + (ok ? "ok" : "err");
+  }
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    setMessage(msgDiv, "", "");
+    setMsg("", true);
 
     const item_name = document.getElementById("item_name").value.trim();
     const quantity = Number(document.getElementById("quantity").value);
@@ -58,28 +45,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const image_url = document.getElementById("image_url").value.trim();
     const description = document.getElementById("description").value.trim();
 
-    if (!item_name) return setMessage(msgDiv, "❌ 物品名稱必填", "error");
-    if (!Number.isFinite(quantity) || quantity <= 0) return setMessage(msgDiv, "❌ 數量必須是大於 0 的數字", "error");
+    if (!item_name || !quantity) {
+      setMsg("請填寫必填欄位（物品名稱、數量）", false);
+      return;
+    }
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = "上架中...";
+    const payload = {
+      donor_id: Number(user.user_id),     // ✅ 不讓使用者填
+      item_name,
+      quantity,
+      area: area || null,
+      pickup_location: pickup_location || null,
+      image_url: image_url || null,
+      description: description || null
+    };
 
     try {
-      // ✅ 注意：後端 routes/donations.js 期待的是 donor_id、quantity
-      const payload = {
-        donor_id: Number(user.user_id),
-        item_name,
-        quantity,
-        area: area || null,
-        pickup_location: pickup_location || null,
-        image_url: image_url || null,
-        description: description || null,
-      };
-
-      const res = await fetch(`${API_BASE}/api/donations`, {
+      const res = await fetch(`${window.API_BASE}/api/donations`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       });
 
       const data = await res.json().catch(() => ({}));
@@ -88,15 +73,12 @@ document.addEventListener("DOMContentLoaded", () => {
         throw new Error(data.message || `上架失敗（HTTP ${res.status}）`);
       }
 
-      setMessage(msgDiv, `✅ 上架成功！Donation ID：${data.donationId}`, "success");
+      setMsg(`✅ 上架成功！Donation ID：${data.donationId}`, true);
       form.reset();
       document.getElementById("quantity").value = 1;
     } catch (err) {
       console.error(err);
-      setMessage(msgDiv, `❌ 上架失敗：${err.message}`, "error");
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = "送出上架";
+      setMsg(`❌ 上架失敗：${err.message}`, false);
     }
   });
-});
+})();

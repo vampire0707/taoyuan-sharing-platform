@@ -5,149 +5,99 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>上架捐贈物品</title>
 
-  <!-- ✅ 確認你專案的檔名是 styles.css -->
-  <link rel="stylesheet" href="./styles.css" />
+  <!-- ✅ 你現在檔名是 styles.css -->
+  <link rel="stylesheet" href="/styles.css" />
 
-  <!-- ✅ 上架頁自己的簡單樣式（不依賴主站也能好看） -->
   <style>
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: #f5f5f5;
-    }
-    .container {
+    /* add-donation 自己的簡單樣式（不影響你主站） */
+    body { background: #f5f5f5; }
+    .add-wrap {
       max-width: 640px;
       margin: 28px auto;
       padding: 18px;
-      background: #ffffff;
+      background: #fff;
       border-radius: 14px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      box-shadow: 0 6px 16px rgba(0,0,0,.08);
     }
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    .title {
-      font-size: 1.4rem;
-      font-weight: 800;
-      margin: 0;
-    }
-    .sub {
-      margin: 0 0 14px;
-      color: #666;
-      font-size: .95rem;
-    }
-    .user-pill {
-      font-size: .9rem;
-      background: #fff3ea;
-      color: #7a3a14;
-      padding: 8px 10px;
-      border-radius: 999px;
-      border: 1px solid #ffd2b8;
-      max-width: 55%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .form-group { margin-bottom: 12px; }
-    label { display: block; margin-bottom: 6px; font-weight: 700; }
+    .add-wrap h1 { margin: 6px 0 16px; text-align: center; }
+    .row { margin-bottom: 12px; }
+    label { display:block; margin-bottom: 6px; font-weight: 700; }
     input, textarea {
       width: 100%;
-      padding: 10px 12px;
+      border: 1px solid #ddd;
       border-radius: 10px;
-      border: 1px solid #d0d0d0;
-      font-size: 1rem;
+      padding: 10px 12px;
       box-sizing: border-box;
-      outline: none;
+      font-size: 16px;
     }
-    textarea { resize: vertical; min-height: 90px; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .actions { display: flex; gap: 10px; margin-top: 12px; }
-    button {
-      flex: 1;
-      padding: 12px;
-      font-size: 1rem;
+    textarea { min-height: 96px; resize: vertical; }
+    .btn {
+      width: 100%;
       border: none;
       border-radius: 999px;
+      padding: 12px 14px;
       background: #ff7a3c;
       color: #fff;
       font-weight: 800;
       cursor: pointer;
+      font-size: 16px;
     }
-    button.secondary {
-      background: #f2f2f2;
-      color: #333;
-      border: 1px solid #ddd;
-    }
-    button:hover { filter: brightness(0.98); }
-    .message {
-      margin-top: 12px;
-      font-size: 0.95rem;
-      text-align: center;
-    }
-    .message.success { color: #2e7d32; }
-    .message.error { color: #c62828; }
-
-    @media (max-width: 520px) {
-      .container { margin: 16px 12px; padding: 14px; }
-      .row { grid-template-columns: 1fr; }
-      .user-pill { max-width: 65%; }
-    }
+    .btn:hover { filter: brightness(.95); }
+    .hint { font-size: 13px; opacity: .75; margin-top: 6px; }
+    .msg { margin-top: 10px; text-align:center; font-weight: 700; }
+    .msg.ok { color: #2e7d32; }
+    .msg.err { color: #c62828; }
   </style>
 </head>
+
 <body>
-  <div class="container">
-    <div class="topbar">
-      <h1 class="title">上架捐贈物品</h1>
-      <div id="whoami" class="user-pill" title="">未登入</div>
-    </div>
-    <p class="sub">請填寫物品資訊後送出，上架成功後會顯示 donation id。</p>
+  <div class="add-wrap">
+    <h1>上架捐贈物品</h1>
+
+    <!-- ✅ 顯示目前登入者 -->
+    <div id="who" class="hint"></div>
 
     <form id="donationForm">
-      <div class="form-group">
+      <div class="row">
         <label for="item_name">物品名稱 *</label>
-        <input type="text" id="item_name" required placeholder="例如：二手課本 / 外套 / 零食" />
+        <input type="text" id="item_name" placeholder="例如：二手課本 / 外套 / 零食" required />
       </div>
 
       <div class="row">
-        <div class="form-group">
-          <label for="quantity">數量 *</label>
-          <input type="number" id="quantity" min="1" step="1" value="1" required />
-        </div>
-        <div class="form-group">
-          <label for="area">地區</label>
-          <input type="text" id="area" placeholder="例如：桃園市 / 中壢區" />
-        </div>
+        <label for="quantity">數量 *</label>
+        <input type="number" id="quantity" min="1" step="1" value="1" required />
       </div>
 
-      <div class="form-group">
+      <div class="row">
+        <label for="area">地區</label>
+        <input type="text" id="area" placeholder="例如：桃園市 / 中壢區" />
+      </div>
+
+      <div class="row">
         <label for="pickup_location">取貨地點</label>
         <input type="text" id="pickup_location" placeholder="例如：元智校門口 / 某捷運站" />
       </div>
 
-      <div class="form-group">
+      <div class="row">
         <label for="image_url">圖片網址</label>
         <input type="url" id="image_url" placeholder="https://..." />
       </div>
 
-      <div class="form-group">
+      <div class="row">
         <label for="description">物品描述</label>
-        <textarea id="description" placeholder="物品狀況、尺寸、注意事項…"></textarea>
+        <textarea id="description" placeholder="物品狀況、尺寸、注意事項..."></textarea>
       </div>
 
-      <div class="actions">
-        <button type="button" class="secondary" id="backBtn">回首頁</button>
-        <button type="submit" id="submitBtn">送出上架</button>
-      </div>
-
-      <div id="msg" class="message"></div>
+      <button class="btn" type="submit">送出上架</button>
+      <div id="msg" class="msg"></div>
     </form>
+
+    <div class="hint" style="margin-top:12px;">
+      若你要回首頁：<a href="/">回首頁</a>
+    </div>
   </div>
 
-  <script src="./add-donation.js"></script>
+  <!-- ✅ 只載入這支，避免跟 script.js 打架 -->
+  <script src="/add-donation.js"></script>
 </body>
 </html>

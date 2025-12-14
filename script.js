@@ -333,7 +333,9 @@ if (addDonationBtn) {
       wrapper?.classList.remove("active"); // show login page
       return;
     }
-    window.location.href = "add-donation.html";
+    window.location.href = "/add-donation.html";
+
+
   });
 }
 

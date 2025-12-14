@@ -26,6 +26,18 @@ app.use(express.urlencoded({ extended: true }));
 // 靜態檔案（index.html / login.html / register.html / JS / CSS）
 app.use(express.static(__dirname));
 
+// 強制用 HTML 回傳 add-donation 頁面（避免被當純文字）
+app.get(["/add-donation", "/add-donation.html"], (req, res) => {
+  res.type("html");
+  res.sendFile(path.join(__dirname, "add-donation.html"));
+});
+
+// ===== 顯示新增捐贈頁面 =====
+app.get('/add-donation', (req, res) => {
+  res.sendFile(path.join(__dirname, 'add-donation.html'));
+});
+
+
 // 掛上 auth 路由（/api/auth/...）
 app.use('/api/auth', authRoutes);
 

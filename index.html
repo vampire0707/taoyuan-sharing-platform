@@ -30,7 +30,8 @@
       <a class="nav-btn" href="/login.html">Login</a>
       <a class="nav-btn" href="/register.html">Register</a>
 
-      <button class="btnLogin-popup" type="button">Quick Login</button>
+      <!-- ✅ 不要再用 popup 了（你要從 index 消除第二張截圖那段） -->
+      <!-- <button class="btnLogin-popup" type="button">Quick Login</button> -->
     </nav>
   </header>
 
@@ -81,7 +82,7 @@
     </div>
   </section>
 
-  <!-- ✅ 主頁快速登入（不是 popup） -->
+  <!-- ✅ 主頁快速登入/註冊（可切換模式） -->
   <section id="simple-auth-section" style="padding:0 20px 40px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
       <div class="orange-bar">🔐 Quick Access</div>
@@ -89,14 +90,37 @@
       <div id="auth-status" style="padding:12px 10px;opacity:.9;">Checking login...</div>
 
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
-        <form id="inline-login-form" style="flex:1;min-width:260px;">
-          <strong style="font-size:1.05rem;">Inline Login</strong>
-          <input id="inline-login-email" type="email" placeholder="Email (username)" required />
-          <input id="inline-login-pass" type="password" placeholder="Password" required />
-          <button type="submit">Login</button>
-          <div id="inline-login-msg" style="min-height:18px;font-size:.95rem;"></div>
-        </form>
+        <!-- ✅ 左：登入/註冊切換表單 -->
+        <div style="flex:1;min-width:260px;">
+          <!-- 已登入顯示 -->
+          <div id="inline-logged-box" class="highlight-box" style="display:none;">
+            <strong>✅ You are logged in</strong>
+            <div style="margin-top:8px;">
+              Email: <span id="inline-logged-user"></span>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+              <a class="nav-btn" href="/add-donation.html">Add Donation</a>
+              <button id="inline-logout-btn" class="nav-btn" type="button">Logout</button>
+            </div>
+          </div>
 
+          <!-- 未登入顯示 -->
+          <form id="inline-auth-form" style="margin:0;">
+            <strong id="inline-auth-title" style="font-size:1.05rem;">線上登入</strong>
+            <input id="inline-auth-email" type="email" placeholder="Email (username)" required />
+            <input id="inline-auth-password" type="password" placeholder="Password" required />
+            <button id="inline-auth-submit" type="submit">登入</button>
+
+            <div style="margin-top:8px;font-size:.95rem;">
+              <span id="inline-switch-text">還沒有帳號？</span>
+              <a href="#" id="inline-switch-mode">註冊</a>
+            </div>
+
+            <div id="inline-auth-msg" style="min-height:18px;font-size:.95rem;margin-top:6px;"></div>
+          </form>
+        </div>
+
+        <!-- ✅ 右：分頁導向 -->
         <div class="highlight-box" style="flex:1;min-width:260px;">
           <strong style="font-size:1.05rem;">Or use separate pages</strong>
           <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
@@ -284,59 +308,7 @@
     </div>
   </div>
 
-  <!-- ⭐⭐⭐ QUICK LOGIN POPUP MODAL ⭐⭐⭐ -->
-  <div class="wrapper">
-    <span class="icon-close"><ion-icon name="close"></ion-icon></span>
-
-    <div class="form-box login">
-      <h2>Login</h2>
-      <form action="#">
-        <div class="input-box">
-          <span class="icon"><ion-icon name="mail"></ion-icon></span>
-          <input type="email" id="login_email" required>
-          <label>Email</label>
-        </div>
-        <div class="input-box">
-          <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-          <input type="password" id="login_password" required>
-          <label>Password</label>
-        </div>
-        <button type="submit" class="btn">Login</button>
-        <div class="login-register">
-          <p>Don't have an account? <a href="/register.html">Register</a></p>
-        </div>
-      </form>
-    </div>
-
-    <div class="form-box register">
-      <h2>Registration</h2>
-      <form action="#">
-        <div class="input-box">
-          <span class="icon"><ion-icon name="person"></ion-icon></span>
-          <input type="text" id="reg_username" required>
-          <label>Username</label>
-        </div>
-
-        <div class="input-box">
-          <span class="icon"><ion-icon name="mail"></ion-icon></span>
-          <input type="email" id="reg_email" required>
-          <label>Email</label>
-        </div>
-
-        <div class="input-box">
-          <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
-          <input type="password" id="reg_password" required>
-          <label>Password</label>
-        </div>
-
-        <button type="submit" class="btn">Register</button>
-        <div class="login-register">
-          <p>Already have an account? <a href="/login.html">Login</a></p>
-        </div>
-      </form>
-    </div>
-  </div>
-
+  <!-- ✅ scripts（只載一次 script.js） -->
   <script src="i18n.js"></script>
   <script src="script.js"></script>
 

@@ -31,15 +31,20 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
+// ✅ 分類推斷：看 item_name + description
 function donationToCategory(d) {
   const text = `${d.item_name || ""} ${d.description || ""}`.toLowerCase();
   const has = (arr) => arr.some((k) => text.includes(k));
 
-  if (has(["bread", "lunch", "snack", "fruit", "food", "rice", "meal", "apple", "banana", "麵包", "便當", "零食", "水果", "食物"])) return "food";
-  if (has(["shirt", "jacket", "jeans", "clothes", "dress", "衣", "外套", "褲"])) return "clothes";
-  if (has(["book", "textbook", "novel", "書", "教材", "小說"])) return "books";
-  if (has(["desk", "chair", "table", "shelf", "furniture", "桌", "椅", "書架", "家具"])) return "furniture";
-  if (has(["fan", "cooker", "kitchen", "laundry", "household", "家", "鍋", "電", "洗衣"])) return "household";
+  // ✅ 支援 description 前綴標籤：[food] xxxx（最穩）
+  const m = text.match(/^\s*\[(food|clothes|books|furniture|household|others)\]/);
+  if (m) return m[1];
+
+  if (has(["bread","lunch","snack","fruit","food","rice","meal","apple","banana","麵包","便當","零食","水果","食物"])) return "food";
+  if (has(["shirt","jacket","jeans","clothes","dress","衣","外套","褲"])) return "clothes";
+  if (has(["book","textbook","novel","書","教材","小說"])) return "books";
+  if (has(["desk","chair","table","shelf","furniture","桌","椅","書架","家具"])) return "furniture";
+  if (has(["fan","cooker","kitchen","laundry","household","家","鍋","電","洗衣"])) return "household";
   return "others";
 }
 
@@ -60,8 +65,32 @@ function calcLevelFromXp(xp) {
   return Math.floor(n / 100) + 1;
 }
 
+// ✅ 共用：登入
+async function apiLogin(username, password) {
+  const res = await fetch(`${API_BASE}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Login failed");
+  return data.user;
+}
+
+// ✅ 共用：註冊
+async function apiRegister(username, password) {
+  const res = await fetch(`${API_BASE}/api/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password, identity: "external", student_id: null }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Register failed");
+  return data;
+}
+
 // ===============================
-// DOMContentLoaded - main
+// DOMContentLoaded
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------
@@ -80,13 +109,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // ---------------------------
-  // ✅ Auth status + inline login
+  // ✅ Auth status (顯示已登入/登出)
   // ---------------------------
   const authStatus = document.getElementById("auth-status");
-  const inlineLoginForm = document.getElementById("inline-login-form");
-  const inlineLoginEmail = document.getElementById("inline-login-email");
-  const inlineLoginPass = document.getElementById("inline-login-pass");
-  const inlineLoginMsg = document.getElementById("inline-login-msg");
 
   function renderAuthStatus() {
     const u = getLoggedInUser();
@@ -107,50 +132,11 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.addEventListener("click", () => {
         clearLoggedInUser();
         renderAuthStatus();
-        if (inlineLoginMsg) inlineLoginMsg.textContent = "Logged out.";
-      });
-    }
-  }
-
-  renderAuthStatus();
-
-  if (inlineLoginForm) {
-    inlineLoginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (inlineLoginMsg) inlineLoginMsg.textContent = "Logging in...";
-
-      const username = inlineLoginEmail?.value?.trim();
-      const password = inlineLoginPass?.value;
-
-      if (!username || !password) {
-        if (inlineLoginMsg) inlineLoginMsg.textContent = "Please enter email and password.";
-        return;
-      }
-
-      try {
-        const res = await fetch(`${API_BASE}/api/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password }),
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          if (inlineLoginMsg) inlineLoginMsg.textContent = data.message || "Login failed.";
-          return;
-        }
-
-        setLoggedInUser(data.user);
-        if (inlineLoginMsg) inlineLoginMsg.textContent = "✅ Login success!";
-        renderAuthStatus();
-
-        // refresh
+        renderInlineAuthState();
         loadHomeNewItems();
         loadLeaderboard();
-      } catch (err) {
-        console.error(err);
-        if (inlineLoginMsg) inlineLoginMsg.textContent = "Login failed. Please try again.";
-      }
-    });
+      });
+    }
   }
 
   // ---------------------------
@@ -228,8 +214,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  loadHomeNewItems();
-
   // ---------------------------
   // ✅ Leaderboard
   // ---------------------------
@@ -273,25 +257,99 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  loadLeaderboard();
-
   // ---------------------------
-  // Quick Login popup UI (keep)
+  // ✅ Inline Quick Auth (登入 <-> 註冊切換)
   // ---------------------------
-  const wrapper = document.querySelector(".wrapper");
-  const btnPopup = document.querySelector(".btnLogin-popup");
-  const iconClose = document.querySelector(".icon-close");
+  const inlineAuthForm = document.getElementById("inline-auth-form");
+  const inlineAuthTitle = document.getElementById("inline-auth-title");
+  const inlineAuthSubmit = document.getElementById("inline-auth-submit");
+  const inlineSwitchMode = document.getElementById("inline-switch-mode");
+  const inlineSwitchText = document.getElementById("inline-switch-text");
+  const inlineAuthEmail = document.getElementById("inline-auth-email");
+  const inlineAuthPassword = document.getElementById("inline-auth-password");
+  const inlineLoggedBox = document.getElementById("inline-logged-box");
+  const inlineLoggedUser = document.getElementById("inline-logged-user");
+  const inlineLogoutBtn = document.getElementById("inline-logout-btn");
+  const inlineAuthMsg = document.getElementById("inline-auth-msg");
 
-  if (btnPopup && wrapper) {
-    btnPopup.addEventListener("click", (e) => {
+  let inlineIsRegister = false;
+
+  function renderInlineAuthState() {
+    const u = getLoggedInUser();
+    if (!inlineAuthForm || !inlineLoggedBox) return;
+
+    if (u) {
+      inlineLoggedBox.style.display = "block";
+      inlineAuthForm.style.display = "none";
+      if (inlineLoggedUser) inlineLoggedUser.textContent = u.username || "";
+    } else {
+      inlineLoggedBox.style.display = "none";
+      inlineAuthForm.style.display = "block";
+    }
+  }
+
+  function setInlineMode(isRegister) {
+    inlineIsRegister = isRegister;
+
+    if (inlineAuthTitle) inlineAuthTitle.textContent = inlineIsRegister ? "快速註冊" : "線上登入";
+    if (inlineAuthSubmit) inlineAuthSubmit.textContent = inlineIsRegister ? "註冊" : "登入";
+    if (inlineSwitchText) inlineSwitchText.textContent = inlineIsRegister ? "已經有帳號？" : "還沒有帳號？";
+    if (inlineSwitchMode) inlineSwitchMode.textContent = inlineIsRegister ? "登入" : "註冊";
+    if (inlineAuthMsg) inlineAuthMsg.textContent = "";
+  }
+
+  if (inlineSwitchMode) {
+    inlineSwitchMode.addEventListener("click", (e) => {
       e.preventDefault();
-      wrapper.classList.add("active-popup");
+      setInlineMode(!inlineIsRegister);
     });
   }
 
-  if (iconClose && wrapper) {
-    iconClose.addEventListener("click", () => {
-      wrapper.classList.remove("active-popup");
+  if (inlineAuthForm) {
+    inlineAuthForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const username = inlineAuthEmail?.value?.trim();
+      const password = inlineAuthPassword?.value;
+
+      if (!username || !password) {
+        if (inlineAuthMsg) inlineAuthMsg.textContent = "請填寫完整資料";
+        return;
+      }
+
+      try {
+        if (inlineAuthMsg) inlineAuthMsg.textContent = inlineIsRegister ? "Registering..." : "Logging in...";
+
+        if (inlineIsRegister) {
+          await apiRegister(username, password);
+          alert("註冊成功，請登入");
+          setInlineMode(false);
+          return;
+        }
+
+        const user = await apiLogin(username, password);
+        setLoggedInUser(user);
+
+        if (inlineAuthMsg) inlineAuthMsg.textContent = "✅ Login success!";
+        renderAuthStatus();
+        renderInlineAuthState();
+
+        loadHomeNewItems();
+        loadLeaderboard();
+      } catch (err) {
+        console.error(err);
+        if (inlineAuthMsg) inlineAuthMsg.textContent = err.message || "操作失敗";
+      }
+    });
+  }
+
+  if (inlineLogoutBtn) {
+    inlineLogoutBtn.addEventListener("click", () => {
+      clearLoggedInUser();
+      renderAuthStatus();
+      renderInlineAuthState();
+      loadHomeNewItems();
+      loadLeaderboard();
     });
   }
 
@@ -335,11 +393,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const eventData = [
     { id: 1, title: "Community Food Sharing", location: "Taoyuan Public Park", time: "Dec 20, 2025, 10:00 AM - 2:00 PM", desc: "Join us to share and enjoy free food with the community.", img: "https://plus.unsplash.com/premium_photo-1754341357839-a11120163778?", lat: 24.993, lng: 121.296 },
     { id: 2, title: "Clothes Exchange Day", location: "Zhongli Cultural Center", time: "Jan 10, 2026, 9:00 AM - 5:00 PM", desc: "Bring your gently used clothes and swap with others.", img: "https://plus.unsplash.com/premium_photo-1676587710768-3c36f6aa9fdd?", lat: 24.995, lng: 121.300 },
-    { id: 3, title: "Book Donation Drive", location: "Taoyuan Library", time: "Feb 5, 2026, 8:00 AM - 4:00 PM", desc: "Donate your old books and help build a community library.", img: "https://images.unsplash.com/photo-1591171550305-7faf12e39a27?", lat: 24.996, lng: 121.298 },
-    { id: 4, title: "Spring Gardening Workshop", location: "Yangmei Community Garden", time: "Mar 15, 2026, 1:00 PM - 4:00 PM", desc: "Learn how to plant and care for your own garden.", img: "https://plus.unsplash.com/premium_photo-1679504029329-0dfac5d2d0e5?", lat: 24.990, lng: 121.310 },
-    { id: 5, title: "Sustainable Living Seminar", location: "Bade Eco Center", time: "Apr 22, 2026, 10:00 AM - 3:00 PM", desc: "Discover tips and tricks to live a greener lifestyle.", img: "https://plus.unsplash.com/premium_vector-1737389670154-190c67b94837?", lat: 24.988, lng: 121.305 },
-    { id: 6, title: "Toy Donation Drive", location: "Taoyuan Sports Complex", time: "May 10, 2026, 7:00 AM - 12:00 PM", desc: "Donate your old toys for orphan houses", img: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?", lat: 24.994, lng: 121.299 },
-    { id: 7, title: "Art & Culture Fair", location: "Taoyuan Art Center", time: "Jun 5, 2026, 11:00 AM - 6:00 PM", desc: "Celebrate local art and culture with exhibitions and workshops.", img: "https://images.unsplash.com/photo-1740049348201-608314a9f047?", lat: 24.992, lng: 121.302 }
   ];
 
   let eventsMap = null;
@@ -347,10 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function showEventInfo(ev) {
     currentEvent = ev;
-    if (eventImg) {
-      eventImg.src = ev.img;
-      eventImg.alt = ev.title;
-    }
+    if (eventImg) { eventImg.src = ev.img; eventImg.alt = ev.title; }
     if (eventTitle) eventTitle.textContent = ev.title;
     if (eventLocation) eventLocation.textContent = ev.location;
     if (eventTime) eventTime.textContent = ev.time;
@@ -360,10 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function initEventsMap() {
     if (!window.L) return;
-    if (eventsMap) {
-      eventsMap.remove();
-      eventsMap = null;
-    }
+    if (eventsMap) { eventsMap.remove(); eventsMap = null; }
     eventsMap = L.map("events-map").setView([24.99, 121.30], 13);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -383,10 +430,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (eventsPopup) eventsPopup.style.display = "none";
     if (eventInfo) eventInfo.style.display = "none";
     currentEvent = null;
-    if (eventsMap) {
-      eventsMap.remove();
-      eventsMap = null;
-    }
+    if (eventsMap) { eventsMap.remove(); eventsMap = null; }
   }
 
   const openEventsBtn = document.getElementById("events-btn");
@@ -535,79 +579,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------
-  // Auth: Quick login popup submit (keep)
+  // ✅ Init
   // ---------------------------
-  const loginForm = document.querySelector(".form-box.login form");
-  if (loginForm) {
-    loginForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  renderAuthStatus();
+  renderInlineAuthState();
+  setInlineMode(false);
 
-      const emailInput = loginForm.querySelector('input[type="email"]');
-      const passInput = loginForm.querySelector('input[type="password"]');
-
-      const username = emailInput?.value?.trim();
-      const password = passInput?.value;
-
-      if (!username || !password) return alert("Please enter email and password.");
-
-      try {
-        const res = await fetch(`${API_BASE}/api/auth/login`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password }),
-        });
-
-        const data = await res.json();
-        if (!res.ok) return alert(data.message || "Login failed.");
-
-        setLoggedInUser(data.user);
-        alert("Login success!");
-        wrapper?.classList.remove("active-popup");
-
-        renderAuthStatus();
-        loadHomeNewItems();
-        loadLeaderboard();
-      } catch (err) {
-        console.error(err);
-        alert("Login failed. Please try again.");
-      }
-    });
-  }
-
-  const regForm = document.querySelector(".form-box.register form");
-  if (regForm) {
-    regForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const emailInput = regForm.querySelector('input[type="email"]');
-      const passInput = regForm.querySelector('input[type="password"]');
-
-      const username = emailInput?.value?.trim();
-      const password = passInput?.value;
-
-      if (!username || !password) return alert("Please enter email and password.");
-
-      try {
-        const res = await fetch(`${API_BASE}/api/auth/register`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username,
-            password,
-            identity: "external",
-            student_id: null,
-          }),
-        });
-
-        const data = await res.json();
-        if (!res.ok) return alert(data.message || "Register failed.");
-
-        alert("Register success! Please login.");
-        wrapper?.classList.remove("active");
-      } catch (err) {
-        console.error(err);
-        alert("Register failed. Please try again.");
-      }
-    });
-  }
+  loadHomeNewItems();
+  loadLeaderboard();
 });

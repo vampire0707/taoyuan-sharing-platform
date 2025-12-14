@@ -37,7 +37,6 @@ body {
   background: #e56810;
 }
 
-
 .welcome-content {
   position: relative;
   z-index: 1;
@@ -571,7 +570,6 @@ img {
 
 /* ===== 手機版：讓 Donor Board 與表單上下排列 ===== */
 @media (max-width: 768px) {
-
   /* 讓兩欄 flex 允許換行 */
   .right-column > div {
     flex-wrap: wrap;
@@ -590,3 +588,207 @@ img {
   }
 }
 
+/* =========================================================
+   ✅ NEW: Services Popup + Items Grid + Item Detail
+   (給你「現有商品區」用的樣式)
+   ========================================================= */
+
+.services-popup {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 2000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.services-box {
+  width: min(1100px, 96vw);
+  height: min(700px, 90vh);
+  background: #fff7f0;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.services-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 20px;
+  background: #ff7f27;
+  color: #fff;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+
+.services-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: 100%;
+}
+
+.category-board {
+  background: #ffecd2;
+  padding: 18px;
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  overflow-y: auto;
+}
+
+.popup-title {
+  margin: 6px 0 14px;
+  font-size: 20px;
+  font-weight: 900;
+  color: #4a2c12;
+}
+
+.cat-btn,
+.add-donation-btn {
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  font-weight: 800;
+  color: #4a2c12;
+  transition: transform 0.08s ease, background 0.2s ease;
+}
+
+.cat-btn:hover,
+.add-donation-btn:hover {
+  background: #fff3e8;
+}
+
+.cat-btn.active {
+  background: #ff7f27;
+  color: #fff;
+  border-color: #ff7f27;
+}
+
+.add-donation-btn {
+  margin-top: 10px;
+  background: #ffe2cf;
+}
+
+.items-area {
+  padding: 18px;
+  overflow: auto;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 14px;
+}
+
+/* ✅ grid */
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.item-card {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.item-card:hover {
+  transform: translateY(-2px);
+}
+
+.item-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+}
+
+.item-card h3,
+.item-card h4 {
+  margin: 10px 12px 6px;
+  font-size: 16px;
+  font-weight: 900;
+  color: #4a2c12;
+}
+
+.item-card p {
+  margin: 0 12px 8px;
+  font-size: 13px;
+  color: #6b4a2b;
+  line-height: 1.35;
+}
+
+/* ✅ detail */
+.item-detail {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.item-detail img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.item-detail h3 {
+  margin: 4px 0 6px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #4a2c12;
+}
+
+.item-detail p {
+  margin: 6px 0;
+  color: #6b4a2b;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* RWD for popup grid */
+@media (max-width: 900px) {
+  .services-layout {
+    grid-template-columns: 220px 1fr;
+  }
+  .items-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .services-layout {
+    grid-template-columns: 1fr;
+  }
+  .category-board {
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  }
+  .items-grid {
+    grid-template-columns: 1fr;
+  }
+  .item-detail {
+    grid-template-columns: 1fr;
+  }
+}

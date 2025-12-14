@@ -4,100 +4,62 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>上架捐贈物品</title>
-
-  <!-- ✅ 你現在檔名是 styles.css -->
-  <link rel="stylesheet" href="/styles.css" />
-
-  <style>
-    /* add-donation 自己的簡單樣式（不影響你主站） */
-    body { background: #f5f5f5; }
-    .add-wrap {
-      max-width: 640px;
-      margin: 28px auto;
-      padding: 18px;
-      background: #fff;
-      border-radius: 14px;
-      box-shadow: 0 6px 16px rgba(0,0,0,.08);
-    }
-    .add-wrap h1 { margin: 6px 0 16px; text-align: center; }
-    .row { margin-bottom: 12px; }
-    label { display:block; margin-bottom: 6px; font-weight: 700; }
-    input, textarea {
-      width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 10px 12px;
-      box-sizing: border-box;
-      font-size: 16px;
-    }
-    textarea { min-height: 96px; resize: vertical; }
-    .btn {
-      width: 100%;
-      border: none;
-      border-radius: 999px;
-      padding: 12px 14px;
-      background: #ff7a3c;
-      color: #fff;
-      font-weight: 800;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .btn:hover { filter: brightness(.95); }
-    .hint { font-size: 13px; opacity: .75; margin-top: 6px; }
-    .msg { margin-top: 10px; text-align:center; font-weight: 700; }
-    .msg.ok { color: #2e7d32; }
-    .msg.err { color: #c62828; }
-  </style>
+  <link rel="stylesheet" href="styles.css" />
 </head>
-
 <body>
-  <div class="add-wrap">
+  <div class="container">
     <h1>上架捐贈物品</h1>
 
-    <!-- ✅ 顯示目前登入者 -->
-    <div id="who" class="hint"></div>
-
     <form id="donationForm">
-      <div class="row">
-        <label for="item_name">物品名稱 *</label>
-        <input type="text" id="item_name" placeholder="例如：二手課本 / 外套 / 零食" required />
+      <!-- 分類（只給前端用） -->
+      <div class="form-group">
+        <label>分類 *</label>
+        <select id="category" required>
+          <option value="">請選擇分類</option>
+          <option value="food">🍎 美食</option>
+          <option value="clothes">👕 服裝</option>
+          <option value="books">📚 書籍</option>
+          <option value="furniture">🪑 家具</option>
+          <option value="household">🏠 家庭</option>
+          <option value="others">✨ 其他</option>
+        </select>
       </div>
 
-      <div class="row">
-        <label for="quantity">數量 *</label>
-        <input type="number" id="quantity" min="1" step="1" value="1" required />
+      <div class="form-group">
+        <label>物品名稱 *</label>
+        <input id="item_name" required />
       </div>
 
-      <div class="row">
-        <label for="area">地區</label>
-        <input type="text" id="area" placeholder="例如：桃園市 / 中壢區" />
+      <div class="form-group">
+        <label>數量 *</label>
+        <input id="quantity" type="number" min="1" value="1" required />
       </div>
 
-      <div class="row">
-        <label for="pickup_location">取貨地點</label>
-        <input type="text" id="pickup_location" placeholder="例如：元智校門口 / 某捷運站" />
+      <div class="form-group">
+        <label>地區</label>
+        <input id="area" />
       </div>
 
-      <div class="row">
-        <label for="image_url">圖片網址</label>
-        <input type="url" id="image_url" placeholder="https://..." />
+      <div class="form-group">
+        <label>取貨地點</label>
+        <input id="pickup_location" />
       </div>
 
-      <div class="row">
-        <label for="description">物品描述</label>
-        <textarea id="description" placeholder="物品狀況、尺寸、注意事項..."></textarea>
+      <div class="form-group">
+        <label>圖片網址</label>
+        <input id="image_url" type="url" />
       </div>
 
-      <button class="btn" type="submit">送出上架</button>
-      <div id="msg" class="msg"></div>
+      <div class="form-group">
+        <label>描述</label>
+        <textarea id="description"></textarea>
+      </div>
+
+      <button type="submit">送出上架</button>
+      <div id="msg" class="message"></div>
     </form>
-
-    <div class="hint" style="margin-top:12px;">
-      若你要回首頁：<a href="/">回首頁</a>
-    </div>
   </div>
 
-  <!-- ✅ 只載入這支，避免跟 script.js 打架 -->
-  <script src="/add-donation.js"></script>
+  <script src="add-donation.js"></script>
 </body>
 </html>

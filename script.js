@@ -1,16 +1,7 @@
 // ===============================
 // Config
 // ===============================
-const API_BASE = ""; // 同網域就留空（Railway 部署最方便）
-
-// ===============================
-// Popup UI
-// ===============================
-const wrapper = document.querySelector(".wrapper");
-const loginLink = document.querySelector(".login-link");
-const registerLink = document.querySelector(".register-link");
-const btnPopup = document.querySelector(".btnLogin-popup");
-const iconClose = document.querySelector(".icon-close");
+const API_BASE = ""; // 同網域就留空
 
 // ===============================
 // Helpers
@@ -27,6 +18,10 @@ function setLoggedInUser(userObj) {
   localStorage.setItem("user", JSON.stringify(userObj));
 }
 
+function clearLoggedInUser() {
+  localStorage.removeItem("user");
+}
+
 function escapeHtml(str) {
   return String(str ?? "")
     .replaceAll("&", "&amp;")
@@ -37,7 +32,6 @@ function escapeHtml(str) {
 }
 
 function donationToCategory(d) {
-  // DB 沒有 category → 先用 item_name/description 猜（B 方案）
   const text = `${d.item_name || ""} ${d.description || ""}`.toLowerCase();
   const has = (arr) => arr.some((k) => text.includes(k));
 
@@ -55,29 +49,238 @@ async function fetchDonations() {
   return await res.json();
 }
 
+async function fetchLeaderboard() {
+  const res = await fetch(`${API_BASE}/api/donations/leaderboard`);
+  if (!res.ok) throw new Error("Failed to fetch leaderboard");
+  return await res.json();
+}
+
+function calcLevelFromXp(xp) {
+  const n = Number(xp) || 0;
+  return Math.floor(n / 100) + 1;
+}
+
 // ===============================
-// Main
+// DOMContentLoaded - main
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
-  // ✅ 讓 navbar 的 anchor 正常作用（不要 preventDefault）
-  // 你原本有些 click 事件會阻止預設行為，這裡不要碰 navbar 的 <a href="#...">
+  // ---------------------------
+  // ✅ Smooth scroll (avoid header overlap)
+  // ---------------------------
+  document.querySelectorAll('a[href^="#"]').forEach((a) => {
+    a.addEventListener("click", (e) => {
+      const href = a.getAttribute("href");
+      if (!href || href === "#") return;
+      const target = document.querySelector(href);
+      if (!target) return;
+      e.preventDefault();
+      const y = target.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top: y, behavior: "smooth" });
+    });
+  });
 
   // ---------------------------
-  // Login/Register popup events
+  // ✅ Auth status + inline login
   // ---------------------------
-  if (registerLink && wrapper) {
-    registerLink.addEventListener("click", (e) => {
+  const authStatus = document.getElementById("auth-status");
+  const inlineLoginForm = document.getElementById("inline-login-form");
+  const inlineLoginEmail = document.getElementById("inline-login-email");
+  const inlineLoginPass = document.getElementById("inline-login-pass");
+  const inlineLoginMsg = document.getElementById("inline-login-msg");
+
+  function renderAuthStatus() {
+    const u = getLoggedInUser();
+    if (!authStatus) return;
+
+    if (!u) {
+      authStatus.innerHTML = `You are not logged in.`;
+      return;
+    }
+
+    authStatus.innerHTML = `
+      Logged in as <strong>${escapeHtml(u.username || "")}</strong>
+      <button id="btn-logout" class="nav-btn" type="button" style="margin-left:10px;">Logout</button>
+    `;
+
+    const btn = document.getElementById("btn-logout");
+    if (btn) {
+      btn.addEventListener("click", () => {
+        clearLoggedInUser();
+        renderAuthStatus();
+        if (inlineLoginMsg) inlineLoginMsg.textContent = "Logged out.";
+      });
+    }
+  }
+
+  renderAuthStatus();
+
+  if (inlineLoginForm) {
+    inlineLoginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      wrapper.classList.add("active");
+      if (inlineLoginMsg) inlineLoginMsg.textContent = "Logging in...";
+
+      const username = inlineLoginEmail?.value?.trim();
+      const password = inlineLoginPass?.value;
+
+      if (!username || !password) {
+        if (inlineLoginMsg) inlineLoginMsg.textContent = "Please enter email and password.";
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          if (inlineLoginMsg) inlineLoginMsg.textContent = data.message || "Login failed.";
+          return;
+        }
+
+        setLoggedInUser(data.user);
+        if (inlineLoginMsg) inlineLoginMsg.textContent = "✅ Login success!";
+        renderAuthStatus();
+
+        // refresh
+        loadHomeNewItems();
+        loadLeaderboard();
+      } catch (err) {
+        console.error(err);
+        if (inlineLoginMsg) inlineLoginMsg.textContent = "Login failed. Please try again.";
+      }
     });
   }
 
-  if (loginLink && wrapper) {
-    loginLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      wrapper.classList.remove("active");
+  // ---------------------------
+  // ✅ Homepage: New items list + modal
+  // ---------------------------
+  const newItemsList = document.getElementById("new-items-list");
+  const homeMsg = document.getElementById("home-items-msg");
+
+  const modal = document.getElementById("item-modal");
+  const modalClose = document.getElementById("modal-close");
+  const mImg = document.getElementById("modal-img");
+  const mName = document.getElementById("modal-name");
+  const mDesc = document.getElementById("modal-desc");
+  const mQty = document.getElementById("modal-qty");
+  const mArea = document.getElementById("modal-area");
+  const mPickup = document.getElementById("modal-pickup");
+  const mDonor = document.getElementById("modal-donor");
+
+  function openModal(d) {
+    if (!modal) return;
+    const img = d.image_url || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?";
+    if (mImg) mImg.src = img;
+    if (mName) mName.textContent = d.item_name || "";
+    if (mDesc) mDesc.textContent = d.description || "(No description)";
+    if (mQty) mQty.textContent = d.amount ?? "-";
+    if (mArea) mArea.textContent = d.area || "-";
+    if (mPickup) mPickup.textContent = d.pickup_location || "-";
+    if (mDonor) mDonor.textContent = d.username ? d.username : `User #${d.donor_id ?? "-"}`;
+    modal.style.display = "flex";
+  }
+
+  function closeModal() {
+    if (!modal) return;
+    modal.style.display = "none";
+  }
+
+  if (modalClose) modalClose.addEventListener("click", closeModal);
+  if (modal) {
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
     });
   }
+
+  async function loadHomeNewItems() {
+    if (!newItemsList) return;
+    try {
+      if (homeMsg) homeMsg.textContent = "Loading items...";
+      const rows = await fetchDonations();
+      const list = rows.slice(0, 8);
+
+      newItemsList.innerHTML = "";
+      if (list.length === 0) {
+        if (homeMsg) homeMsg.textContent = "No items yet.";
+        return;
+      }
+
+      if (homeMsg) homeMsg.textContent = "";
+
+      list.forEach((d) => {
+        const li = document.createElement("li");
+        const img = d.image_url || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?";
+
+        li.innerHTML = `
+          <img src="${escapeHtml(img)}" alt="">
+          <strong>${escapeHtml(d.item_name)}</strong>
+          <span>${escapeHtml(d.area || "-")}</span>
+        `;
+
+        li.addEventListener("click", () => openModal(d));
+        newItemsList.appendChild(li);
+      });
+    } catch (err) {
+      console.error(err);
+      if (homeMsg) homeMsg.textContent = "Failed to load items from server.";
+    }
+  }
+
+  loadHomeNewItems();
+
+  // ---------------------------
+  // ✅ Leaderboard
+  // ---------------------------
+  const lbBody = document.getElementById("leaderboard-body");
+  const lbMsg = document.getElementById("leaderboard-msg");
+
+  async function loadLeaderboard() {
+    if (!lbBody) return;
+    try {
+      if (lbMsg) lbMsg.textContent = "Loading leaderboard...";
+      const rows = await fetchLeaderboard();
+
+      lbBody.innerHTML = "";
+      if (!rows || rows.length === 0) {
+        if (lbMsg) lbMsg.textContent = "No data yet.";
+        return;
+      }
+
+      if (lbMsg) lbMsg.textContent = "";
+
+      rows.forEach((r, idx) => {
+        const tr = document.createElement("tr");
+        tr.style.borderBottom = "1px solid rgba(0,0,0,.08)";
+
+        const xp = Number(r.xp) || 0;
+        const lvl = calcLevelFromXp(xp);
+
+        tr.innerHTML = `
+          <td style="padding:10px;">${idx + 1}</td>
+          <td style="padding:10px;"><strong>${escapeHtml(r.username || "-")}</strong></td>
+          <td style="padding:10px;">${Number(r.listings) || 0}</td>
+          <td style="padding:10px;">${Number(r.total_amount) || 0}</td>
+          <td style="padding:10px;">${xp}</td>
+          <td style="padding:10px;">Lv.${lvl}</td>
+        `;
+        lbBody.appendChild(tr);
+      });
+    } catch (err) {
+      console.error(err);
+      if (lbMsg) lbMsg.textContent = "Failed to load leaderboard.";
+    }
+  }
+
+  loadLeaderboard();
+
+  // ---------------------------
+  // Quick Login popup UI (keep)
+  // ---------------------------
+  const wrapper = document.querySelector(".wrapper");
+  const btnPopup = document.querySelector(".btnLogin-popup");
+  const iconClose = document.querySelector(".icon-close");
 
   if (btnPopup && wrapper) {
     btnPopup.addEventListener("click", (e) => {
@@ -95,26 +298,21 @@ document.addEventListener("DOMContentLoaded", () => {
   // ---------------------------
   // About popup
   // ---------------------------
-  const aboutUsLink = document.getElementById("nav-about");
+  const aboutUsLink = document.getElementById("about-btn");
   const aboutPopup = document.querySelector(".about-popup");
   const aboutCloseBtn = document.querySelector(".about-close");
 
-  // ⚠️ 你 navbar 的 About Us 是 #about-section，
-  // 但你其實想開 popup（about-popup）
-  // 所以我只在「找得到 about-popup」時才攔截
   if (aboutUsLink && aboutPopup) {
     aboutUsLink.addEventListener("click", (e) => {
       e.preventDefault();
       aboutPopup.classList.add("active");
     });
   }
-
   if (aboutCloseBtn && aboutPopup) {
     aboutCloseBtn.addEventListener("click", () => {
       aboutPopup.classList.remove("active");
     });
   }
-
   if (aboutPopup) {
     aboutPopup.addEventListener("click", (e) => {
       if (e.target === aboutPopup) aboutPopup.classList.remove("active");
@@ -122,7 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------
-  // Events popup + Leaflet (保留你原本)
+  // Events popup + Leaflet
   // ---------------------------
   const eventsPopup = document.querySelector(".events-popup");
   const eventsClose = document.querySelector(".events-close");
@@ -191,7 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  const openEventsBtn = document.getElementById("nav-events");
+  const openEventsBtn = document.getElementById("events-btn");
   if (openEventsBtn && eventsPopup) {
     openEventsBtn.addEventListener("click", (e) => {
       e.preventDefault();
@@ -226,12 +424,11 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------
-  // ✅ Services popup (from MySQL API)
+  // Services popup (from MySQL API)
   // ---------------------------
   const servicesPopup = document.querySelector(".services-popup");
   const servicesClose = document.querySelector(".services-close");
-  const servicesBtn = document.getElementById("nav-services");
-
+  const servicesBtn = document.getElementById("services-btn");
   const catBtns = document.querySelectorAll(".cat-btn");
   const grid = document.getElementById("items-grid");
 
@@ -279,17 +476,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const img = d.image_url || "https://images.unsplash.com/photo-1523275335684-37898b6baf30?";
     if (dImg) dImg.src = img;
-
     if (dName) dName.textContent = d.item_name || "";
     if (dDesc) dDesc.textContent = d.description || "(No description)";
     if (dStatus) dStatus.textContent = `Available · Qty: ${d.amount ?? "-"}`;
-
-    // ✅ 你希望所有人都看到 area / pickup_location / donor
-    const areaText = d.area ? d.area : "-";
-    const pickupText = d.pickup_location ? ` · ${d.pickup_location}` : "";
-    if (dArea) dArea.textContent = `${areaText}${pickupText}`;
-
-    // donor: 後端有 LEFT JOIN users → 會有 username
+    if (dArea) dArea.textContent = `${d.area || "-"} · ${d.pickup_location || "-"}`;
     if (dDonor) dDonor.textContent = d.username ? d.username : `User #${d.donor_id ?? "-"}`;
   }
 
@@ -308,7 +498,6 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       servicesPopup.style.display = "flex";
 
-      // 預設選中 food
       catBtns.forEach((b) => b.classList.remove("active"));
       const first = document.querySelector('.cat-btn[data-cat="food"]');
       if (first) first.classList.add("active");
@@ -338,7 +527,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ✅ Add Donation → 直接去你的頁面
   const addDonationBtn = document.getElementById("add-donation-btn");
   if (addDonationBtn) {
     addDonationBtn.addEventListener("click", () => {
@@ -347,11 +535,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------
-  // Auth: Login/Register form submit
+  // Auth: Quick login popup submit (keep)
   // ---------------------------
   const loginForm = document.querySelector(".form-box.login form");
-  const regForm = document.querySelector(".form-box.register form");
-
   if (loginForm) {
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -377,6 +563,10 @@ document.addEventListener("DOMContentLoaded", () => {
         setLoggedInUser(data.user);
         alert("Login success!");
         wrapper?.classList.remove("active-popup");
+
+        renderAuthStatus();
+        loadHomeNewItems();
+        loadLeaderboard();
       } catch (err) {
         console.error(err);
         alert("Login failed. Please try again.");
@@ -384,18 +574,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const regForm = document.querySelector(".form-box.register form");
   if (regForm) {
     regForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const usernameInput = regForm.querySelector('input[type="text"]');
       const emailInput = regForm.querySelector('input[type="email"]');
       const passInput = regForm.querySelector('input[type="password"]');
 
-      const username = (emailInput?.value?.trim() || usernameInput?.value?.trim());
+      const username = emailInput?.value?.trim();
       const password = passInput?.value;
 
-      if (!username || !password) return alert("Please enter username/email and password.");
+      if (!username || !password) return alert("Please enter email and password.");
 
       try {
         const res = await fetch(`${API_BASE}/api/auth/register`, {

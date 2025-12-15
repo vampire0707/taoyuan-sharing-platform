@@ -1,235 +1,338 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">   
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taoyuan Sharing Platform </title>
-    <link rel="stylesheet" href="styles.css">
-    
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Taoyuan Sharing Platform</title>
 
-<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
-<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+  <link rel="stylesheet" href="styles.css" />
 
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
 </head>
+
 <body>
-    <header>
-        <h2 class ="logo">🏠 Home</h2>
-        <nav class="navigation">
-            <a href="#" id="about-btn">About Us</a>
-            <a href="#" id="services-btn">Services</a>
-            <a href="#" id="events-btn">Events</a>
-            <a href="#">Members</a>
-            <button class="btnLogin-popup">Login</button>
-        </nav>
-        
-    </header>
+  <header>
+    <h2 class="logo">
+      <a href="#welcome-section" style="color:inherit;text-decoration:none;">🏠 Home</a>
+    </h2>
 
-    <section id="welcome-section">
-        <div class="welcome-content">
-          <h1 id="main-title">Welcome to Taoyuan Sharing Community</h1>
-          <hr class="welcome-divider" />
-          <p id="main-mission">
-            Share, Save, Smile — Free Food, Clothes, Books & Useful Items Around
-            You!
-          </p>
+    <nav class="navigation">
+      <a href="#about-section" id="nav-about">About</a>
+      <a href="#services-section" id="nav-services">Services</a>
+      <a href="#events-section" id="nav-events">Events</a>
+      <a href="#members-section" id="nav-members">Members</a>
+
+      <!-- ✅ 改成相對路徑：避免部署在子路徑時壞掉 -->
+      <a class="nav-btn" href="login.html">Login</a>
+      <a class="nav-btn" href="register.html">Register</a>
+
+      <button class="nav-btn btnLogin-popup" type="button" aria-label="Open Login Popup">Popup Login</button>
+      <button id="lang-toggle" class="nav-btn" type="button">中文</button>
+    </nav>
+  </header>
+
+  <section id="welcome-section">
+    <div class="welcome-content">
+      <h1 id="main-title">Welcome to Taoyuan Sharing Community</h1>
+      <hr class="welcome-divider" />
+      <p id="main-mission">
+        Share, Save, Smile — Free Food, Clothes, Books & Useful Items Around You!
+      </p>
+
+      <div style="max-width:900px;margin:20px auto 0;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+        <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
+          <strong>♻ Reduce Waste</strong>
+          <div class="feature-desc">Give items a second life instead of throwing them away.</div>
+          <a class="feature-btn" href="#services-section">Browse Items</a>
         </div>
-      </section>
 
-    
-    <!-- ⭐⭐⭐ ABOUT US POPUP MODAL ⭐⭐⭐ -->
-<div class="about-popup">
-    <div class="about-box">
-        <span class="about-close">
-            <ion-icon name="close"></ion-icon>
-        </span>
-
-        <div class="about-wrapper">
-            <div class="about-image">
-                <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?" alt="Sharing Image">
-            </div>
-            <div class="about-content">
-                <h2>🌿 About Taoyuan Sharing</h2>
-                <p>
-                    Welcome to Taoyuan Share! Our platform helps students exchange items, 
-                    services, and support each other in a friendly, safe community.
-                </p>
-                <p>
-                    Our mission is to reduce waste, save money, and build strong connections 
-                    between local and international students.
-                </p>
-                </div>
+        <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
+          <strong>🤝 Help Students</strong>
+          <div class="feature-desc">Support local and international students in Taoyuan.</div>
+          <a class="feature-btn" href="#members-section">View Ranking</a>
         </div>
+
+        <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
+          <strong>📍 Easy Pickup</strong>
+          <div class="feature-desc">Clear pickup area and location for everyone.</div>
+          <a class="feature-btn" href="#howto-section">How It Works</a>
+        </div>
+      </div>
     </div>
-</div>
+  </section>
 
+  <section id="howto-section" style="padding:40px 20px;">
+    <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
+      <div class="orange-bar" id="howto-bar">✨ How it works</div>
 
-<!-- ⭐⭐⭐ SERVICES POPUP MODAL ⭐⭐⭐ -->
-<div class="services-popup">
-  <div class="services-box">
-    <span class="services-close">✖</span>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;">
+        <div class="highlight-box" style="flex:1;min-width:220px;">
+          <strong>1) Login / Register</strong>
+          <div style="opacity:.85;margin-top:6px;">Create an account to post items.</div>
+        </div>
+        <div class="highlight-box" style="flex:1;min-width:220px;">
+          <strong>2) Add Donation</strong>
+          <div style="opacity:.85;margin-top:6px;">Fill item name, qty, area, pickup, image and description.</div>
+        </div>
+        <div class="highlight-box" style="flex:1;min-width:220px;">
+          <strong>3) Everyone Can Browse</strong>
+          <div style="opacity:.85;margin-top:6px;">All users can view item info and donor.</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <div class="services-layout">
-      <!-- LEFT: CATEGORIES -->
-      <aside class="category-board">
-        <h2 class="popup-title">Available Items</h2>
+  <section id="simple-auth-section" style="padding:0 20px 40px;">
+    <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
+      <div class="orange-bar" id="quickaccess-bar">🔐 Quick Access</div>
 
-        <button class="cat-btn active" data-cat="food">🍎 Food</button>
-        <button class="cat-btn" data-cat="clothes">👕 Clothes</button>
-        <button class="cat-btn" data-cat="books">📚 Books</button>
-        <button class="cat-btn" data-cat="furniture">🪑 Furniture</button>
-        <button class="cat-btn" data-cat="household">🏠 Household</button>
-        <button class="cat-btn" data-cat="others">✨ Others</button>
-        <!-- ADD DONATION -->
-        <button id="add-donation-btn" class="add-donation-btn">
-        ➕ Add Donation
-  </button>
-      </aside>
+      <div id="auth-status" style="padding:12px 10px;opacity:.9;">Checking login...</div>
 
-      <!-- RIGHT -->
-      <section class="items-area">
-        <!-- ITEMS GRID -->
-        <div id="items-grid" class="items-grid"></div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
+        <div style="flex:1;min-width:260px;">
+          <div id="inline-logged-box" class="highlight-box" style="display:none;">
+            <strong>✅ You are logged in</strong>
+            <div style="margin-top:8px;">
+              Email: <span id="inline-logged-user"></span>
+            </div>
+            <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+              <a class="nav-btn" href="add-donation.html">Add Donation</a>
+              <button id="inline-logout-btn" class="nav-btn" type="button">Logout</button>
+            </div>
+          </div>
 
-        <!-- ITEM DETAIL -->
-        <div id="item-detail" class="item-detail hidden">
-          <img id="detail-img">
-          <div>
-            <h3 id="detail-name"></h3>
-            <p id="detail-desc"></p>
-            <p><strong>Status:</strong> <span id="detail-status"></span></p>
-            <p><strong>Pickup Area:</strong> <span id="detail-area"></span></p>
-            <p><strong>Donor:</strong> <span id="detail-donor"></span></p>
+          <form id="inline-auth-form" style="margin:0;">
+            <strong id="inline-auth-title" style="font-size:1.05rem;">Online Login</strong>
+            <input id="inline-auth-email" type="email" placeholder="Email (username)" required />
+            <input id="inline-auth-password" type="password" placeholder="Password" required />
+            <button id="inline-auth-submit" type="submit">Login</button>
+
+            <div style="margin-top:8px;font-size:.95rem;">
+              <span id="inline-switch-text">Don't have an account?</span>
+              <a href="#" id="inline-switch-mode">Register</a>
+            </div>
+
+            <div id="inline-auth-msg" style="min-height:18px;font-size:.95rem;margin-top:6px;"></div>
+          </form>
+        </div>
+
+        <div class="highlight-box" style="flex:1;min-width:260px;">
+          <strong style="font-size:1.05rem;">Or use separate pages</strong>
+          <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
+            <a class="nav-btn" href="login.html">Go to Login Page</a>
+            <a class="nav-btn" href="register.html">Go to Register Page</a>
+            <a class="nav-btn" href="add-donation.html">Add Donation</a>
+          </div>
+          <div style="opacity:.8;margin-top:10px;">
+            Tip: After you log in once, you stay logged in (saved in localStorage).
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
+
+  <section id="home-items-section" style="padding:40px 20px;">
+    <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
+      <div class="orange-bar" id="home-items-title">🧡 New Items</div>
+      <ul id="new-items-list"></ul>
+      <div id="home-items-msg" style="padding:10px;opacity:.8;"></div>
+    </div>
+  </section>
+
+  <div id="item-modal">
+    <div class="modal-content">
+      <button id="modal-close" type="button">✖</button>
+      <img id="modal-img" src="" alt="item" />
+      <h2 id="modal-name"></h2>
+      <p id="modal-desc"></p>
+      <p><strong>Qty:</strong> <span id="modal-qty"></span></p>
+      <p><strong>Area:</strong> <span id="modal-area"></span></p>
+      <p><strong>Pickup:</strong> <span id="modal-pickup"></span></p>
+      <p><strong>Donor:</strong> <span id="modal-donor"></span></p>
     </div>
   </div>
-</div>
 
+  <!-- ✅（下面 popup 區你原本就 OK，我不改） -->
 
-<!-- Events Popup -->
-<div class="events-popup">
-  <div class="events-box">
-    <span class="events-close" title="Close"><ion-icon name="close"></ion-icon></span>
-
-    <!-- Map container -->
-    <div id="events-map"></div>
-    <!-- Event info container -->
-    <div id="event-info" class="event-info" style="display:none;">
-      <img id="event-img" src="" alt="Event Image" />
-      <h3 id="event-title"></h3>
-      <p><strong>📍 Location:</strong> <span id="event-location"></span></p>
-      <p><strong>🕒 Time:</strong> <span id="event-time"></span></p>
-      <p id="event-desc"></p>
-      <button id="btn-directions">Get Directions from Your Place</button>
-
+  <div class="about-popup">
+    <div class="about-box">
+      <span class="about-close"><ion-icon name="close"></ion-icon></span>
+      <div class="about-wrapper">
+        <div class="about-image">
+          <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?" alt="Sharing Image">
+        </div>
+        <div class="about-content">
+          <h2>🌿 About Taoyuan Sharing</h2>
+          <p>Welcome to Taoyuan Share! Our platform helps students exchange items, services, and support each other in a friendly, safe community.</p>
+          <p>Our mission is to reduce waste, save money, and build strong connections between local and international students.</p>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
+  <div class="services-popup">
+    <div class="services-box">
+      <span class="services-close">✖</span>
+      <div class="services-layout">
+        <aside class="category-board">
+          <h2 class="popup-title">Available Items</h2>
 
-    <!-- ⭐⭐⭐ LOGIN & REGISTRATION POPUP MODAL ⭐⭐⭐ -->
+          <button class="cat-btn active" data-cat="food">🍎 Food</button>
+          <button class="cat-btn" data-cat="clothes">👕 Clothes</button>
+          <button class="cat-btn" data-cat="books">📚 Books</button>
+          <button class="cat-btn" data-cat="furniture">🪑 Furniture</button>
+          <button class="cat-btn" data-cat="household">🏠 Household</button>
+          <button class="cat-btn" data-cat="others">✨ Others</button>
 
+          <button id="add-donation-btn" class="add-donation-btn">➕ Add Donation</button>
+        </aside>
 
-        <div class="wrapper">
-            <span class="icon-close">
-                <ion-icon name="close"></ion-icon>
-            </span>
+        <section class="items-area">
+          <div id="items-grid" class="items-grid"></div>
 
-            <div class="form-box login">
-                <h2>Login</h2>
-                <form action="#">
-                    <div class="input-box">
-                        <span class="icon"><ion-icon name="mail"></ion-icon></span>
-                        <input type="email" required>
-                        <label>Email</label>
-                    </div>
-                    <div class="input-box">
-                        <span class="icon"><ion-icon name="lock-closed"></ion-icon> </span>
-                        <input type="password" required>
-                        <label>Password</label>
-                    </div>
-                    <div class="remember-forgot">
-                        <label><input type="checkbox">Remember me</label>
-                        <a href="#">Forgot Password?</a>
-                    </div>
-                    <button type="submit" class="btn">Login</button>
-                    <div class="login-register">
-                        <p>Don't have an account? <a href="#" class="register-link">Register</a></p>
-                    </div>
-                </form>
+          <div id="item-detail" class="item-detail hidden">
+            <img id="detail-img" alt="detail">
+            <div>
+              <h3 id="detail-name"></h3>
+              <p id="detail-desc"></p>
+              <p><strong>Status:</strong> <span id="detail-status"></span></p>
+              <p><strong>Pickup Area:</strong> <span id="detail-area"></span></p>
+              <p><strong>Donor:</strong> <span id="detail-donor"></span></p>
             </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
 
-        
-            <div class="form-box register">
-                <h2>Registration</h2>
-                <form action="#">
-                <div class="input-box">
-                    <span class="icon"><ion-icon name="person"></ion-icon>
-                        </span>
-                        <input type="text" required>
-                        <label>Username</label>
-                    </div>
-<div class="input-box">
-    <span class="icon"><ion-icon name="location"></ion-icon></span>
-    <select required>
-        <option value="" disabled selected>Select Your Area (Taoyuan)</option>
-        <option>Zhongli District</option>
-        <option>Taoyuan District</option>
-        <option>Pingzhen District</option>
-        <option>Longtan District</option>
-        <option>Yangmei District</option>
-        <option>Bade District</option>
-        <option>Guishan District</option>
-        <option>Daxi District</option>
-        <option>Luzhu District</option>
-        <option>Dayuan District</option>
-        <option>Xinwu District</option>
-        <option>Guanyin District</option>
-        <option>Fuxing District</option>
-    </select>
-    <label style="top:-5px;">Area</label>
-</div>
+  <div class="events-popup">
+    <div class="events-box">
+      <span class="events-close" title="Close"><ion-icon name="close"></ion-icon></span>
+      <div id="events-map"></div>
 
-<div class="input-box">
-    <span class="icon"><ion-icon name="call"></ion-icon></span>
-    <input type="tel" required pattern="[0-9]{10,}">
-    <label>Phone Number</label>
-</div>
+      <div id="event-info" class="event-info" style="display:none;">
+        <img id="event-img" src="" alt="Event Image" />
+        <h3 id="event-title"></h3>
+        <p><strong>📍 Location:</strong> <span id="event-location"></span></p>
+        <p><strong>🕒 Time:</strong> <span id="event-time"></span></p>
+        <p id="event-desc"></p>
+        <button id="btn-directions" type="button">Get Directions from Your Place</button>
+      </div>
+    </div>
+  </div>
 
-                    <div class="input-box">
-                        <span class="icon"><ion-icon name="mail"></ion-icon></span>
-                        <input type="email" required>
-                        <label>Email</label>
-                    </div>
+  <div class="wrapper" aria-hidden="true">
+    <span class="icon-close" role="button" tabindex="0" aria-label="Close">
+      <ion-icon name="close"></ion-icon>
+    </span>
 
-                    <div class="input-box">
-                        <span class="icon"><ion-icon name="lock-closed"></ion-icon> </span>
-                        <input type="password" required>
-                        <label>Password</label>
-                    </div>
+    <div class="form-box login">
+      <h2>Login</h2>
+      <form id="modal-login-form" action="#" autocomplete="on">
+        <div class="input-box">
+          <span class="icon"><ion-icon name="mail"></ion-icon></span>
+          <input id="modal-login-email" name="email" type="email" required />
+          <label>Email</label>
+        </div>
 
-                    <div class="remember-forgot">
-                        <label><input type="checkbox">I agree to the terms & conditions </label>
-                        <a href="#">Forgot Password?</a>
-                    </div>
+        <div class="input-box">
+          <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+          <input id="modal-login-password" name="password" type="password" required />
+          <label>Password</label>
+        </div>
 
-                    <button type="submit" class="btn">Register</button>
-                    <div class="login-register">
-                        <p>Already have an account? <a href="#" class="login-link">Login</a></p>
-                    </div>
-                </form>
-            </div>
+        <div class="remember-forgot">
+          <label><input type="checkbox" />Remember me</label>
+          <a href="#" onclick="return false;">Forgot Password?</a>
+        </div>
 
+        <button type="submit" class="btn">Login</button>
 
-        <script src="script.js"></script>
-        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+        <div class="login-register">
+          <p>Don't have an account?
+            <a href="#" class="register-link">Register</a>
+          </p>
+        </div>
+
+        <div id="modal-login-msg" style="min-height:18px;font-size:.95rem;margin-top:8px;"></div>
+      </form>
+    </div>
+
+    <div class="form-box register">
+      <h2>Registration</h2>
+      <form id="modal-register-form" action="#" autocomplete="on">
+        <div class="input-box">
+          <span class="icon"><ion-icon name="person"></ion-icon></span>
+          <input id="modal-register-username" name="username" type="text" required />
+          <label>Username</label>
+        </div>
+
+        <div class="input-box">
+          <span class="icon"><ion-icon name="location"></ion-icon></span>
+          <select id="modal-register-area" name="area" required>
+            <option value="" disabled selected>Select Your Area (Taoyuan)</option>
+            <option>Zhongli District</option>
+            <option>Taoyuan District</option>
+            <option>Pingzhen District</option>
+            <option>Longtan District</option>
+            <option>Yangmei District</option>
+            <option>Bade District</option>
+            <option>Guishan District</option>
+            <option>Daxi District</option>
+            <option>Luzhu District</option>
+            <option>Dayuan District</option>
+            <option>Xinwu District</option>
+            <option>Guanyin District</option>
+            <option>Fuxing District</option>
+          </select>
+          <label style="top:-5px;">Area</label>
+        </div>
+
+        <div class="input-box">
+          <span class="icon"><ion-icon name="call"></ion-icon></span>
+          <input id="modal-register-phone" name="phone" type="tel" required pattern="[0-9]{10,}" />
+          <label>Phone Number</label>
+        </div>
+
+        <div class="input-box">
+          <span class="icon"><ion-icon name="mail"></ion-icon></span>
+          <input id="modal-register-email" name="email" type="email" required />
+          <label>Email</label>
+        </div>
+
+        <div class="input-box">
+          <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
+          <input id="modal-register-password" name="password" type="password" required />
+          <label>Password</label>
+        </div>
+
+        <div class="remember-forgot">
+          <label><input type="checkbox" required />I agree to the terms &amp; conditions</label>
+          <a href="#" onclick="return false;">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="btn">Register</button>
+
+        <div class="login-register">
+          <p>Already have an account?
+            <a href="#" class="login-link">Login</a>
+          </p>
+        </div>
+
+        <div id="modal-register-msg" style="min-height:18px;font-size:.95rem;margin-top:8px;"></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="script.js"></script>
+
+  <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+  <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 </body>
-
 </html>

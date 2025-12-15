@@ -288,15 +288,25 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function setInlineMode(isRegister) {
+    function setInlineMode(isRegister) {
     inlineIsRegister = isRegister;
 
-    if (inlineAuthTitle) inlineAuthTitle.textContent = inlineIsRegister ? "快速註冊" : "線上登入";
-    if (inlineAuthSubmit) inlineAuthSubmit.textContent = inlineIsRegister ? "註冊" : "登入";
-    if (inlineSwitchText) inlineSwitchText.textContent = inlineIsRegister ? "已經有帳號？" : "還沒有帳號？";
-    if (inlineSwitchMode) inlineSwitchMode.textContent = inlineIsRegister ? "登入" : "註冊";
+    if (inlineAuthTitle)
+        inlineAuthTitle.textContent = inlineIsRegister ? "Quick Register" : "Online Login";
+
+    if (inlineAuthSubmit)
+        inlineAuthSubmit.textContent = inlineIsRegister ? "Register" : "Login";
+
+    if (inlineSwitchText)
+        inlineSwitchText.textContent = inlineIsRegister
+        ? "Already have an account?"
+        : "Don't have an account?";
+
+    if (inlineSwitchMode)
+        inlineSwitchMode.textContent = inlineIsRegister ? "Login" : "Register";
+
     if (inlineAuthMsg) inlineAuthMsg.textContent = "";
-  }
+    }
 
   if (inlineSwitchMode) {
     inlineSwitchMode.addEventListener("click", (e) => {
@@ -312,10 +322,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const username = inlineAuthEmail?.value?.trim();
       const password = inlineAuthPassword?.value;
 
-      if (!username || !password) {
-        if (inlineAuthMsg) inlineAuthMsg.textContent = "請填寫完整資料";
+        if (!username || !password) {
+        if (inlineAuthMsg) inlineAuthMsg.textContent = "Please fill in all fields.";
         return;
-      }
+        }
 
       try {
         if (inlineAuthMsg) inlineAuthMsg.textContent = inlineIsRegister ? "Registering..." : "Logging in...";
@@ -577,6 +587,33 @@ document.addEventListener("DOMContentLoaded", () => {
       window.location.href = "/add-donation.html";
     });
   }
+
+    // ---------------------------
+    // ✅ i18n (EN/中文 toggle)
+    // ---------------------------
+    const langBtn = document.getElementById("lang-toggle");
+
+    function renderLangBtn() {
+    const lang = window.i18n?.getLang?.() || "en";
+    if (!langBtn) return;
+    langBtn.textContent = lang === "en" ? "中文" : "EN";
+    }
+
+    if (window.i18n?.applyLang) {
+    window.i18n.applyLang(window.i18n.getLang());
+    renderLangBtn();
+    }
+
+    if (langBtn) {
+    langBtn.addEventListener("click", () => {
+        const cur = window.i18n.getLang();
+        const next = cur === "en" ? "zh" : "en";
+        window.i18n.setLang(next);
+        window.i18n.applyLang(next);
+        renderLangBtn();
+    });
+    }
+
 
   // ---------------------------
   // ✅ Init

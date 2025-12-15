@@ -29,6 +29,8 @@
 
       <a class="nav-btn" href="/login.html">Login</a>
       <a class="nav-btn" href="/register.html">Register</a>
+      <button id="lang-toggle" class="nav-btn" type="button">中文</button>
+
     </nav>
   </header>
 
@@ -67,7 +69,7 @@
   <!-- ✅ How it works -->
   <section id="howto-section" style="padding:40px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar">✨ How it works</div>
+      <div class="orange-bar" id="howto-bar">✨ How it works</div>
 
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;">
         <div class="highlight-box" style="flex:1;min-width:220px;">
@@ -89,7 +91,7 @@
   <!-- ✅ Quick Access -->
   <section id="simple-auth-section" style="padding:0 20px 40px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar">🔐 Quick Access</div>
+      <div class="orange-bar" id="quickaccess-bar">🔐 Quick Access</div>
 
       <div id="auth-status" style="padding:12px 10px;opacity:.9;">Checking login...</div>
 
@@ -162,7 +164,7 @@
   <!-- ✅ About -->
   <section id="about-section" style="padding:80px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar">🌿 About</div>
+      <div class="orange-bar" id="about-bar">🌿 About</div>
       <p style="opacity:.9;line-height:1.7;margin-top:12px;">
         Taoyuan Sharing Platform is a student-friendly community website for exchanging food, clothes, books, and useful items.
         We aim to reduce waste and help students save money.
@@ -176,7 +178,7 @@
   <!-- ✅ Services -->
   <section id="services-section" style="padding:80px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar">🧰 Services</div>
+      <div class="orange-bar" id="services-bar">🧰 Services</div>
       <p style="opacity:.9;line-height:1.7;margin-top:12px;">
         Browse donated items by category. Click an item to view details such as quantity, area, and pickup location.
       </p>
@@ -190,7 +192,7 @@
   <!-- ✅ Events -->
   <section id="events-section" style="padding:80px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar">🗺 Events</div>
+      <div class="orange-bar" id="events-bar">🗺 Events</div>
       <p style="opacity:.9;line-height:1.7;margin-top:12px;">
         Check community events and get directions from your current location.
       </p>
@@ -203,7 +205,7 @@
   <!-- ✅ Members -->
   <section id="members-section" style="padding:80px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar">🏆 Member Ranking (XP)</div>
+      <div class="orange-bar" id="members-bar">🏆 Member Ranking (XP)</div>
 
       <div style="opacity:.85;margin-top:10px;">
         XP rule: XP = total donated quantity × 10 (based on SUM(amount)).

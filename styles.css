@@ -905,11 +905,85 @@ header .navigation a:hover{
   padding: 8px 14px;
   border-radius: 8px;
   background: #ff7f27;
-  color: #fff !important;
+  color: #767676 !important;
   text-decoration: none;
   font-weight: 900;
 }
 
 .feature-btn:hover{
   background: #e56810;
+}
+
+/* =========================
+   Header / Navigation (RWD fix)
+   ========================= */
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 3000;
+  background: #ffecd2;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.logo {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.logo a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap; /* 不要換行 */
+}
+
+.navigation {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap; /* 允許換行，但我們手機會改排版 */
+}
+
+.navigation a {
+  text-decoration: none;
+  color: #4a2c12;
+  font-weight: 800;
+  white-space: nowrap; /* About/Services 不要斷字 */
+}
+
+/* ✅ Mobile: nav 變成「一排可換行」+ 按鈕縮小，不會散掉 */
+@media (max-width: 600px) {
+  header {
+    flex-wrap: wrap;
+    align-items: flex-start;
+  }
+
+  .logo {
+    width: 100%;
+    font-size: 20px;
+  }
+
+  .navigation {
+    width: 100%;
+    justify-content: flex-start;
+    gap: 10px;
+  }
+
+  .navigation a {
+    font-size: 14px;
+  }
+
+  .nav-btn {
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+  }
 }

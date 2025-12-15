@@ -1,82 +1,123 @@
-/* ===== Global Styles ===== */
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background: #ebc9b8; /* sửa lỗi ## */
-  color: #4a2c12;
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Playfair+Display:wght@600;700;800&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif; 
 }
 
-/* Navbar */
-#navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background: #ffecd2;
-  font-weight: bold;
+body{
+    margin: 0;
+    padding: 0;
+    background: #f0f0f0; /* optionnel */
 }
 
-#navbar button {
-  cursor: pointer;
-  background: none;
-  border: none;
-  font-weight: 700;
+
+header{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    padding:20px 100px;
+    display: flex ;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 99;
+     background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(10px);
 }
 
-.nav-btn {
-  padding: 8px 15px;
-  background: #ff7f27;
-  color: white;
-  text-decoration: none;
-  border-radius: 6px;
-  font-weight: bold;
+
+.logo{
+    font-size: 2em;
+    color: #ffecd2;
+    user-select: none;
 }
 
-.nav-btn:hover {
-  background: #e56810;
+.navigation a{
+    position: relative;
+    font-size: 1.1em;
+    color: #ffecd2;
+    text-decoration: none;
+    font-weight: 500;
+    margin-left: 40px;
 }
 
-.welcome-content {
-  position: relative;
-  z-index: 1;
+.navigation a::after{
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    height: 3px;
+    background:#ffecd2;
+    border-radius: 5px;
+    transform-origin: right;
+    transform: scaleX(0);
+    transition: transform 0.5s;
 }
 
-/* Welcome Section */
-.welcome-wrapper {
-  margin: 30px auto;
-  max-width: 2000px;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(255, 140, 40, 0.2);
+.navigation a:hover::after{
+    transform-origin: left;
+    transform: scaleX(1);
+}
+.navigation .btnLogin-popup{
+    width: 130px;
+    height: 50px;
+    background: transparent;
+    border: 2px solid #fff;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    color: #fff ;
+    font-weight: 500;
+    margin-left: 40px;
+    transition: .5s;
+}
+
+.navigation .btnLogin-popup:hover{
+    background: #fff;
+    color: orangered;
 }
 
 #welcome-section {
-  position: relative;
-  background: url("https://images.unsplash.com/photo-1586738652833-c71f02454563?")
-    center/cover no-repeat;
-  padding: 120px 20px;
-  text-align: center;
-  color: #ffffff;
-  width: 100vw;
+    background: url("https://images.unsplash.com/photo-1586738652833-c71f02454563?") no-repeat center center;
+    background-size: cover;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+
+    padding: 0 20px;
+    color: #ffffff;
+    position: relative;
+    width: 100vw;
   box-sizing: border-box;
 }
 
+/* ==== Nâng cấp font cho tiêu đề chính ==== */
 h1#main-title {
-  font-size: 3rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 3.4rem;
   margin-bottom: 20px;
   font-weight: 800;
-  text-shadow: 2px 2px 6px rgba(230, 128, 61, 0.7);
+  letter-spacing: 1px;
+  text-shadow: 2px 3px 10px rgba(230, 128, 61, 0.75);
 }
 
 p#main-mission {
+  font-family: 'Poppins', sans-serif;
   font-size: 1.5rem;
-  font-weight: bold;
+  font-weight: 500;
   max-width: 800px;
   margin: 40px auto 0;
   text-shadow: 1px 1px 4px rgba(238, 168, 62, 0.6);
 }
-
 hr.welcome-divider {
   width: 200px;
   border: 2px solid #ebc9b8;
@@ -84,906 +125,565 @@ hr.welcome-divider {
   border-radius: 5px;
 }
 
-/* Main container layout */
-.container {
-  display: flex;
-  flex-wrap: wrap; /* 螢幕不夠寬時自動換行 */
-  gap: 20px;
-  max-width: 1200px;
-  margin: 20px auto 40px;
-  padding: 0 20px;
-  box-sizing: border-box;
+/* ===== Events POPUP ===== */
+.events-popup {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
 }
 
-/* Cột trái (event + new item) */
-.left-column {
-  flex: 2;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  background: #ffecd2;
-  min-width: 0;
-}
+.events-box {
+  width: 85%;
+  max-width: 900px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 15px;
+  position: relative;
+  animation: fadeIn 0.3s ease;
 
-/* Cột phải */
-.right-column {
-  flex: 1;
+  /* đổi thành flex ngang 2 cột */
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-  background: rgba(231, 208, 165, 0.1);
-  min-width: 0;
+  flex-direction: row; /* hàng ngang */
+  height: 80vh;
+  gap: 20px; /* khoảng cách giữa 2 cột */
 }
-
-/* Thanh ngang */
-.orange-bar {
+.add-donation-btn {
+  margin-top: 12px;
   width: 100%;
   padding: 10px;
-  background-color: #f3853c;
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-  text-align: left;
+  border: none;
+  border-radius: 10px;
+  background: #ff7a2f;
+  color: #fff;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
   cursor: pointer;
-  transition: background 0.3s;
 }
 
-/* Highlight Box */
-.highlight-box {
-  background: #fff7f0;
+.add-donation-btn:hover {
+  background: #e86a22;
+}
+
+/* ==== Tiêu đề popup (Events, Services, About) ==== */
+.popup-title,
+.events-box h2,
+.about-content h2,
+.services-box h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ff7a2f;
+  letter-spacing: 0.8px;
+}
+
+.events-close {
+  position: absolute;
+  top: 10px; right: 15px;
+  font-size: 28px;
+  cursor: pointer;
+  color: #333;
+}
+
+/* map chiếm 45% chiều ngang */
+#events-map {
+  flex: 0 0 60%;
+  height: 100%; /* cao full của popup */
+  border-radius: 12px;
+}
+
+/* info chiếm phần còn lại */
+.event-info {
+  flex: 1 1 auto;
+  background: #f6f6f6;
   border-radius: 12px;
   padding: 15px;
-  box-shadow: 0 4px 12px rgba(255, 140, 40, 0.2);
-}
-
-/* Section Links Horizontal */
-.section-links {
-  display: flex;
-  gap: 40px;
-  margin-bottom: 15px;
-}
-
-.section-links a {
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: #eb8d12;
-  text-decoration: none;
-  cursor: pointer;
-  transition: color 0.3s, transform 0.2s;
-}
-
-.section-links a:hover {
-  color: #d3790e;
-  transform: scale(1.05);
-}
-
-/* ===== Events Slider ===== */
-.orange-bar:hover {
-  background-color: #e65c00; /* đậm hơn khi hover */
-}
-
-.highlight-slider-wrapper {
-  position: relative;
-  overflow: hidden;
-  width: 100%;
-  margin: 20px 0;
-}
-
-.highlight-slider {
-  display: flex;
-  gap: 15px;
-  overflow-x: auto;
-  scroll-behavior: auto;
-  padding: 10px 0;
-}
-
-.highlight-slider::-webkit-scrollbar {
-  display: none;
-}
-
-.highlight-slider .item {
-  flex: 0 0 300px;
-  background: #fff9f3;
-  border-radius: 10px;
-  padding: 10px;
-  box-shadow: 0 3px 8px rgba(255, 140, 40, 0.2);
-  position: relative;
-}
-
-.highlight-slider .item img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 10px;
-}
-
-.highlight-slider .badge {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #eb8d12;
-  color: white;
-  font-weight: 800;
-  font-size: 1rem;
-  padding: 5px 15px;
-  border-radius: 5px;
-}
-
-.highlight-slider .item .text-below {
-  margin-top: 10px;
-  text-align: center;
-}
-
-.highlight-slider .item .text-below h3 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 5px 0;
-  color: #222;
-}
-
-.highlight-slider .item .text-below p {
-  font-size: 1rem;
-  color: #666;
-  margin: 0;
-}
-
-/* Slider Buttons ◀ / ▶ */
-.slider-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.7);
-  border: none;
-  font-size: 2rem;
-  cursor: pointer;
-  padding: 5px 12px;
-  border-radius: 5px;
-  z-index: 10;
-  transition: background 0.3s;
-}
-
-.slider-btn:hover {
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.slider-btn.left {
-  left: 10px;
-}
-
-.slider-btn.right {
-  right: 10px;
-}
-
-/* Lists */
-#new-items-list {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  padding: 0;
-  margin: 50px 0;
-  list-style: none;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-#new-items-list li {
-  background: #fff9f3;
-  border-radius: 10px;
-  box-shadow: 0 3px 8px rgba(255, 140, 40, 0.2);
-  padding: 10px;
-  text-align: center;
-  cursor: pointer;
-  transition: transform 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#new-items-list li:hover {
-  transform: scale(1.03);
-}
-
-#new-items-list li img {
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 8px;
-  margin-bottom: 8px;
-}
-
-#new-items-list li strong {
-  font-size: 1.2rem;
-  margin-bottom: 5px;
-}
-
-#new-items-list li span {
-  font-size: 1rem;
-  color: #666;
-}
-
-/* Modal styles */
-#item-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.6);
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-#item-modal .modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 500px;
-  width: 90%;
-  position: relative;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  max-height: 90vh;
   overflow-y: auto;
+  height: 100%; /* cao full popup */
 }
 
-#item-modal img {
+.event-info img {
   width: 100%;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  object-fit: cover;
-  max-height: 300px;
-}
-
-#item-modal h2 {
-  margin: 0 0 10px;
-}
-
-#item-modal p {
-  margin: 5px 0;
-  font-size: 1rem;
-  color: #444;
-}
-
-#modal-close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: #eb8d12;
-  border: none;
-  color: white;
-  font-weight: bold;
-  font-size: 1.2rem;
-  padding: 5px 12px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-#modal-close:hover {
-  background-color: #d3790e;
-}
-
-/* Donor Board Styles */
-.donor-board {
-  background: #fff9f3;
-  border-radius: 15px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
-  padding: 25px;
-  margin-left: 20px; /* cách lề trái */
-  max-width: 400px;
-}
-
-.donor-title {
-  background-color: #e67e22; /* cam đậm */
-  color: white;
-  font-weight: bold;
-  font-size: 22px;
-  text-align: center;
-  padding: 10px 0;
-  border-radius: 10px;
-  margin-bottom: 15px;
-  letter-spacing: 1px;
-}
-
-.donor-list {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 15px 0;
-}
-
-.donor-list li {
-  background: #fde8d0;
-  margin-bottom: 8px;
-  padding: 10px 15px;
-  border-radius: 8px;
-  font-size: 16px;
-  color: #4a2c12;
-  font-weight: 500;
-  transition: 0.3s ease;
-}
-
-.donor-list li:hover {
-  background: #fcd3a1;
-  transform: translateX(3px);
-}
-
-.heart {
-  margin-right: 6px;
-  color: #e74c3c;
-  font-size: 18px;
-}
-
-.donor-footer {
-  text-align: center;
-  color: #a65b23;
-  font-style: italic;
-  font-size: 15px;
-  margin-top: 10px;
-}
-
-/* Auth Forms */
-#auth-tabs {
-  display: flex;
-  gap: 5px;
-}
-
-#auth-tabs button {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: 700;
-  background: #ffd9b3;
-}
-
-#auth-tabs button.active {
-  background: #ff7f27;
-  color: white;
-}
-
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: #fff7f0;
-  padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(255, 140, 40, 0.2);
-}
-
-form input,
-form select {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ffb347;
-}
-
-form button {
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background: #ff7f27;
-  color: white;
-  cursor: pointer;
-  font-weight: 700;
-}
-
-/* QA Board Styles */
-.qa-board {
-  background-color: #fff9f3; /* màu nền trắng hơi vàng nhạt */
-  border-radius: 15px; /* bo góc */
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1); /* shadow nhẹ */
-  width: 900px;
-  height: fit-content;
-  padding: 25px; /* khoảng cách bên trong */
-  font-family: "Poppins", sans-serif;
-  line-height: 1.5;
-  color: #333;
-  margin: 10px; /* khoảng cách xung quanh */
-}
-
-/* Tiêu đề chính */
-.qa-board h2 {
-  font-size: 22px;
-  color: #57c8b8; /* màu xanh nhẹ */
-  margin-bottom: 15px;
-}
-
-/* Tiêu đề phụ */
-.qa-board h3 {
-  font-size: 18px;
-  color: #ff91b6; /* màu hồng nhẹ */
-  margin-top: 20px;
+  border-radius: 12px;
   margin-bottom: 10px;
+  max-height: 200px;
+  object-fit: cover;
 }
 
-/* Paragraph */
-.qa-board p {
-  font-size: 15px;
-  margin-bottom: 12px;
+@keyframes fadeIn {
+  from {opacity: 0; transform: scale(0.95);}
+  to {opacity: 1; transform: scale(1);}
 }
-
-/* Q&A style */
-.qa-board strong {
+#btn-directions {
+  margin-top: 15px;
+  padding: 10px 16px;
+  border-radius: 6px;
+  background-color: #357ABD;
+  color: white;
   font-weight: 600;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-/* ==== RWD 新增：基礎設定 ==== */
-* {
-  box-sizing: border-box;
+#btn-directions:hover {
+  background-color: #28548e;
 }
 
-img {
-  max-width: 100%;
-  height: auto;
+/* ===== LOGIN POPUP ===== */
+.wrapper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    z-index: 3000;
+    width: 400px;
+    height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: rgba(255,255,255,0.1);
+    border: 2px solid rgba(255,255,255,0.5);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    transition: transform .5s ease, height .2s ease;
 }
 
-/* ==== 手機版排版：螢幕寬度 <= 768px ==== */
-@media (max-width: 768px) {
-  /* Navbar 改成上下排 */
-  #navbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
+.wrapper.active-popup {
+    transform: translate(-50%, -50%) scale(1);
+}
 
-  /* 主內容縮小 padding，方便手機閱讀 */
-  .container {
-    padding: 10px;
-    margin: 10px auto 30px;
-  }
 
-  /* 左右欄變成直排 */
-  .left-column,
-  .right-column {
+.wrapper.active{
+    height: 650px;
+}
+
+.wrapper .form-box{
     width: 100%;
-  }
-
-  /* Hot items：從 4 欄變 2 欄 */
-  #new-items-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  /* 標題縮小一點 */
-  h1#main-title {
-    font-size: 2rem;
-  }
-
-  p#main-mission {
-    font-size: 1.1rem;
-  }
-
-  /* QA board 不再固定 900px，改為 100% */
-  .qa-board {
-    width: 100%;
-    margin: 10px 0;
-  }
-
-  /* Donor board 在手機吃滿寬 */
-  .donor-board {
-    margin-left: 0;
-    max-width: 100%;
-  }
+    padding: 40px;
 }
 
-/* ===== 手機版：讓 Donor Board 與表單上下排列 ===== */
-@media (max-width: 768px) {
-  /* 讓兩欄 flex 允許換行 */
-  .right-column > div {
+.wrapper .form-box.login{
+    transition: transform .18s ease;
+    transform: translateX(0);
+}
+
+.wrapper.active .form-box.login{
+    transition: none;
+    transform: translateX(-400px);
+}
+
+.wrapper .form-box.register{
+    position: absolute;
+    transition: none;
+    transform: translateX(400px);
+}
+
+.wrapper.active .form-box.register{
+    transition: transform .18s ease;
+    transform: translateX(0);
+}
+
+.wrapper .icon-close{
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 45px;
+    height: 45px;
+    background: #162938;
+    font-size: 2em;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom-left-radius: 20px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.form-box h2{
+    font-family: 'Playfair Display', serif;
+    font-size: 2em;
+    color: #162938;
+    text-align: center;
+    font-weight: 700;
+}
+
+.input-box{
+    position: relative;
+    width: 100%;
+    height: 50px;
+    border-bottom: 2px solid #162938;
+    margin: 30px 0;
+}
+
+.input-box label{
+    position: absolute;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    font-size: 1em;
+    color: #162938;
+    font-weight: 500;
+    pointer-events: none;
+    transition: .5s;
+}
+
+.input-box input:focus ~ label,
+.input-box input:valid ~ label{
+    top: -5px;
+}
+
+.input-box input{
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    color: #162938;
+    font-weight: 600;
+    padding: 0 35px 0 5px;
+}
+
+.input-box .icon{
+    position: absolute;
+    right: 8px;
+    font-size: 1.2em;
+    color: #162938;
+    line-height: 57px;
+    
+}
+/* ----- SELECT AREA (Taoyuan) ----- */
+.input-box select {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 1em;
+    color: #162938;
+    font-weight: 600;
+    padding: 0 35px 0 5px;
+    appearance: none; /* ẩn mũi tên mặc định */
+}
+
+.input-box select:focus ~ label,
+.input-box select:valid ~ label {
+    top: -5px;
+}
+
+.input-box select option {
+    color: #162938;
+    background: #fff;
+}
+
+.remember-forgot{
+    font-size: 0.9em;
+    color: #162938;
+    font-weight: 500;
+    margin: -15px 0 15px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.remember-forgot label input{
+    accent-color: #162938;
+    margin-right: 3px;
+}
+
+.remember-forgot a{
+    color: #162938;
+    text-decoration: none;
+}
+.remember-forgot a:hover{
+    text-decoration: underline;
+}
+
+.btn{
+    width: 100%;
+    height: 45px;
+    background: #162938;
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.2em;
+    color: #fff ;
+    font-weight: 500;
+    transition: .5s;
+}
+
+.login-register{
+    font-size: 0.9em;
+    color: #162938;
+    font-weight: 500;
+    text-align: center;
+    margin:25px 0 10px ;
+}
+
+.login-register p a{
+    color: #162938;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-register p a:hover{
+    text-decoration: underline;
+}
+/* ===== ABOUT US POPUP ===== */
+.about-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none; /* hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+}
+
+.about-popup.active {
+    display: flex;
+}
+
+.about-box {
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    border: 2px solid rgba(255,255,255,0.4);
+    padding: 20px;
+    max-width: 900px;
+    width: 90%;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    position: relative;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.about-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #fff;
+}
+
+.about-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 30px;
     flex-wrap: wrap;
-  }
-
-  /* Donor board 在手機占滿寬 */
-  .donor-board {
-    max-width: 100% !important;
-    width: 100%;
-    margin: 0;
-  }
-
-  /* 表單在手機占滿寬 */
-  .form-container {
-    width: 100% !important;
-  }
 }
 
-/* =========================================================
-   ✅ NEW: Services Popup + Items Grid + Item Detail
-   (給你「現有商品區」用的樣式)
-   ========================================================= */
+.about-image {
+    flex: 1 1 300px;
+}
 
+.about-image img {
+    width: 100%;
+    border-radius: 15px;
+    border: 2px solid rgba(255,255,255,0.4);
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.about-content {
+    flex: 1 1 300px;
+    color: #fff;
+}
+
+.about-content h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2em;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+/* Thêm gạch chân cho popup title và about h2 */
+.popup-title::after,
+.about-content h2::after {
+  content: "";
+  display: block;
+  width: 50px;
+  height: 3px;
+  background: #ff7a2f;
+  margin: 6px auto 0;
+  border-radius: 3px;
+}
+
+.about-content p {
+    font-size: 1.05em;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+@keyframes fadeIn {
+    from {opacity: 0; transform: scale(0.9);}
+    to {opacity: 1; transform: scale(1);}
+}
+
+/* Responsive */
+@media screen and (max-width: 800px) {
+    .about-wrapper {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+/* ===== SERVICES POPUP ===== */
 .services-popup {
-  display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.55);
-  z-index: 2000;
+  background: rgba(0,0,0,0.6);
+  display: none;
   justify-content: center;
   align-items: center;
-  padding: 20px;
+  z-index: 9999;
 }
 
 .services-box {
-  width: min(1100px, 96vw);
-  height: min(700px, 90vh);
-  background: #fff7f0;
+  background: #fff;
+  width: 90%;
+  max-width: 1000px;
+  height: 80vh;
   border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  padding: 15px;
   position: relative;
-  overflow: hidden;
 }
 
 .services-close {
   position: absolute;
   top: 12px;
-  right: 14px;
+  right: 15px;
   cursor: pointer;
-  font-weight: 900;
-  font-size: 20px;
-  background: #ff7f27;
-  color: #fff;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  z-index: 1;
-}
-
-.services-layout {
-  display: grid;
-  grid-template-columns: 260px 1fr;
-  height: 100%;
-}
-
-.category-board {
-  background: #ffecd2;
-  padding: 18px;
-  border-right: 1px solid rgba(0, 0, 0, 0.06);
-  overflow-y: auto;
+  font-size: 22px;
 }
 
 .popup-title {
-  margin: 6px 0 14px;
-  font-size: 20px;
-  font-weight: 900;
-  color: #4a2c12;
-}
-
-.cat-btn,
-.add-donation-btn {
-  width: 100%;
-  text-align: left;
-  padding: 10px 12px;
+  text-align: center;
+  color: #ff7a2f;
   margin-bottom: 10px;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
-  background: #fff;
-  cursor: pointer;
-  font-weight: 800;
-  color: #4a2c12;
-  transition: transform 0.08s ease, background 0.2s ease;
 }
 
-.cat-btn:hover,
-.add-donation-btn:hover {
-  background: #fff3e8;
+.services-layout {
+  display: flex;
+  height: calc(100% - 50px);
+  gap: 15px;
+}
+
+/* LEFT */
+.category-board {
+  width: 200px;
+  background: #fff7f0;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.cat-btn {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 8px;
+  border: none;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
 }
 
 .cat-btn.active {
-  background: #ff7f27;
-  color: #fff;
-  border-color: #ff7f27;
+  background: #ff7a2f;
+  color: white;
 }
 
-.add-donation-btn {
-  margin-top: 10px;
-  background: #ffe2cf;
-}
-
+/* RIGHT */
 .items-area {
-  padding: 18px;
-  overflow: auto;
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: 14px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ✅ grid */
 .items-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
 }
 
 .item-card {
   background: #fff;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  padding: 8px;
   cursor: pointer;
-  transition: transform 0.12s ease;
-}
-
-.item-card:hover {
-  transform: translateY(-2px);
 }
 
 .item-card img {
   width: 100%;
-  height: 150px;
+  height: 100px;
   object-fit: cover;
-  display: block;
+  border-radius: 8px;
 }
 
-.item-card h3,
-.item-card h4 {
-  margin: 10px 12px 6px;
-  font-size: 16px;
-  font-weight: 900;
-  color: #4a2c12;
-}
-
-.item-card p {
-  margin: 0 12px 8px;
-  font-size: 13px;
-  color: #6b4a2b;
-  line-height: 1.35;
-}
-
-/* ✅ detail */
+/* DETAIL */
 .item-detail {
-  background: #fff;
-  border-radius: 14px;
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
-  padding: 12px;
-  display: grid;
-  grid-template-columns: 220px 1fr;
+  margin-top: 12px;
+  background: #fff7f0;
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
   gap: 12px;
-  align-items: start;
 }
 
 .item-detail img {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 12px;
-}
-
-.item-detail h3 {
-  margin: 4px 0 6px;
-  font-size: 18px;
-  font-weight: 900;
-  color: #4a2c12;
-}
-
-.item-detail p {
-  margin: 6px 0;
-  color: #6b4a2b;
+  width: 150px;
+  border-radius: 10px;
 }
 
 .hidden {
-  display: none !important;
+  display: none;
 }
 
-/* RWD for popup grid */
-@media (max-width: 900px) {
-  .services-layout {
-    grid-template-columns: 220px 1fr;
-  }
-  .items-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+
+/* MAP popup */
+.map-popup {
+    position: fixed; top:0; left:0;
+    width:100%; height:100%;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center; align-items: center;
+    z-index: 4000;
 }
 
-@media (max-width: 600px) {
-  .services-layout {
-    grid-template-columns: 1fr;
-  }
-  .category-board {
-    border-right: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  }
-  .items-grid {
-    grid-template-columns: 1fr;
-  }
-  .item-detail {
-    grid-template-columns: 1fr;
-  }
+.map-popup.active { display: flex; }
+
+#map {
+    width: 90%;
+    height: 80%;  /* indispensable */
+    border-radius: 10px;
 }
 
-/* =========================
-   Add Donation Page (NEW)
-   ========================= */
 
-.donation-form {
-  max-width: 520px;
-  width: 100%;
-  margin: 30px auto;
+.map-box {
+    width: 90%; height: 90%;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 10px;
+    backdrop-filter: blur(20px);
+    position: relative;
 }
 
-.donation-title {
-  margin: 0 0 12px;
-  font-size: 30px;
-  font-weight: 900;
-  color: #4a2c12;
-  text-align: left;
+.map-close {
+    position: absolute; top:10px; right:15px;
+    font-size: 2em; cursor:pointer; color:#fff;z-index: 4000;background: rgba(0,0,0,0.3);border-radius: 50%;width: 40px;height: 40px;display: flex;justify-content: center;align-items: center;
 }
 
-.form-actions {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 6px;
-}
-
-.btn-primary {
-  flex: 1;
-  min-width: 180px;
-}
-
-.btn-secondary {
-  flex: 1;
-  min-width: 180px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: 700;
-  background: #ffd9b3;
-  color: #4a2c12;
-  border: 1px solid #ffb347;
-}
-
-.btn-secondary:hover {
-  background: #ffcfa0;
-}
-
-/* =========================================
-   ✅ Header / Navigation (Fix white-on-white)
-   ========================================= */
-header{
-  position: sticky;
-  top: 0;
-  z-index: 3000;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-  padding: 10px 20px;
-  background: #ffecd2;
-}
-
-header .logo{
-  margin: 0;
-  font-weight: 900;
-  color: #4a2c12;
-}
-
-header .logo a{
-  color: #4a2c12 !important;
-}
-
-header .navigation{
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  align-items: center;
-}
-
-header .navigation a{
-  color: #4a2c12 !important;
-  text-decoration: none;
-  font-weight: 800;
-}
-
-header .navigation a:hover{
-  color: #e56810 !important;
-}
-
-/* =========================================
-   ✅ Welcome feature cards buttons
-   ========================================= */
-.feature-card{
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.feature-desc{
-  opacity: .85;
-  margin-top: 6px;
-}
-
-.feature-btn{
-  margin-top: 10px;
-  display: inline-block;
-  width: fit-content;
-  padding: 8px 14px;
-  border-radius: 8px;
-  background: #ff7f27;
-  color: #767676 !important;
-  text-decoration: none;
-  font-weight: 900;
-}
-
-.feature-btn:hover{
-  background: #e56810;
-}
-
-/* =========================
-   Header / Navigation (RWD fix)
-   ========================= */
-
-header {
-  position: sticky;
-  top: 0;
-  z-index: 3000;
-  background: #ffecd2;
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.logo {
-  margin: 0;
-  font-size: 22px;
-  font-weight: 900;
-  line-height: 1;
-}
-
-.logo a {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap; /* 不要換行 */
-}
-
-.navigation {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  flex-wrap: wrap; /* 允許換行，但我們手機會改排版 */
-}
-
-.navigation a {
-  text-decoration: none;
-  color: #4a2c12;
-  font-weight: 800;
-  white-space: nowrap; /* About/Services 不要斷字 */
-}
-
-/* ✅ Mobile: nav 變成「一排可換行」+ 按鈕縮小，不會散掉 */
-@media (max-width: 600px) {
-  header {
-    flex-wrap: wrap;
-    align-items: flex-start;
-  }
-
-  .logo {
-    width: 100%;
-    font-size: 20px;
-  }
-
-  .navigation {
-    width: 100%;
-    justify-content: flex-start;
-    gap: 10px;
-  }
-
-  .navigation a {
-    font-size: 14px;
-  }
-
-  .nav-btn {
-    padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 14px;
-  }
+@media screen and (max-width: 600px) {
+    .services-grid {
+        flex-direction: column;
+        align-items: center;
+    }
 }

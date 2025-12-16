@@ -1,16 +1,15 @@
 // auth-pages.js
-const API_BASE = ""; // 同網域就留空；如果前端在 GitHub Pages、後端在 Railway，這裡要改成後端網址
+// ===============================
+// Config (同首頁一致)
+// ===============================
+const API_BASE =
+  (location.hostname === "127.0.0.1" || location.hostname === "localhost") && location.port === "5500"
+    ? "http://localhost:3000"
+    : "";
 
-function setMsg(el, text, isError = false) {
-  if (!el) return;
-  el.textContent = text || "";
-  el.style.color = isError ? "#b00020" : "#1b5e20";
-}
-
-function setLoggedInUser(userObj) {
-  localStorage.setItem("user", JSON.stringify(userObj));
-}
-
+// ===============================
+// Helpers (同首頁一致)
+// ===============================
 function getLoggedInUser() {
   try {
     return JSON.parse(localStorage.getItem("user") || "null");
@@ -18,7 +17,9 @@ function getLoggedInUser() {
     return null;
   }
 }
-
+function setLoggedInUser(userObj) {
+  localStorage.setItem("user", JSON.stringify(userObj));
+}
 function clearLoggedInUser() {
   localStorage.removeItem("user");
 }
@@ -29,7 +30,6 @@ async function apiLogin(username, password) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
-
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.message || "Login failed");
   return data.user;
@@ -39,87 +39,93 @@ async function apiRegister(username, password) {
   const res = await fetch(`${API_BASE}/api/auth/register`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      username,
-      password,
-      identity: "external",
-      student_id: null,
-    }),
+    body: JSON.stringify({ username, password, identity: "external", student_id: null }),
   });
-
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.message || "Register failed");
   return data;
 }
 
+// ===============================
+// Page Logic
+// ===============================
 document.addEventListener("DOMContentLoaded", () => {
-  // ===== Login Page =====
+  const msg = document.getElementById("msg");
+
+  // --- Login Page ---
   const loginForm = document.getElementById("loginPageForm");
   if (loginForm) {
-    const uEl = document.getElementById("login_username");
-    const pEl = document.getElementById("login_password");
-    const msgEl = document.getElementById("msg");
+    const uInput = document.getElementById("login_username");
+    const pInput = document.getElementById("login_password");
 
-    const existing = getLoggedInUser();
-    if (existing) {
-      setMsg(msgEl, `Already logged in as ${existing.username || ""}.`);
+    // 如果已登入，直接顯示「已登入 + 登出」
+    const u = getLoggedInUser();
+    if (u && msg) {
+      msg.innerHTML = `
+        ✅ You are already logged in as <strong>${u.username || ""}</strong>.
+        <div style="margin-top:10px;">
+          <button id="logoutBtn" type="button">Logout</button>
+        </div>
+      `;
+      const logoutBtn = document.getElementById("logoutBtn");
+      if (logoutBtn) {
+        logoutBtn.addEventListener("click", () => {
+          clearLoggedInUser();
+          location.reload();
+        });
+      }
     }
 
     loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      const username = uEl?.value?.trim();
-      const password = pEl?.value;
+      const username = (uInput?.value || "").trim();
+      const password = pInput?.value || "";
 
       if (!username || !password) {
-        setMsg(msgEl, "Please fill in all fields.", true);
+        if (msg) msg.textContent = "Please fill in all fields.";
         return;
       }
 
       try {
-        setMsg(msgEl, "Logging in...");
+        if (msg) msg.textContent = "Logging in...";
         const user = await apiLogin(username, password);
         setLoggedInUser(user);
 
-        setMsg(msgEl, "✅ Login success!");
-        // 登入成功導回首頁
-        window.location.href = "/index.html";
+        if (msg) msg.textContent = "✅ Login success! Redirecting...";
+        setTimeout(() => {
+          window.location.href = "/"; // 回首頁
+        }, 350);
       } catch (err) {
-        setMsg(msgEl, err.message || "Login failed", true);
+        if (msg) msg.textContent = err.message || "Login failed";
       }
     });
-
-    return; // 避免跟 register 同時綁
   }
 
-  // ===== Register Page =====
-  const regForm = document.getElementById("registerPageForm");
-  if (regForm) {
-    const uEl = document.getElementById("reg_username");
-    const pEl = document.getElementById("reg_password");
-    const msgEl = document.getElementById("msg");
+  // --- Register Page ---
+  const registerForm = document.getElementById("registerPageForm");
+  if (registerForm) {
+    const uInput = document.getElementById("reg_username");
+    const pInput = document.getElementById("reg_password");
 
-    regForm.addEventListener("submit", async (e) => {
+    registerForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-
-      const username = uEl?.value?.trim();
-      const password = pEl?.value;
+      const username = (uInput?.value || "").trim();
+      const password = pInput?.value || "";
 
       if (!username || !password) {
-        setMsg(msgEl, "Please fill in all fields.", true);
+        if (msg) msg.textContent = "Please fill in all fields.";
         return;
       }
 
       try {
-        setMsg(msgEl, "Registering...");
+        if (msg) msg.textContent = "Registering...";
         await apiRegister(username, password);
-
-        setMsg(msgEl, "✅ Register success! Redirecting to login...");
+        if (msg) msg.textContent = "✅ Register success! Redirecting to Login...";
         setTimeout(() => {
           window.location.href = "/login.html";
         }, 500);
       } catch (err) {
-        setMsg(msgEl, err.message || "Register failed", true);
+        if (msg) msg.textContent = err.message || "Register failed";
       }
     });
   }

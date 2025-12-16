@@ -1,7 +1,10 @@
 // ===============================
 // Config
 // ===============================
-const API_BASE = ""; // 同網域就留空
+const API_BASE =
+  (location.hostname === "127.0.0.1" || location.hostname === "localhost") && location.port === "5500"
+    ? "http://localhost:3000"
+    : "";
 
 // ===============================
 // Helpers

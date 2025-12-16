@@ -1,22 +1,19 @@
-// routes/donations.js
+// routes/donations.js (CommonJS)
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
-// ===============================
-// TEMP Auth Middleware (no JWT yet)
-// Client must send header: x-user-id
-// ===============================
+// ✅ 簡單登入保護（先用 x-user-id）
+// 前端請送：headers: { "x-user-id": user.user_id }
 function requireLogin(req, res, next) {
-  const id = Number(req.headers["x-user-id"]);
-  if (!id) return res.status(401).json({ message: "Not logged in" });
-  req.userId = id;
+  const uid = Number(req.headers["x-user-id"]);
+  if (!uid) return res.status(401).json({ message: "Not logged in" });
+  req.userId = uid;
   next();
 }
 
 // ===============================
 // GET /api/donations/leaderboard
-// Top donors by total amount (XP)
 // ===============================
 router.get("/leaderboard", async (req, res) => {
   try {
@@ -43,8 +40,7 @@ router.get("/leaderboard", async (req, res) => {
 });
 
 // ===============================
-// GET /api/donations
-// 取得所有捐贈商品列表
+// GET /api/donations  取得所有捐贈商品列表
 // ===============================
 router.get("/", async (req, res) => {
   try {
@@ -64,25 +60,15 @@ router.get("/", async (req, res) => {
 });
 
 // ===============================
-// POST /api/donations
-// 新增一筆捐贈商品
+// POST /api/donations  新增一筆捐贈商品
+// 你前端送 quantity，我這裡寫入 amount
 // ===============================
 router.post("/", async (req, res) => {
   try {
-    const {
-      donor_id,
-      item_name,
-      quantity,
-      area,
-      description,
-      image_url,
-      pickup_location,
-    } = req.body;
+    const { donor_id, item_name, quantity, area, description, image_url, pickup_location } = req.body;
 
     if (!donor_id || !item_name || !quantity) {
-      return res.status(400).json({
-        message: "donor_id、item_name、quantity 為必填",
-      });
+      return res.status(400).json({ message: "donor_id、item_name、quantity 為必填" });
     }
 
     const [result] = await db.query(
@@ -92,7 +78,7 @@ router.post("/", async (req, res) => {
       VALUES (?, ?, ?, ?, ?, ?, ?)
       `,
       [
-        donor_id,
+        Number(donor_id),
         item_name,
         Number(quantity),
         area || null,
@@ -102,20 +88,16 @@ router.post("/", async (req, res) => {
       ]
     );
 
-    res.status(201).json({
-      message: "捐贈商品建立成功",
-      donationId: result.insertId,
-    });
+    res.status(201).json({ message: "捐贈商品建立成功", donationId: result.insertId });
   } catch (err) {
     console.error("新增捐贈商品錯誤：", err);
     res.status(500).json({ message: "資料庫錯誤，請稍後再試" });
   }
 });
 
-// =======================================================
-// ✅ NEW: GET /api/donations/mine
-// 取得「我上架的」商品（需要登入）
-// =======================================================
+// ===============================
+// ✅ GET /api/donations/mine 取得我上架的
+// ===============================
 router.get("/mine", requireLogin, async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -129,21 +111,19 @@ router.get("/mine", requireLogin, async (req, res) => {
     );
     res.json(rows);
   } catch (err) {
-    console.error("取得我的捐贈列表錯誤：", err);
+    console.error("取得我的商品錯誤：", err);
     res.status(500).json({ message: "資料庫錯誤，請稍後再試" });
   }
 });
 
-// =======================================================
-// ✅ NEW: PUT /api/donations/:id
-// 更新「我上架的」某筆商品（需要登入 + 只能改自己的）
-// =======================================================
+// ===============================
+// ✅ PUT /api/donations/:id 更新我上架的商品
+// ===============================
 router.put("/:id", requireLogin, async (req, res) => {
   try {
     const id = Number(req.params.id);
     const { item_name, amount, area, pickup_location, image_url, description } = req.body;
 
-    // 只能改自己的
     const [own] = await db.query(
       "SELECT donation_id FROM donations WHERE donation_id=? AND donor_id=?",
       [id, req.userId]
@@ -170,15 +150,14 @@ router.put("/:id", requireLogin, async (req, res) => {
 
     res.json({ message: "Donation updated" });
   } catch (err) {
-    console.error("更新捐贈商品錯誤：", err);
+    console.error("更新商品錯誤：", err);
     res.status(500).json({ message: "資料庫錯誤，請稍後再試" });
   }
 });
 
-// =======================================================
-// ✅ NEW: DELETE /api/donations/:id
-// 刪除「我上架的」某筆商品（需要登入 + 只能刪自己的）
-// =======================================================
+// ===============================
+// ✅ DELETE /api/donations/:id 刪除我上架的商品
+// ===============================
 router.delete("/:id", requireLogin, async (req, res) => {
   try {
     const id = Number(req.params.id);
@@ -192,7 +171,7 @@ router.delete("/:id", requireLogin, async (req, res) => {
     await db.query("DELETE FROM donations WHERE donation_id=? AND donor_id=?", [id, req.userId]);
     res.json({ message: "Donation deleted" });
   } catch (err) {
-    console.error("刪除捐贈商品錯誤：", err);
+    console.error("刪除商品錯誤：", err);
     res.status(500).json({ message: "資料庫錯誤，請稍後再試" });
   }
 });

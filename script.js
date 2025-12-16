@@ -9,6 +9,10 @@ const API_BASE =
 // ===============================
 // Helpers
 // ===============================
+function T(key) {
+  return window.i18n?.t?.(key) || key;
+}
+
 function getLoggedInUser() {
   try {
     return JSON.parse(localStorage.getItem("user") || "null");
@@ -68,7 +72,7 @@ function calcLevelFromXp(xp) {
   return Math.floor(n / 100) + 1;
 }
 
-// ✅ 共用：登入（更不挑後端欄位：username/email 都送）
+// ✅ 共用：登入（username/email 都送）
 async function apiLogin(identifier, password) {
   const res = await fetch(`${API_BASE}/api/auth/login`, {
     method: "POST",
@@ -138,13 +142,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!authStatus) return;
 
     if (!u) {
-      authStatus.innerHTML = `You are not logged in.`;
+      authStatus.textContent = T("you_not_logged_in");
       return;
     }
 
     authStatus.innerHTML = `
-      Logged in as <strong>${escapeHtml(u.username || u.email || "")}</strong>
-      <button id="btn-logout" class="nav-btn" type="button" style="margin-left:10px;">Logout</button>
+      ${T("logged_in_as")} <strong>${escapeHtml(u.username || u.email || "")}</strong>
+      <button id="btn-logout" class="nav-btn" type="button" style="margin-left:10px;">${T("logout")}</button>
     `;
 
     const btn = document.getElementById("btn-logout");
@@ -204,13 +208,13 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadHomeNewItems() {
     if (!newItemsList) return;
     try {
-      if (homeMsg) homeMsg.textContent = "Loading items...";
+      if (homeMsg) homeMsg.textContent = T("loading_items");
       const rows = await fetchDonations();
       const list = rows.slice(0, 8);
 
       newItemsList.innerHTML = "";
       if (list.length === 0) {
-        if (homeMsg) homeMsg.textContent = "No items yet.";
+        if (homeMsg) homeMsg.textContent = T("no_items");
         return;
       }
 
@@ -231,7 +235,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     } catch (err) {
       console.error(err);
-      if (homeMsg) homeMsg.textContent = "Failed to load items from server.";
+      if (homeMsg) homeMsg.textContent = T("fetch_items_failed");
     }
   }
 
@@ -244,12 +248,12 @@ document.addEventListener("DOMContentLoaded", () => {
   async function loadLeaderboard() {
     if (!lbBody) return;
     try {
-      if (lbMsg) lbMsg.textContent = "Loading leaderboard...";
+      if (lbMsg) lbMsg.textContent = T("loading_leaderboard");
       const rows = await fetchLeaderboard();
 
       lbBody.innerHTML = "";
       if (!rows || rows.length === 0) {
-        if (lbMsg) lbMsg.textContent = "No data yet.";
+        if (lbMsg) lbMsg.textContent = T("no_data");
         return;
       }
 
@@ -274,7 +278,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     } catch (err) {
       console.error(err);
-      if (lbMsg) lbMsg.textContent = "Failed to load leaderboard.";
+      if (lbMsg) lbMsg.textContent = T("leaderboard_failed");
     }
   }
 
@@ -313,18 +317,16 @@ document.addEventListener("DOMContentLoaded", () => {
     inlineIsRegister = isRegister;
 
     if (inlineAuthTitle)
-      inlineAuthTitle.textContent = inlineIsRegister ? "Quick Register" : "Online Login";
+      inlineAuthTitle.textContent = inlineIsRegister ? T("register") : T("inline_auth_title");
 
     if (inlineAuthSubmit)
-      inlineAuthSubmit.textContent = inlineIsRegister ? "Register" : "Login";
+      inlineAuthSubmit.textContent = inlineIsRegister ? T("register") : T("login");
 
     if (inlineSwitchText)
-      inlineSwitchText.textContent = inlineIsRegister
-        ? "Already have an account?"
-        : "Don't have an account?";
+      inlineSwitchText.textContent = inlineIsRegister ? T("already_have_account") : T("dont_have_account");
 
     if (inlineSwitchMode)
-      inlineSwitchMode.textContent = inlineIsRegister ? "Login" : "Register";
+      inlineSwitchMode.textContent = inlineIsRegister ? T("login") : T("register");
 
     if (inlineAuthMsg) inlineAuthMsg.textContent = "";
   }
@@ -344,17 +346,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = inlineAuthPassword?.value;
 
       if (!identifier || !password) {
-        if (inlineAuthMsg) inlineAuthMsg.textContent = "Please fill in all fields.";
+        if (inlineAuthMsg) inlineAuthMsg.textContent = T("fill_all_fields");
         return;
       }
 
       try {
-        if (inlineAuthMsg) inlineAuthMsg.textContent = inlineIsRegister ? "Registering..." : "Logging in...";
+        if (inlineAuthMsg) inlineAuthMsg.textContent = inlineIsRegister ? T("registering") : T("logging_in");
 
         if (inlineIsRegister) {
-          // inline 用 email 當作 username、email 都送
           await apiRegister(identifier, identifier, password);
-          alert("註冊成功，請登入");
+          alert(T("register_success_alert"));
           setInlineMode(false);
           return;
         }
@@ -362,7 +363,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const user = await apiLogin(identifier, password);
         setLoggedInUser(user);
 
-        if (inlineAuthMsg) inlineAuthMsg.textContent = "✅ Login success!";
+        if (inlineAuthMsg) inlineAuthMsg.textContent = T("login_success");
         renderAuthStatus();
         renderInlineAuthState();
         syncModalAuthState();
@@ -371,7 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loadLeaderboard();
       } catch (err) {
         console.error(err);
-        if (inlineAuthMsg) inlineAuthMsg.textContent = err.message || "操作失敗";
+        if (inlineAuthMsg) inlineAuthMsg.textContent = err.message || "Error";
       }
     });
   }
@@ -388,7 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---------------------------
-  // ✅ Wrapper Popup Login/Register (⚠️ 這段修掉你原本 const 重複宣告)
+  // ✅ Wrapper Popup Login/Register
   // ---------------------------
   const wrapper = document.querySelector(".wrapper");
   const loginLink = document.querySelector(".login-link");
@@ -424,14 +425,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function syncModalAuthState() {
-    // 先保留，不影響現有功能
+    // 保留，不影響現有功能
   }
 
   if (registerLink) {
     registerLink.addEventListener("click", (e) => {
       e.preventDefault();
       if (!wrapper) return;
-      wrapper.classList.add("active"); // show register box
+      wrapper.classList.add("active");
     });
   }
 
@@ -439,7 +440,7 @@ document.addEventListener("DOMContentLoaded", () => {
     loginLink.addEventListener("click", (e) => {
       e.preventDefault();
       if (!wrapper) return;
-      wrapper.classList.remove("active"); // show login box
+      wrapper.classList.remove("active");
     });
   }
 
@@ -454,7 +455,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ 讓「彈窗 Login」接 API
   if (modalLoginForm) {
     modalLoginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -462,16 +462,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = modalLoginPassword?.value;
 
       if (!identifier || !password) {
-        if (modalLoginMsg) modalLoginMsg.textContent = "Please fill in all fields.";
+        if (modalLoginMsg) modalLoginMsg.textContent = T("fill_all_fields");
         return;
       }
 
       try {
-        if (modalLoginMsg) modalLoginMsg.textContent = "Logging in...";
+        if (modalLoginMsg) modalLoginMsg.textContent = T("logging_in");
         const user = await apiLogin(identifier, password);
         setLoggedInUser(user);
 
-        if (modalLoginMsg) modalLoginMsg.textContent = "✅ Login success!";
+        if (modalLoginMsg) modalLoginMsg.textContent = T("login_success");
         renderAuthStatus();
         renderInlineAuthState();
         syncModalAuthState();
@@ -486,7 +486,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ✅ 讓「彈窗 Register」接 API（用你 HTML 真正的欄位）
   if (modalRegisterForm) {
     modalRegisterForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -496,16 +495,16 @@ document.addEventListener("DOMContentLoaded", () => {
       const password = modalRegisterPassword?.value;
 
       if (!username || !email || !password) {
-        if (modalRegisterMsg) modalRegisterMsg.textContent = "Please fill in all fields.";
+        if (modalRegisterMsg) modalRegisterMsg.textContent = T("fill_all_fields");
         return;
       }
 
       try {
-        if (modalRegisterMsg) modalRegisterMsg.textContent = "Registering...";
+        if (modalRegisterMsg) modalRegisterMsg.textContent = T("registering");
         await apiRegister(username, email, password);
 
-        if (modalRegisterMsg) modalRegisterMsg.textContent = "✅ Register success! Please login.";
-        if (wrapper) wrapper.classList.remove("active"); // switch back to login
+        if (modalRegisterMsg) modalRegisterMsg.textContent = T("register_success_login");
+        if (wrapper) wrapper.classList.remove("active");
       } catch (err) {
         console.error(err);
         if (modalRegisterMsg) modalRegisterMsg.textContent = err.message || "Register failed";
@@ -617,8 +616,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (btnDirections) {
     btnDirections.addEventListener("click", () => {
-      if (!currentEvent) return alert("Please select an event first!");
-      if (!navigator.geolocation) return alert("Geolocation is not supported by your browser.");
+      if (!currentEvent) return alert(T("select_event_first"));
+      if (!navigator.geolocation) return alert(T("geolocation_not_supported"));
 
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -627,7 +626,7 @@ document.addEventListener("DOMContentLoaded", () => {
           const url = `https://www.google.com/maps/dir/?api=1&origin=${userLat},${userLng}&destination=${currentEvent.lat},${currentEvent.lng}&travelmode=walking`;
           window.open(url, "_blank");
         },
-        () => alert("Unable to retrieve your location.")
+        () => alert(T("location_failed"))
       );
     });
   }
@@ -662,7 +661,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const filtered = donationsCache.filter((d) => donationToCategory(d) === cat);
 
     if (filtered.length === 0) {
-      grid.innerHTML = `<div style="padding:10px;opacity:.7;">No items in this category yet.</div>`;
+      grid.innerHTML = `<div style="padding:10px;opacity:.7;">${escapeHtml(T("no_items_category"))}</div>`;
       return;
     }
 
@@ -698,7 +697,7 @@ document.addEventListener("DOMContentLoaded", () => {
       renderGridByCategory(currentCat);
     } catch (err) {
       console.error(err);
-      if (grid) grid.innerHTML = `<div style="padding:10px;color:#b00020;">Failed to load items from server.</div>`;
+      if (grid) grid.innerHTML = `<div style="padding:10px;color:#b00020;">${escapeHtml(T("fetch_items_failed"))}</div>`;
     }
   }
 
@@ -768,6 +767,14 @@ document.addEventListener("DOMContentLoaded", () => {
       renderLangBtn();
     });
   }
+
+  // ✅ 語言切換後：重畫動態文字（很重要）
+  document.addEventListener("languageChange", () => {
+    renderAuthStatus();
+    setInlineMode(inlineIsRegister);
+    loadHomeNewItems();
+    loadLeaderboard();
+  });
 
   // ---------------------------
   // ✅ Init

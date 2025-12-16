@@ -2,54 +2,276 @@
 const I18N = {
   en: {
     // nav
-    "nav-about": "About Us",
-    "nav-services": "Services",
-    "nav-events": "Events",
-    "nav-members": "Members",
+    nav_home: "🏠 Home",
+    nav_about: "About",
+    nav_services: "Services",
+    nav_events: "Events",
+    nav_members: "Members",
+    nav_login: "Login",
+    nav_register: "Register",
+    nav_popup_login: "Popup Login",
 
     // hero
-    "main-title": "Welcome to Taoyuan Sharing Community",
-    "main-mission": "Share, Save, Smile — Free Food, Clothes, Books & Useful Items Around You!",
+    main_title: "Welcome to Taoyuan Sharing Community",
+    main_mission: "Share, Save, Smile — Free Food, Clothes, Books & Useful Items Around You!",
 
-    // sections (orange bars)
-    "howto-bar": "✨ How it works",
-    "quickaccess-bar": "🔐 Quick Access",
-    "home-items-title": "🧡 New Items",
-    "about-bar": "🌿 About",
-    "services-bar": "🧰 Services",
-    "events-bar": "🗺 Events",
-    "members-bar": "🏆 Member Ranking (XP)",
+    // feature cards
+    feature1_title: "♻ Reduce Waste",
+    feature1_desc: "Give items a second life instead of throwing them away.",
+    feature1_btn: "Browse Items",
+    feature2_title: "🤝 Help Students",
+    feature2_desc: "Support local and international students in Taoyuan.",
+    feature2_btn: "View Ranking",
+    feature3_title: "📍 Easy Pickup",
+    feature3_desc: "Clear pickup area and location for everyone.",
+    feature3_btn: "How It Works",
 
-    // quick access
-    "inline-auth-title": "Login",
-    "inline-auth-submit": "Login",
-    "inline-switch-text": "Don't have an account?",
-    "inline-switch-mode": "Register",
+    // bars
+    howto_bar: "✨ How it works",
+    quickaccess_bar: "🔐 Quick Access",
+    new_items: "🧡 New Items",
+    about_bar: "🌿 About",
+    services_bar: "🧰 Services",
+    events_bar: "🗺 Events",
+    members_bar: "🏆 Member Ranking (XP)",
 
-    // static text blocks (optional ids you can add later)
+    // howto
+    howto_1_title: "1) Login / Register",
+    howto_1_desc: "Create an account to post items.",
+    howto_2_title: "2) Add Donation",
+    howto_2_desc: "Fill item name, qty, area, pickup, image and description.",
+    howto_3_title: "3) Everyone Can Browse",
+    howto_3_desc: "All users can view item info and donor.",
+
+    // quick access static
+    checking_login: "Checking login...",
+    inline_logged_title: "✅ You are logged in",
+    label_email: "Email:",
+    add_donation: "Add Donation",
+    logout: "Logout",
+    inline_auth_title: "Online Login",
+    login: "Login",
+    register: "Register",
+    dont_have_account: "Don't have an account?",
+    already_have_account: "Already have an account?",
+    separate_pages_title: "Or use separate pages",
+    go_login_page: "Go to Login Page",
+    go_register_page: "Go to Register Page",
+    login_tip: "Tip: After you log in once, you stay logged in (saved in localStorage).",
+
+    // modal labels
+    label_qty: "Qty:",
+    label_area: "Area:",
+    label_pickup: "Pickup:",
+    label_donor: "Donor:",
+    label_password: "Password",
+    label_username: "Username",
+    label_phone: "Phone Number",
+    registration: "Registration",
+    remember_me: "Remember me",
+    forgot_password: "Forgot Password?",
+    agree_terms: "I agree to the terms & conditions",
+    select_area: "Select Your Area (Taoyuan)",
+
+    // about/services/events text
+    about_text:
+      "Taoyuan Sharing Platform is a student-friendly community website for exchanging food, clothes, books, and useful items. We aim to reduce waste and help students save money.",
+    about_open: "Open About Popup",
+    services_text:
+      "Browse donated items by category. Click an item to view details such as quantity, area, and pickup location.",
+    services_open: "Open Items Board",
+    events_text: "Check community events and get directions from your current location.",
+    events_open: "Open Events Map",
+
+    // leaderboard
+    xp_rule: "XP rule: XP = total donated quantity × 10 (based on SUM(amount)).",
+    loading_leaderboard: "Loading leaderboard...",
+    th_rank: "Rank",
+    th_user: "User",
+    th_listings: "Listings",
+    th_total_qty: "Total Qty",
+    th_xp: "XP",
+    th_level: "Level",
+
+    // services popup
+    available_items: "Available Items",
+    cat_food: "🍎 Food",
+    cat_clothes: "👕 Clothes",
+    cat_books: "📚 Books",
+    cat_furniture: "🪑 Furniture",
+    cat_household: "🏠 Household",
+    cat_others: "✨ Others",
+    add_donation_btn: "➕ Add Donation",
+    label_status: "Status:",
+    label_pickup_area: "Pickup Area:",
+
+    // about popup
+    about_popup_title: "🌿 About Taoyuan Sharing",
+    about_popup_p1:
+      "Welcome to Taoyuan Share! Our platform helps students exchange items, services, and support each other in a friendly, safe community.",
+    about_popup_p2:
+      "Our mission is to reduce waste, save money, and build strong connections between local and international students.",
+
+    // events popup labels
+    label_location: "📍 Location:",
+    label_time: "🕒 Time:",
+    get_directions: "Get Directions from Your Place",
+
+    // ✅ dynamic (script.js 用)
+    you_not_logged_in: "You are not logged in.",
+    logged_in_as: "Logged in as",
+    loading_items: "Loading items...",
+    no_items: "No items yet.",
+    fetch_items_failed: "Failed to load items from server.",
+    no_data: "No data yet.",
+    leaderboard_failed: "Failed to load leaderboard.",
+    fill_all_fields: "Please fill in all fields.",
+    registering: "Registering...",
+    logging_in: "Logging in...",
+    register_success_login: "✅ Register success! Please login.",
+    login_success: "✅ Login success!",
+    register_success_alert: "Register success, please login.",
+    select_event_first: "Please select an event first!",
+    geolocation_not_supported: "Geolocation is not supported by your browser.",
+    location_failed: "Unable to retrieve your location.",
+    no_items_category: "No items in this category yet.",
   },
 
   zh: {
-    "nav-about": "關於我們",
-    "nav-services": "服務",
-    "nav-events": "活動",
-    "nav-members": "成員",
+    // nav
+    nav_home: "🏠 首頁",
+    nav_about: "關於我們",
+    nav_services: "服務",
+    nav_events: "活動",
+    nav_members: "成員",
+    nav_login: "登入",
+    nav_register: "註冊",
+    nav_popup_login: "彈窗登入",
 
-    "main-title": "歡迎來到桃園共享社區",
-    "main-mission": "分享、節省、微笑——你身邊就有免費的食物、衣服、書籍和實用物品！",
+    // hero
+    main_title: "歡迎來到桃園共享社區",
+    main_mission: "分享、省錢、微笑——你身邊就有免費的食物、衣服、書籍和實用物品！",
 
-    "howto-bar": "✨ 工作原理",
-    "quickaccess-bar": "🔐 快速登入",
-    "home-items-title": "🧡 最新上架",
-    "about-bar": "🌿 關於我們",
-    "services-bar": "🧰 服務",
-    "events-bar": "🗺 活動",
-    "members-bar": "🏆 成員排行（XP）",
+    // feature cards
+    feature1_title: "♻ 減少浪費",
+    feature1_desc: "讓物品延續生命，不再被隨手丟棄。",
+    feature1_btn: "瀏覽物資",
+    feature2_title: "🤝 幫助學生",
+    feature2_desc: "支持桃園在地與國際學生互助共享。",
+    feature2_btn: "查看排行",
+    feature3_title: "📍 方便取貨",
+    feature3_desc: "清楚的取貨地點與區域，大家更安心。",
+    feature3_btn: "如何運作",
 
-    "inline-auth-title": "線上登入",
-    "inline-auth-submit": "登入",
-    "inline-switch-text": "還沒有帳號？",
-    "inline-switch-mode": "註冊",
+    // bars
+    howto_bar: "✨ 工作原理",
+    quickaccess_bar: "🔐 快速登入",
+    new_items: "🧡 最新上架",
+    about_bar: "🌿 關於我們",
+    services_bar: "🧰 服務",
+    events_bar: "🗺 活動",
+    members_bar: "🏆 成員排行（XP）",
+
+    // howto
+    howto_1_title: "1) 登入／註冊",
+    howto_1_desc: "建立帳號後即可上架物品。",
+    howto_2_title: "2) 新增捐贈",
+    howto_2_desc: "填寫品名、數量、區域、取貨地點、圖片與描述。",
+    howto_3_title: "3) 大家都能瀏覽",
+    howto_3_desc: "所有人都能查看物品資訊與捐贈者。",
+
+    // quick access static
+    checking_login: "檢查登入中…",
+    inline_logged_title: "✅ 已登入",
+    label_email: "電子郵件：",
+    add_donation: "新增捐贈",
+    logout: "登出",
+    inline_auth_title: "線上登入",
+    login: "登入",
+    register: "註冊",
+    dont_have_account: "還沒有帳號？",
+    already_have_account: "已經有帳號？",
+    separate_pages_title: "或使用獨立頁面",
+    go_login_page: "前往登入頁",
+    go_register_page: "前往註冊頁",
+    login_tip: "提示：登入一次後會保持登入（儲存在 localStorage）。",
+
+    // modal labels
+    label_qty: "數量：",
+    label_area: "區域：",
+    label_pickup: "取貨：",
+    label_donor: "捐贈者：",
+    label_password: "密碼",
+    label_username: "使用者名稱",
+    label_phone: "電話",
+    registration: "註冊",
+    remember_me: "記住我",
+    forgot_password: "忘記密碼？",
+    agree_terms: "我同意條款與條件",
+    select_area: "選擇你的區域（桃園）",
+
+    // about/services/events text
+    about_text:
+      "桃園共享平台是一個學生友善的社群網站，用來交換食物、衣物、書籍與實用物品。我們希望減少浪費並幫助同學省錢。",
+    about_open: "開啟關於視窗",
+    services_text:
+      "依分類瀏覽捐贈物資。點擊物品可查看數量、區域與取貨地點等資訊。",
+    services_open: "開啟物資看板",
+    events_text: "查看社群活動，並從你的位置取得路線。",
+    events_open: "開啟活動地圖",
+
+    // leaderboard
+    xp_rule: "XP 規則：XP = 捐贈總數量 × 10（依 SUM(amount) 計算）。",
+    loading_leaderboard: "載入排行中…",
+    th_rank: "名次",
+    th_user: "使用者",
+    th_listings: "上架數",
+    th_total_qty: "總數量",
+    th_xp: "XP",
+    th_level: "等級",
+
+    // services popup
+    available_items: "可用物資",
+    cat_food: "🍎 食物",
+    cat_clothes: "👕 衣物",
+    cat_books: "📚 書籍",
+    cat_furniture: "🪑 家具",
+    cat_household: "🏠 家用品",
+    cat_others: "✨ 其他",
+    add_donation_btn: "➕ 新增捐贈",
+    label_status: "狀態：",
+    label_pickup_area: "取貨區域：",
+
+    // about popup
+    about_popup_title: "🌿 關於桃園共享",
+    about_popup_p1:
+      "歡迎來到桃園共享！平台協助同學交換物品與互助服務，打造友善且安全的社群。",
+    about_popup_p2:
+      "我們的目標是減少浪費、節省開支，並促進在地與國際學生的連結。",
+
+    // events popup labels
+    label_location: "📍 地點：",
+    label_time: "🕒 時間：",
+    get_directions: "從我的位置取得路線",
+
+    // ✅ dynamic (script.js 用)
+    you_not_logged_in: "尚未登入。",
+    logged_in_as: "登入身分",
+    loading_items: "載入物資中…",
+    no_items: "目前沒有物資。",
+    fetch_items_failed: "從伺服器載入物資失敗。",
+    no_data: "目前沒有資料。",
+    leaderboard_failed: "載入排行失敗。",
+    fill_all_fields: "請填寫所有欄位。",
+    registering: "註冊中…",
+    logging_in: "登入中…",
+    register_success_login: "✅ 註冊成功！請登入。",
+    login_success: "✅ 登入成功！",
+    register_success_alert: "註冊成功，請登入",
+    select_event_first: "請先選擇一個活動！",
+    geolocation_not_supported: "你的瀏覽器不支援定位功能。",
+    location_failed: "無法取得你的定位。",
+    no_items_category: "此分類目前沒有物資。",
   },
 };
 
@@ -61,20 +283,36 @@ function setLang(lang) {
   localStorage.setItem("lang", lang);
 }
 
-function applyLang(lang) {
-  const dict = I18N[lang] || I18N.en;
-
-  Object.keys(dict).forEach((id) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.textContent = dict[id];
-  });
-
-  // placeholder（如果你想要也能翻）
-  const email = document.getElementById("inline-auth-email");
-  const pass = document.getElementById("inline-auth-password");
-  if (email) email.placeholder = lang === "zh" ? "Email（帳號）" : "Email (username)";
-  if (pass) pass.placeholder = lang === "zh" ? "密碼" : "Password";
+function t(key) {
+  const lang = getLang();
+  return (I18N[lang] && I18N[lang][key]) || (I18N.en && I18N.en[key]) || key;
 }
 
-window.i18n = { getLang, setLang, applyLang };
+function applyLang(lang) {
+  const use = I18N[lang] ? lang : "en";
+  const dict = I18N[use];
+
+  // ✅ 1) data-i18n 掃描（主要推薦）
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    const key = el.getAttribute("data-i18n");
+    const text = dict[key] ?? I18N.en[key];
+    if (text != null) el.textContent = text;
+  });
+
+  // ✅ 2) 兼容你原本用 id 的寫法（如果還想用也行）
+  Object.keys(dict).forEach((key) => {
+    const el = document.getElementById(key);
+    if (el) el.textContent = dict[key];
+  });
+
+  // ✅ placeholders
+  const email = document.getElementById("inline-auth-email");
+  const pass = document.getElementById("inline-auth-password");
+  if (email) email.placeholder = use === "zh" ? "Email（帳號）" : "Email (username)";
+  if (pass) pass.placeholder = use === "zh" ? "密碼" : "Password";
+
+  // ✅ 通知 script.js 重畫動態內容
+  document.dispatchEvent(new CustomEvent("languageChange", { detail: { lang: use } }));
+}
+
+window.i18n = { getLang, setLang, applyLang, t };

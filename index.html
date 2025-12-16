@@ -15,25 +15,26 @@
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
 </head>
 
-<body class="page-center">
+<!-- ✅ 首頁不要 page-center，page-center 留給 login/register/add-donation 那些表單頁 -->
+<body>
   <header>
     <h2 class="logo">
-      <a href="#welcome-section" style="color:inherit;text-decoration:none;">🏠 Home</a>
+      <a href="#welcome-section" style="color:inherit;text-decoration:none;" data-i18n="nav_home">🏠 Home</a>
     </h2>
 
     <nav class="navigation">
-      <!-- Keep OLD nav anchors (script.js / i18n likely uses these ids) -->
-      <a href="#about-section" id="nav-about">About</a>
-      <a href="#services-section" id="nav-services">Services</a>
-      <a href="#events-section" id="nav-events">Events</a>
-      <a href="#members-section" id="nav-members">Members</a>
+      <!-- Keep OLD nav anchors (script.js / i18n uses these ids) -->
+      <a href="#about-section" id="nav-about" data-i18n="nav_about">About</a>
+      <a href="#services-section" id="nav-services" data-i18n="nav_services">Services</a>
+      <a href="#events-section" id="nav-events" data-i18n="nav_events">Events</a>
+      <a href="#members-section" id="nav-members" data-i18n="nav_members">Members</a>
 
       <!-- Keep OLD separate pages -->
-      <a class="nav-btn" href="/login.html">Login</a>
-      <a class="nav-btn" href="/register.html">Register</a>
+      <a class="nav-btn" href="/login.html" data-i18n="nav_login">Login</a>
+      <a class="nav-btn" href="/register.html" data-i18n="nav_register">Register</a>
 
-      <!-- NEW: modal login button (from your new index) -->
-      <button class="nav-btn btnLogin-popup" type="button" aria-label="Open Login Popup">Popup Login</button>
+      <!-- NEW: modal login button -->
+      <button class="nav-btn btnLogin-popup" type="button" aria-label="Open Login Popup" data-i18n="nav_popup_login">Popup Login</button>
 
       <!-- Keep OLD language toggle -->
       <button id="lang-toggle" class="nav-btn" type="button">中文</button>
@@ -43,86 +44,86 @@
   <!-- ✅ Welcome -->
   <section id="welcome-section">
     <div class="welcome-content">
-      <h1 id="main-title">Welcome to Taoyuan Sharing Community</h1>
+      <h1 id="main-title" data-i18n="main_title">Welcome to Taoyuan Sharing Community</h1>
       <hr class="welcome-divider" />
-      <p id="main-mission">
+      <p id="main-mission" data-i18n="main_mission">
         Share, Save, Smile — Free Food, Clothes, Books & Useful Items Around You!
       </p>
 
-      <!-- ✅ 3 feature cards (old) -->
+      <!-- ✅ 3 feature cards -->
       <div style="max-width:900px;margin:20px auto 0;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
         <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
-          <strong>♻ Reduce Waste</strong>
-          <div class="feature-desc">Give items a second life instead of throwing them away.</div>
-          <a class="feature-btn" href="#services-section">Browse Items</a>
+          <strong data-i18n="feature1_title">♻ Reduce Waste</strong>
+          <div class="feature-desc" data-i18n="feature1_desc">Give items a second life instead of throwing them away.</div>
+          <a class="feature-btn" href="#services-section" data-i18n="feature1_btn">Browse Items</a>
         </div>
 
         <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
-          <strong>🤝 Help Students</strong>
-          <div class="feature-desc">Support local and international students in Taoyuan.</div>
-          <a class="feature-btn" href="#members-section">View Ranking</a>
+          <strong data-i18n="feature2_title">🤝 Help Students</strong>
+          <div class="feature-desc" data-i18n="feature2_desc">Support local and international students in Taoyuan.</div>
+          <a class="feature-btn" href="#members-section" data-i18n="feature2_btn">View Ranking</a>
         </div>
 
         <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
-          <strong>📍 Easy Pickup</strong>
-          <div class="feature-desc">Clear pickup area and location for everyone.</div>
-          <a class="feature-btn" href="#howto-section">How It Works</a>
+          <strong data-i18n="feature3_title">📍 Easy Pickup</strong>
+          <div class="feature-desc" data-i18n="feature3_desc">Clear pickup area and location for everyone.</div>
+          <a class="feature-btn" href="#howto-section" data-i18n="feature3_btn">How It Works</a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ✅ How it works (old) -->
+  <!-- ✅ How it works -->
   <section id="howto-section" style="padding:40px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar" id="howto-bar">✨ How it works</div>
+      <div class="orange-bar" id="howto-bar" data-i18n="howto_bar">✨ How it works</div>
 
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;">
         <div class="highlight-box" style="flex:1;min-width:220px;">
-          <strong>1) Login / Register</strong>
-          <div style="opacity:.85;margin-top:6px;">Create an account to post items.</div>
+          <strong data-i18n="howto_1_title">1) Login / Register</strong>
+          <div style="opacity:.85;margin-top:6px;" data-i18n="howto_1_desc">Create an account to post items.</div>
         </div>
         <div class="highlight-box" style="flex:1;min-width:220px;">
-          <strong>2) Add Donation</strong>
-          <div style="opacity:.85;margin-top:6px;">Fill item name, qty, area, pickup, image and description.</div>
+          <strong data-i18n="howto_2_title">2) Add Donation</strong>
+          <div style="opacity:.85;margin-top:6px;" data-i18n="howto_2_desc">Fill item name, qty, area, pickup, image and description.</div>
         </div>
         <div class="highlight-box" style="flex:1;min-width:220px;">
-          <strong>3) Everyone Can Browse</strong>
-          <div style="opacity:.85;margin-top:6px;">All users can view item info and donor.</div>
+          <strong data-i18n="howto_3_title">3) Everyone Can Browse</strong>
+          <div style="opacity:.85;margin-top:6px;" data-i18n="howto_3_desc">All users can view item info and donor.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ✅ Quick Access (old inline auth; keep ids 100% same) -->
+  <!-- ✅ Quick Access -->
   <section id="simple-auth-section" style="padding:0 20px 40px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar" id="quickaccess-bar">🔐 Quick Access</div>
+      <div class="orange-bar" id="quickaccess-bar" data-i18n="quickaccess_bar">🔐 Quick Access</div>
 
-      <div id="auth-status" style="padding:12px 10px;opacity:.9;">Checking login...</div>
+      <div id="auth-status" style="padding:12px 10px;opacity:.9;" data-i18n="checking_login">Checking login...</div>
 
       <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:flex-start;">
         <div style="flex:1;min-width:260px;">
           <div id="inline-logged-box" class="highlight-box" style="display:none;">
-            <strong>✅ You are logged in</strong>
+            <strong data-i18n="inline_logged_title">✅ You are logged in</strong>
             <div style="margin-top:8px;">
-              Email: <span id="inline-logged-user"></span>
+              <span data-i18n="label_email">Email:</span> <span id="inline-logged-user"></span>
             </div>
             <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
-              <a class="nav-btn" href="/add-donation.html">Add Donation</a>
-              <button id="inline-logout-btn" class="nav-btn" type="button">Logout</button>
+              <a class="nav-btn" href="/add-donation.html" data-i18n="add_donation">Add Donation</a>
+              <button id="inline-logout-btn" class="nav-btn" type="button" data-i18n="logout">Logout</button>
             </div>
           </div>
 
           <form id="inline-auth-form" style="margin:0;">
-            <strong id="inline-auth-title" style="font-size:1.05rem;">Online Login</strong>
+            <strong id="inline-auth-title" style="font-size:1.05rem;" data-i18n="inline_auth_title">Online Login</strong>
             <input id="inline-auth-email" type="email" placeholder="Email (username)" required />
             <input id="inline-auth-password" type="password" placeholder="Password" required />
-            <button id="inline-auth-submit" type="submit">Login</button>
+            <button id="inline-auth-submit" type="submit" data-i18n="login">Login</button>
 
             <div style="margin-top:8px;font-size:.95rem;">
-              <span id="inline-switch-text">Don't have an account?</span>
-              <a href="#" id="inline-switch-mode">Register</a>
+              <span id="inline-switch-text" data-i18n="dont_have_account">Don't have an account?</span>
+              <a href="#" id="inline-switch-mode" data-i18n="register">Register</a>
             </div>
 
             <div id="inline-auth-msg" style="min-height:18px;font-size:.95rem;margin-top:6px;"></div>
@@ -130,13 +131,13 @@
         </div>
 
         <div class="highlight-box" style="flex:1;min-width:260px;">
-          <strong style="font-size:1.05rem;">Or use separate pages</strong>
+          <strong style="font-size:1.05rem;" data-i18n="separate_pages_title">Or use separate pages</strong>
           <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
-            <a class="nav-btn" href="/login.html">Go to Login Page</a>
-            <a class="nav-btn" href="/register.html">Go to Register Page</a>
-            <a class="nav-btn" href="/add-donation.html">Add Donation</a>
+            <a class="nav-btn" href="/login.html" data-i18n="go_login_page">Go to Login Page</a>
+            <a class="nav-btn" href="/register.html" data-i18n="go_register_page">Go to Register Page</a>
+            <a class="nav-btn" href="/add-donation.html" data-i18n="add_donation">Add Donation</a>
           </div>
-          <div style="opacity:.8;margin-top:10px;">
+          <div style="opacity:.8;margin-top:10px;" data-i18n="login_tip">
             Tip: After you log in once, you stay logged in (saved in localStorage).
           </div>
         </div>
@@ -144,91 +145,91 @@
     </div>
   </section>
 
-  <!-- ✅ New Items (old) -->
+  <!-- ✅ New Items -->
   <section id="home-items-section" style="padding:40px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar" id="home-items-title">🧡 New Items</div>
+      <div class="orange-bar" id="home-items-title" data-i18n="new_items">🧡 New Items</div>
       <ul id="new-items-list"></ul>
       <div id="home-items-msg" style="padding:10px;opacity:.8;"></div>
     </div>
   </section>
 
-  <!-- ✅ Item Modal (old) -->
+  <!-- ✅ Item Modal -->
   <div id="item-modal">
     <div class="modal-content">
       <button id="modal-close" type="button">✖</button>
       <img id="modal-img" src="" alt="item" />
       <h2 id="modal-name"></h2>
       <p id="modal-desc"></p>
-      <p><strong>Qty:</strong> <span id="modal-qty"></span></p>
-      <p><strong>Area:</strong> <span id="modal-area"></span></p>
-      <p><strong>Pickup:</strong> <span id="modal-pickup"></span></p>
-      <p><strong>Donor:</strong> <span id="modal-donor"></span></p>
+      <p><strong data-i18n="label_qty">Qty:</strong> <span id="modal-qty"></span></p>
+      <p><strong data-i18n="label_area">Area:</strong> <span id="modal-area"></span></p>
+      <p><strong data-i18n="label_pickup">Pickup:</strong> <span id="modal-pickup"></span></p>
+      <p><strong data-i18n="label_donor">Donor:</strong> <span id="modal-donor"></span></p>
     </div>
   </div>
 
-  <!-- ✅ About section (old; keep #about-section + about-btn) -->
+  <!-- ✅ About -->
   <section id="about-section" style="padding:80px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar" id="about-bar">🌿 About</div>
-      <p style="opacity:.9;line-height:1.7;margin-top:12px;">
+      <div class="orange-bar" id="about-bar" data-i18n="about_bar">🌿 About</div>
+      <p style="opacity:.9;line-height:1.7;margin-top:12px;" data-i18n="about_text">
         Taoyuan Sharing Platform is a student-friendly community website for exchanging food, clothes, books, and useful items.
         We aim to reduce waste and help students save money.
       </p>
       <div style="margin-top:12px;">
-        <button id="about-btn" class="nav-btn" type="button">Open About Popup</button>
+        <button id="about-btn" class="nav-btn" type="button" data-i18n="about_open">Open About Popup</button>
       </div>
     </div>
   </section>
 
-  <!-- ✅ Services section (old; keep #services-section + services-btn) -->
+  <!-- ✅ Services -->
   <section id="services-section" style="padding:80px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar" id="services-bar">🧰 Services</div>
-      <p style="opacity:.9;line-height:1.7;margin-top:12px;">
+      <div class="orange-bar" id="services-bar" data-i18n="services_bar">🧰 Services</div>
+      <p style="opacity:.9;line-height:1.7;margin-top:12px;" data-i18n="services_text">
         Browse donated items by category. Click an item to view details such as quantity, area, and pickup location.
       </p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
-        <button id="services-btn" class="nav-btn" type="button">Open Items Board</button>
-        <a class="nav-btn" href="/add-donation.html">Add Donation</a>
+        <button id="services-btn" class="nav-btn" type="button" data-i18n="services_open">Open Items Board</button>
+        <a class="nav-btn" href="/add-donation.html" data-i18n="add_donation">Add Donation</a>
       </div>
     </div>
   </section>
 
-  <!-- ✅ Events section (old; keep #events-section + events-btn) -->
+  <!-- ✅ Events -->
   <section id="events-section" style="padding:80px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar" id="events-bar">🗺 Events</div>
-      <p style="opacity:.9;line-height:1.7;margin-top:12px;">
+      <div class="orange-bar" id="events-bar" data-i18n="events_bar">🗺 Events</div>
+      <p style="opacity:.9;line-height:1.7;margin-top:12px;" data-i18n="events_text">
         Check community events and get directions from your current location.
       </p>
       <div style="margin-top:12px;">
-        <button id="events-btn" class="nav-btn" type="button">Open Events Map</button>
+        <button id="events-btn" class="nav-btn" type="button" data-i18n="events_open">Open Events Map</button>
       </div>
     </div>
   </section>
 
-  <!-- ✅ Members section (old leaderboard; keep ids) -->
+  <!-- ✅ Members -->
   <section id="members-section" style="padding:80px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar" id="members-bar">🏆 Member Ranking (XP)</div>
+      <div class="orange-bar" id="members-bar" data-i18n="members_bar">🏆 Member Ranking (XP)</div>
 
-      <div style="opacity:.85;margin-top:10px;">
+      <div style="opacity:.85;margin-top:10px;" data-i18n="xp_rule">
         XP rule: XP = total donated quantity × 10 (based on SUM(amount)).
       </div>
 
-      <div id="leaderboard-msg" style="padding:10px 0;opacity:.85;">Loading leaderboard...</div>
+      <div id="leaderboard-msg" style="padding:10px 0;opacity:.85;" data-i18n="loading_leaderboard">Loading leaderboard...</div>
 
       <div style="overflow:auto;">
         <table style="width:100%;border-collapse:collapse;min-width:520px;">
           <thead>
             <tr style="text-align:left;border-bottom:1px solid rgba(0,0,0,.15);">
-              <th style="padding:10px;">Rank</th>
-              <th style="padding:10px;">User</th>
-              <th style="padding:10px;">Listings</th>
-              <th style="padding:10px;">Total Qty</th>
-              <th style="padding:10px;">XP</th>
-              <th style="padding:10px;">Level</th>
+              <th style="padding:10px;" data-i18n="th_rank">Rank</th>
+              <th style="padding:10px;" data-i18n="th_user">User</th>
+              <th style="padding:10px;" data-i18n="th_listings">Listings</th>
+              <th style="padding:10px;" data-i18n="th_total_qty">Total Qty</th>
+              <th style="padding:10px;" data-i18n="th_xp">XP</th>
+              <th style="padding:10px;" data-i18n="th_level">Level</th>
             </tr>
           </thead>
           <tbody id="leaderboard-body"></tbody>
@@ -237,11 +238,9 @@
     </div>
   </section>
 
-  <!-- =========================
-       POPUPS (old/new merged)
-       ========================= -->
+  <!-- ========================= POPUPS ========================= -->
 
-  <!-- About Popup (keep class names used by CSS/JS) -->
+  <!-- About Popup -->
   <div class="about-popup">
     <div class="about-box">
       <span class="about-close"><ion-icon name="close"></ion-icon></span>
@@ -251,11 +250,11 @@
           <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?" alt="Sharing Image">
         </div>
         <div class="about-content">
-          <h2>🌿 About Taoyuan Sharing</h2>
-          <p>
+          <h2 data-i18n="about_popup_title">🌿 About Taoyuan Sharing</h2>
+          <p data-i18n="about_popup_p1">
             Welcome to Taoyuan Share! Our platform helps students exchange items, services, and support each other in a friendly, safe community.
           </p>
-          <p>
+          <p data-i18n="about_popup_p2">
             Our mission is to reduce waste, save money, and build strong connections between local and international students.
           </p>
         </div>
@@ -270,16 +269,16 @@
 
       <div class="services-layout">
         <aside class="category-board">
-          <h2 class="popup-title">Available Items</h2>
+          <h2 class="popup-title" data-i18n="available_items">Available Items</h2>
 
-          <button class="cat-btn active" data-cat="food">🍎 Food</button>
-          <button class="cat-btn" data-cat="clothes">👕 Clothes</button>
-          <button class="cat-btn" data-cat="books">📚 Books</button>
-          <button class="cat-btn" data-cat="furniture">🪑 Furniture</button>
-          <button class="cat-btn" data-cat="household">🏠 Household</button>
-          <button class="cat-btn" data-cat="others">✨ Others</button>
+          <button class="cat-btn active" data-cat="food" data-i18n="cat_food">🍎 Food</button>
+          <button class="cat-btn" data-cat="clothes" data-i18n="cat_clothes">👕 Clothes</button>
+          <button class="cat-btn" data-cat="books" data-i18n="cat_books">📚 Books</button>
+          <button class="cat-btn" data-cat="furniture" data-i18n="cat_furniture">🪑 Furniture</button>
+          <button class="cat-btn" data-cat="household" data-i18n="cat_household">🏠 Household</button>
+          <button class="cat-btn" data-cat="others" data-i18n="cat_others">✨ Others</button>
 
-          <button id="add-donation-btn" class="add-donation-btn">➕ Add Donation</button>
+          <button id="add-donation-btn" class="add-donation-btn" data-i18n="add_donation_btn">➕ Add Donation</button>
         </aside>
 
         <section class="items-area">
@@ -290,9 +289,9 @@
             <div>
               <h3 id="detail-name"></h3>
               <p id="detail-desc"></p>
-              <p><strong>Status:</strong> <span id="detail-status"></span></p>
-              <p><strong>Pickup Area:</strong> <span id="detail-area"></span></p>
-              <p><strong>Donor:</strong> <span id="detail-donor"></span></p>
+              <p><strong data-i18n="label_status">Status:</strong> <span id="detail-status"></span></p>
+              <p><strong data-i18n="label_pickup_area">Pickup Area:</strong> <span id="detail-area"></span></p>
+              <p><strong data-i18n="label_donor">Donor:</strong> <span id="detail-donor"></span></p>
             </div>
           </div>
         </section>
@@ -310,18 +309,15 @@
       <div id="event-info" class="event-info" style="display:none;">
         <img id="event-img" src="" alt="Event Image" />
         <h3 id="event-title"></h3>
-        <p><strong>📍 Location:</strong> <span id="event-location"></span></p>
-        <p><strong>🕒 Time:</strong> <span id="event-time"></span></p>
+        <p><strong data-i18n="label_location">📍 Location:</strong> <span id="event-location"></span></p>
+        <p><strong data-i18n="label_time">🕒 Time:</strong> <span id="event-time"></span></p>
         <p id="event-desc"></p>
-        <button id="btn-directions" type="button">Get Directions from Your Place</button>
+        <button id="btn-directions" type="button" data-i18n="get_directions">Get Directions from Your Place</button>
       </div>
     </div>
   </div>
 
-  <!-- =========================
-       NEW: Popup Login/Register (from your new index)
-       IMPORTANT: keep it, but do NOT delete old inline auth.
-       ========================= -->
+  <!-- ========================= Popup Login/Register ========================= -->
   <div class="wrapper" aria-hidden="true">
     <span class="icon-close" role="button" tabindex="0" aria-label="Close">
       <ion-icon name="close"></ion-icon>
@@ -329,31 +325,30 @@
 
     <!-- Login box -->
     <div class="form-box login">
-      <h2>Login</h2>
-      <!-- Use ids so you can wire to backend later if you want -->
+      <h2 data-i18n="login">Login</h2>
       <form id="modal-login-form" action="#" autocomplete="on">
         <div class="input-box">
           <span class="icon"><ion-icon name="mail"></ion-icon></span>
           <input id="modal-login-email" name="email" type="email" required />
-          <label>Email</label>
+          <label data-i18n="label_email">Email</label>
         </div>
 
         <div class="input-box">
           <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
           <input id="modal-login-password" name="password" type="password" required />
-          <label>Password</label>
+          <label data-i18n="label_password">Password</label>
         </div>
 
         <div class="remember-forgot">
-          <label><input type="checkbox" />Remember me</label>
-          <a href="#" onclick="return false;">Forgot Password?</a>
+          <label><input type="checkbox" /><span data-i18n="remember_me">Remember me</span></label>
+          <a href="#" onclick="return false;" data-i18n="forgot_password">Forgot Password?</a>
         </div>
 
-        <button type="submit" class="btn">Login</button>
+        <button type="submit" class="btn" data-i18n="login">Login</button>
 
         <div class="login-register">
-          <p>Don't have an account?
-            <a href="#" class="register-link">Register</a>
+          <p><span data-i18n="dont_have_account">Don't have an account?</span>
+            <a href="#" class="register-link" data-i18n="register">Register</a>
           </p>
         </div>
 
@@ -363,18 +358,18 @@
 
     <!-- Register box -->
     <div class="form-box register">
-      <h2>Registration</h2>
+      <h2 data-i18n="registration">Registration</h2>
       <form id="modal-register-form" action="#" autocomplete="on">
         <div class="input-box">
           <span class="icon"><ion-icon name="person"></ion-icon></span>
           <input id="modal-register-username" name="username" type="text" required />
-          <label>Username</label>
+          <label data-i18n="label_username">Username</label>
         </div>
 
         <div class="input-box">
           <span class="icon"><ion-icon name="location"></ion-icon></span>
           <select id="modal-register-area" name="area" required>
-            <option value="" disabled selected>Select Your Area (Taoyuan)</option>
+            <option value="" disabled selected data-i18n="select_area">Select Your Area (Taoyuan)</option>
             <option>Zhongli District</option>
             <option>Taoyuan District</option>
             <option>Pingzhen District</option>
@@ -389,37 +384,37 @@
             <option>Guanyin District</option>
             <option>Fuxing District</option>
           </select>
-          <label style="top:-5px;">Area</label>
+          <label style="top:-5px;" data-i18n="label_area">Area</label>
         </div>
 
         <div class="input-box">
           <span class="icon"><ion-icon name="call"></ion-icon></span>
           <input id="modal-register-phone" name="phone" type="tel" required pattern="[0-9]{10,}" />
-          <label>Phone Number</label>
+          <label data-i18n="label_phone">Phone Number</label>
         </div>
 
         <div class="input-box">
           <span class="icon"><ion-icon name="mail"></ion-icon></span>
           <input id="modal-register-email" name="email" type="email" required />
-          <label>Email</label>
+          <label data-i18n="label_email">Email</label>
         </div>
 
         <div class="input-box">
           <span class="icon"><ion-icon name="lock-closed"></ion-icon></span>
           <input id="modal-register-password" name="password" type="password" required />
-          <label>Password</label>
+          <label data-i18n="label_password">Password</label>
         </div>
 
         <div class="remember-forgot">
-          <label><input type="checkbox" required />I agree to the terms &amp; conditions</label>
-          <a href="#" onclick="return false;">Forgot Password?</a>
+          <label><input type="checkbox" required /><span data-i18n="agree_terms">I agree to the terms &amp; conditions</span></label>
+          <a href="#" onclick="return false;" data-i18n="forgot_password">Forgot Password?</a>
         </div>
 
-        <button type="submit" class="btn">Register</button>
+        <button type="submit" class="btn" data-i18n="register">Register</button>
 
         <div class="login-register">
-          <p>Already have an account?
-            <a href="#" class="login-link">Login</a>
+          <p><span data-i18n="already_have_account">Already have an account?</span>
+            <a href="#" class="login-link" data-i18n="login">Login</a>
           </p>
         </div>
 
@@ -428,7 +423,7 @@
     </div>
   </div>
 
-  <!-- Scripts: keep i18n BEFORE script.js (old requirement) -->
+  <!-- Scripts: keep i18n BEFORE script.js -->
   <script src="i18n.js"></script>
   <script src="script.js"></script>
 

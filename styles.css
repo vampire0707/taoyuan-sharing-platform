@@ -905,3 +905,24 @@ tbody td{
   #events-map{ flex: 0 0 auto; height: 320px; }
   .wrapper{ width: min(92vw, 420px); }
 }
+
+/* ===== Auth / Form Pages Center ===== */
+body.page-center {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 14px;
+}
+
+/* 讓表單卡片固定漂亮寬度 */
+.page-center .container {
+  width: min(520px, 100%);
+  display: block;
+}
+
+/* 你的 highlight-box 如果已存在就不用改，這段是保險 */
+.page-center .highlight-box {
+  width: 100%;
+}
+

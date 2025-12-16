@@ -1,10 +1,9 @@
-// routes/users.js
-const express = require("express");
-const router = express.Router();
-const db = require("../db");
+// routes/users.js (ESM)
+import express from "express";
+import db from "../db.js";
 
-// ✅ 簡易登入判斷（先用 localStorage 的 user_id 送來）
-// 前端請在 fetch 時帶 header: x-user-id
+const router = express.Router();
+
 function requireUser(req, res, next) {
   const id = Number(req.headers["x-user-id"]);
   if (!id) return res.status(401).json({ message: "Not logged in" });
@@ -12,7 +11,6 @@ function requireUser(req, res, next) {
   next();
 }
 
-// 取得我的資料
 router.get("/me", requireUser, async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -30,7 +28,6 @@ router.get("/me", requireUser, async (req, res) => {
   }
 });
 
-// 更新我的資料（電話/地址/自介）
 router.put("/me", requireUser, async (req, res) => {
   try {
     const { phone, address, bio } = req.body;
@@ -49,7 +46,6 @@ router.put("/me", requireUser, async (req, res) => {
   }
 });
 
-// 我的統計（XP / 總上架數 / 總數量）
 router.get("/me/stats", requireUser, async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -68,4 +64,4 @@ router.get("/me/stats", requireUser, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

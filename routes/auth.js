@@ -1,8 +1,9 @@
 // routes/auth.js
-const express = require("express");
+import express from "express";
+import bcrypt from "bcrypt";
+import db from "../db.js";
+
 const router = express.Router();
-const bcrypt = require("bcrypt");
-const db = require("../db");
 
 // =======================
 //  POST /api/auth/register
@@ -93,4 +94,5 @@ router.post("/login", async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
+

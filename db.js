@@ -1,17 +1,18 @@
-// db.js
-require("dotenv").config();      // 本機跑 node server.js 時會讀 .env，Railway 上會用它自己的 env
+// db.js (ESM)
+import dotenv from "dotenv";
+dotenv.config(); // 本機讀 .env；Railway 會用環境變數
 
-const mysql = require("mysql2");
+import mysql from "mysql2/promise";
 
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 3306,
+  port: Number(process.env.DB_PORT || 3306),
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
 });
 
-module.exports = pool.promise();
+export default pool;

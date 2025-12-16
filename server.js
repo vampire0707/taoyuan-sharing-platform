@@ -7,6 +7,7 @@ const cors = require("cors");
 
 const authRoutes = require("./routes/auth");
 const donationRoutes = require("./routes/donations");
+const userRoutes = require("./routes/users");
 
 const app = express();
 
@@ -35,6 +36,8 @@ app.get(["/profile", "/profile.html"], (req, res) => {
 // API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/donations", donationRoutes);
+
+app.use("/api/users", userRoutes);
 
 // health check（Railway 很愛用）
 app.get("/health", (req, res) => res.json({ ok: true }));

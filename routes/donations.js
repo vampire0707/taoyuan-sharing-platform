@@ -177,3 +177,66 @@ router.delete("/:id", requireLogin, async (req, res) => {
 });
 
 module.exports = router;
+
+function requireUser(req, res, next) {
+  const id = Number(req.headers["x-user-id"]);
+  if (!id) return res.status(401).json({ message: "Not logged in" });
+  req.userId = id;
+  next();
+}
+
+// 取得我上架的
+router.get("/mine", requireUser, async (req, res) => {
+  const [rows] = await db.query(
+    `SELECT donation_id, item_name, amount, area, pickup_location, image_url, description, created_at
+     FROM donations
+     WHERE donor_id=?
+     ORDER BY donation_id DESC`,
+    [req.userId]
+  );
+  res.json(rows);
+});
+
+// 更新我上架的某筆
+router.put("/:id", requireUser, async (req, res) => {
+  const id = Number(req.params.id);
+  const { item_name, amount, area, pickup_location, image_url, description } = req.body;
+
+  const [own] = await db.query(
+    "SELECT donation_id FROM donations WHERE donation_id=? AND donor_id=?",
+    [id, req.userId]
+  );
+  if (!own.length) return res.status(403).json({ message: "No permission" });
+
+  await db.query(
+    `UPDATE donations
+     SET item_name=?, amount=?, area=?, pickup_location=?, image_url=?, description=?
+     WHERE donation_id=? AND donor_id=?`,
+    [
+      item_name ?? "",
+      Number(amount) || 1,
+      area ?? "",
+      pickup_location ?? "",
+      image_url ?? null,
+      description ?? null,
+      id,
+      req.userId,
+    ]
+  );
+
+  res.json({ message: "Donation updated" });
+});
+
+// 刪除我上架的某筆
+router.delete("/:id", requireUser, async (req, res) => {
+  const id = Number(req.params.id);
+
+  const [own] = await db.query(
+    "SELECT donation_id FROM donations WHERE donation_id=? AND donor_id=?",
+    [id, req.userId]
+  );
+  if (!own.length) return res.status(403).json({ message: "No permission" });
+
+  await db.query("DELETE FROM donations WHERE donation_id=? AND donor_id=?", [id, req.userId]);
+  res.json({ message: "Donation deleted" });
+});

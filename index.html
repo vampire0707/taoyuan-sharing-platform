@@ -22,20 +22,25 @@
     </h2>
 
     <nav class="navigation">
+      <!-- Keep OLD nav anchors (script.js / i18n likely uses these ids) -->
       <a href="#about-section" id="nav-about">About</a>
       <a href="#services-section" id="nav-services">Services</a>
       <a href="#events-section" id="nav-events">Events</a>
       <a href="#members-section" id="nav-members">Members</a>
 
-      <!-- ✅ 改成相對路徑：避免部署在子路徑時壞掉 -->
-      <a class="nav-btn" href="login.html">Login</a>
-      <a class="nav-btn" href="register.html">Register</a>
+      <!-- Keep OLD separate pages -->
+      <a class="nav-btn" href="/login.html">Login</a>
+      <a class="nav-btn" href="/register.html">Register</a>
 
+      <!-- NEW: modal login button (from your new index) -->
       <button class="nav-btn btnLogin-popup" type="button" aria-label="Open Login Popup">Popup Login</button>
+
+      <!-- Keep OLD language toggle -->
       <button id="lang-toggle" class="nav-btn" type="button">中文</button>
     </nav>
   </header>
 
+  <!-- ✅ Welcome -->
   <section id="welcome-section">
     <div class="welcome-content">
       <h1 id="main-title">Welcome to Taoyuan Sharing Community</h1>
@@ -44,6 +49,7 @@
         Share, Save, Smile — Free Food, Clothes, Books & Useful Items Around You!
       </p>
 
+      <!-- ✅ 3 feature cards (old) -->
       <div style="max-width:900px;margin:20px auto 0;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
         <div class="highlight-box feature-card" style="min-width:220px;flex:1;">
           <strong>♻ Reduce Waste</strong>
@@ -66,6 +72,7 @@
     </div>
   </section>
 
+  <!-- ✅ How it works (old) -->
   <section id="howto-section" style="padding:40px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
       <div class="orange-bar" id="howto-bar">✨ How it works</div>
@@ -87,6 +94,7 @@
     </div>
   </section>
 
+  <!-- ✅ Quick Access (old inline auth; keep ids 100% same) -->
   <section id="simple-auth-section" style="padding:0 20px 40px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
       <div class="orange-bar" id="quickaccess-bar">🔐 Quick Access</div>
@@ -101,7 +109,7 @@
               Email: <span id="inline-logged-user"></span>
             </div>
             <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
-              <a class="nav-btn" href="add-donation.html">Add Donation</a>
+              <a class="nav-btn" href="/add-donation.html">Add Donation</a>
               <button id="inline-logout-btn" class="nav-btn" type="button">Logout</button>
             </div>
           </div>
@@ -124,9 +132,9 @@
         <div class="highlight-box" style="flex:1;min-width:260px;">
           <strong style="font-size:1.05rem;">Or use separate pages</strong>
           <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
-            <a class="nav-btn" href="login.html">Go to Login Page</a>
-            <a class="nav-btn" href="register.html">Go to Register Page</a>
-            <a class="nav-btn" href="add-donation.html">Add Donation</a>
+            <a class="nav-btn" href="/login.html">Go to Login Page</a>
+            <a class="nav-btn" href="/register.html">Go to Register Page</a>
+            <a class="nav-btn" href="/add-donation.html">Add Donation</a>
           </div>
           <div style="opacity:.8;margin-top:10px;">
             Tip: After you log in once, you stay logged in (saved in localStorage).
@@ -136,6 +144,7 @@
     </div>
   </section>
 
+  <!-- ✅ New Items (old) -->
   <section id="home-items-section" style="padding:40px 20px;">
     <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
       <div class="orange-bar" id="home-items-title">🧡 New Items</div>
@@ -144,6 +153,7 @@
     </div>
   </section>
 
+  <!-- ✅ Item Modal (old) -->
   <div id="item-modal">
     <div class="modal-content">
       <button id="modal-close" type="button">✖</button>
@@ -157,27 +167,107 @@
     </div>
   </div>
 
-  <!-- ✅（下面 popup 區你原本就 OK，我不改） -->
+  <!-- ✅ About section (old; keep #about-section + about-btn) -->
+  <section id="about-section" style="padding:80px 20px;">
+    <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
+      <div class="orange-bar" id="about-bar">🌿 About</div>
+      <p style="opacity:.9;line-height:1.7;margin-top:12px;">
+        Taoyuan Sharing Platform is a student-friendly community website for exchanging food, clothes, books, and useful items.
+        We aim to reduce waste and help students save money.
+      </p>
+      <div style="margin-top:12px;">
+        <button id="about-btn" class="nav-btn" type="button">Open About Popup</button>
+      </div>
+    </div>
+  </section>
 
+  <!-- ✅ Services section (old; keep #services-section + services-btn) -->
+  <section id="services-section" style="padding:80px 20px;">
+    <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
+      <div class="orange-bar" id="services-bar">🧰 Services</div>
+      <p style="opacity:.9;line-height:1.7;margin-top:12px;">
+        Browse donated items by category. Click an item to view details such as quantity, area, and pickup location.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+        <button id="services-btn" class="nav-btn" type="button">Open Items Board</button>
+        <a class="nav-btn" href="/add-donation.html">Add Donation</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ✅ Events section (old; keep #events-section + events-btn) -->
+  <section id="events-section" style="padding:80px 20px;">
+    <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
+      <div class="orange-bar" id="events-bar">🗺 Events</div>
+      <p style="opacity:.9;line-height:1.7;margin-top:12px;">
+        Check community events and get directions from your current location.
+      </p>
+      <div style="margin-top:12px;">
+        <button id="events-btn" class="nav-btn" type="button">Open Events Map</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ✅ Members section (old leaderboard; keep ids) -->
+  <section id="members-section" style="padding:80px 20px;">
+    <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
+      <div class="orange-bar" id="members-bar">🏆 Member Ranking (XP)</div>
+
+      <div style="opacity:.85;margin-top:10px;">
+        XP rule: XP = total donated quantity × 10 (based on SUM(amount)).
+      </div>
+
+      <div id="leaderboard-msg" style="padding:10px 0;opacity:.85;">Loading leaderboard...</div>
+
+      <div style="overflow:auto;">
+        <table style="width:100%;border-collapse:collapse;min-width:520px;">
+          <thead>
+            <tr style="text-align:left;border-bottom:1px solid rgba(0,0,0,.15);">
+              <th style="padding:10px;">Rank</th>
+              <th style="padding:10px;">User</th>
+              <th style="padding:10px;">Listings</th>
+              <th style="padding:10px;">Total Qty</th>
+              <th style="padding:10px;">XP</th>
+              <th style="padding:10px;">Level</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================
+       POPUPS (old/new merged)
+       ========================= -->
+
+  <!-- About Popup (keep class names used by CSS/JS) -->
   <div class="about-popup">
     <div class="about-box">
       <span class="about-close"><ion-icon name="close"></ion-icon></span>
+
       <div class="about-wrapper">
         <div class="about-image">
           <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?" alt="Sharing Image">
         </div>
         <div class="about-content">
           <h2>🌿 About Taoyuan Sharing</h2>
-          <p>Welcome to Taoyuan Share! Our platform helps students exchange items, services, and support each other in a friendly, safe community.</p>
-          <p>Our mission is to reduce waste, save money, and build strong connections between local and international students.</p>
+          <p>
+            Welcome to Taoyuan Share! Our platform helps students exchange items, services, and support each other in a friendly, safe community.
+          </p>
+          <p>
+            Our mission is to reduce waste, save money, and build strong connections between local and international students.
+          </p>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Services Popup -->
   <div class="services-popup">
     <div class="services-box">
       <span class="services-close">✖</span>
+
       <div class="services-layout">
         <aside class="category-board">
           <h2 class="popup-title">Available Items</h2>
@@ -210,9 +300,11 @@
     </div>
   </div>
 
+  <!-- Events Popup -->
   <div class="events-popup">
     <div class="events-box">
       <span class="events-close" title="Close"><ion-icon name="close"></ion-icon></span>
+
       <div id="events-map"></div>
 
       <div id="event-info" class="event-info" style="display:none;">
@@ -226,13 +318,19 @@
     </div>
   </div>
 
+  <!-- =========================
+       NEW: Popup Login/Register (from your new index)
+       IMPORTANT: keep it, but do NOT delete old inline auth.
+       ========================= -->
   <div class="wrapper" aria-hidden="true">
     <span class="icon-close" role="button" tabindex="0" aria-label="Close">
       <ion-icon name="close"></ion-icon>
     </span>
 
+    <!-- Login box -->
     <div class="form-box login">
       <h2>Login</h2>
+      <!-- Use ids so you can wire to backend later if you want -->
       <form id="modal-login-form" action="#" autocomplete="on">
         <div class="input-box">
           <span class="icon"><ion-icon name="mail"></ion-icon></span>
@@ -263,6 +361,7 @@
       </form>
     </div>
 
+    <!-- Register box -->
     <div class="form-box register">
       <h2>Registration</h2>
       <form id="modal-register-form" action="#" autocomplete="on">
@@ -329,6 +428,7 @@
     </div>
   </div>
 
+  <!-- Scripts: keep i18n BEFORE script.js (old requirement) -->
   <script src="i18n.js"></script>
   <script src="script.js"></script>
 

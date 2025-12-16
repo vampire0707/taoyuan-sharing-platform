@@ -1,0 +1,334 @@
+/* profile.css (Glassmorphism dark theme)
+   - Matches your styles.css variables & vibe
+   - Only styles profile page blocks
+*/
+
+:root{
+  /* 沿用 styles.css 的變數，沒有就 fallback */
+  --bg: var(--bg, #0b0f14);
+  --card: var(--card, rgba(255,255,255,0.08));
+  --card-2: var(--card-2, rgba(255,255,255,0.12));
+  --border: var(--border, rgba(255,255,255,0.18));
+  --text: var(--text, #f7f7f7);
+  --muted: var(--muted, rgba(255,255,255,0.75));
+  --brand: var(--brand, #ff7a2f);
+  --brand-2: var(--brand-2, #ffb07b);
+  --shadow: var(--shadow, 0 20px 50px rgba(0,0,0,0.45));
+}
+
+/* ===== Page layout ===== */
+.profile-page{
+  width: 100%;
+  padding: 28px 18px 46px;
+}
+
+.profile-wrap{
+  width: min(1100px, 96vw);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 14px;
+}
+
+/* ===== Cards (glass) ===== */
+.profile-card{
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 16px;
+}
+
+.profile-card + .profile-card{ margin-top: 14px; }
+
+.profile-title{
+  font-family: 'Playfair Display', serif;
+  font-weight: 800;
+  letter-spacing: .3px;
+  color: rgba(255,255,255,0.95);
+  font-size: 1.6rem;
+  margin: 4px 0 10px;
+}
+
+.profile-subtitle{
+  color: rgba(255,255,255,0.82);
+  font-weight: 600;
+  margin-top: 2px;
+  font-size: .95rem;
+}
+
+/* ===== Header row inside card ===== */
+.profile-head{
+  display:flex;
+  gap: 14px;
+  align-items:center;
+}
+
+.profile-avatar{
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+  overflow:hidden;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.08);
+  display:grid;
+  place-items:center;
+  box-shadow: 0 12px 26px rgba(0,0,0,0.35);
+}
+
+.profile-avatar img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+}
+
+/* fallback initials */
+.profile-avatar .initial{
+  font-weight: 900;
+  font-size: 1.6rem;
+  color: rgba(255,255,255,0.92);
+}
+
+/* ===== Stats chips ===== */
+.profile-stats{
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.stat{
+  background: rgba(0,0,0,0.20);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  padding: 10px 12px;
+}
+
+.stat .label{
+  color: rgba(255,255,255,0.72);
+  font-size: .88rem;
+  font-weight: 600;
+}
+
+.stat .value{
+  margin-top: 4px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: rgba(255,255,255,0.95);
+}
+
+/* ===== Form ===== */
+.profile-form{
+  margin-top: 12px;
+  display:flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* 不要吃到 styles.css 的 form 全域樣式：profile 專用覆蓋更精緻 */
+.profile-form .row{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.profile-form label{
+  display:block;
+  font-weight: 700;
+  font-size: .92rem;
+  color: rgba(255,255,255,0.84);
+  margin: 2px 0 6px;
+}
+
+.profile-form input,
+.profile-form textarea{
+  width:100%;
+  padding: 11px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.20);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.95);
+  outline:none;
+}
+
+.profile-form input::placeholder,
+.profile-form textarea::placeholder{
+  color: rgba(255,255,255,0.60);
+}
+
+.profile-form textarea{
+  min-height: 110px;
+  resize: vertical;
+}
+
+/* Buttons: reuse your nav-btn vibe but add primary */
+.btn-row{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.btn-primary{
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  cursor:pointer;
+  font-weight: 900;
+  color:#111;
+  background: linear-gradient(135deg, var(--brand), #ff9c57);
+}
+
+.btn-ghost{
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.10);
+  color:#fff;
+  cursor:pointer;
+  transition: transform .15s ease, background .25s ease, border-color .25s ease;
+}
+
+.btn-ghost:hover{
+  transform: translateY(-1px);
+  background: rgba(255,255,255,0.16);
+  border-color: rgba(255,255,255,0.28);
+}
+
+.btn-danger{
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-weight: 900;
+  border: 1px solid rgba(255, 90, 90, 0.35);
+  background: rgba(255, 90, 90, 0.14);
+  color: rgba(255,255,255,0.95);
+  cursor:pointer;
+}
+
+/* ===== Right side: My Items table/grid ===== */
+.myitems-head{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.search{
+  flex: 1 1 260px;
+  display:flex;
+  gap: 10px;
+}
+
+.search input{
+  flex: 1 1 auto;
+  padding: 11px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.20);
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.95);
+  outline:none;
+}
+
+.myitems-grid{
+  margin-top: 12px;
+  display:grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* Item card */
+.myitem{
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.16);
+  border-radius: 16px;
+  overflow:hidden;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+}
+
+.myitem .thumb{
+  width:100%;
+  height: 170px;
+  object-fit: cover;
+  display:block;
+}
+
+.myitem .body{
+  padding: 10px 12px 12px;
+}
+
+.myitem .name{
+  font-weight: 900;
+  color: rgba(255,255,255,0.95);
+  font-size: 1.05rem;
+  margin-bottom: 4px;
+}
+
+.myitem .meta{
+  color: rgba(255,255,255,0.76);
+  font-size: .92rem;
+  line-height: 1.35;
+}
+
+.myitem .actions{
+  display:flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+/* small buttons */
+.btn-sm{
+  padding: 8px 10px;
+  border-radius: 12px;
+  font-weight: 900;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+  cursor:pointer;
+}
+
+.btn-sm.primary{
+  border:none;
+  background: linear-gradient(135deg, var(--brand), #ff9c57);
+  color:#111;
+}
+
+.btn-sm.danger{
+  border: 1px solid rgba(255, 90, 90, 0.35);
+  background: rgba(255, 90, 90, 0.14);
+}
+
+/* ===== Inline message ===== */
+.profile-msg{
+  margin-top: 10px;
+  color: rgba(255,255,255,0.80);
+  font-size: .95rem;
+  min-height: 18px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 980px){
+  .profile-wrap{
+    grid-template-columns: 1fr;
+  }
+  .profile-stats{
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px){
+  .profile-page{ padding: 18px 12px 36px; }
+  .profile-form .row{
+    grid-template-columns: 1fr;
+  }
+  .myitems-grid{
+    grid-template-columns: 1fr;
+  }
+  .profile-stats{
+    grid-template-columns: 1fr;
+  }
+}

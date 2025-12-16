@@ -3,17 +3,19 @@ const I18N = {
   en: {
     // nav
     nav_home: "🏠 Home",
-    nav_about: "About",
+    nav_about: "About us",
     nav_services: "Services",
     nav_events: "Events",
     nav_members: "Members",
     nav_login: "Login",
     nav_register: "Register",
     nav_popup_login: "Popup Login",
+    nav_profile: "My Profile", // ✅ NEW
 
     // hero
     main_title: "Welcome to Taoyuan Sharing Community",
-    main_mission: "Share, Save, Smile — Free Food, Clothes, Books & Useful Items Around You!",
+    main_mission:
+      "Share, Save, Smile — Free Food, Clothes, Books & Useful Items Around You!",
 
     // feature cards
     feature1_title: "♻ Reduce Waste",
@@ -57,7 +59,8 @@ const I18N = {
     separate_pages_title: "Or use separate pages",
     go_login_page: "Go to Login Page",
     go_register_page: "Go to Register Page",
-    login_tip: "Tip: After you log in once, you stay logged in (saved in localStorage).",
+    login_tip:
+      "Tip: After you log in once, you stay logged in (saved in localStorage).",
 
     // modal labels
     label_qty: "Qty:",
@@ -80,7 +83,8 @@ const I18N = {
     services_text:
       "Browse donated items by category. Click an item to view details such as quantity, area, and pickup location.",
     services_open: "Open Items Board",
-    events_text: "Check community events and get directions from your current location.",
+    events_text:
+      "Check community events and get directions from your current location.",
     events_open: "Open Events Map",
 
     // leaderboard
@@ -147,6 +151,7 @@ const I18N = {
     nav_login: "登入",
     nav_register: "註冊",
     nav_popup_login: "彈窗登入",
+    nav_profile: "個人頁面", // ✅ NEW
 
     // hero
     main_title: "歡迎來到桃園共享社區",
@@ -285,27 +290,31 @@ function setLang(lang) {
 
 function t(key) {
   const lang = getLang();
-  return (I18N[lang] && I18N[lang][key]) || (I18N.en && I18N.en[key]) || key;
+  return (
+    (I18N[lang] && I18N[lang][key]) ||
+    (I18N.en && I18N.en[key]) ||
+    key
+  );
 }
 
 function applyLang(lang) {
   const use = I18N[lang] ? lang : "en";
   const dict = I18N[use];
 
-  // ✅ 1) data-i18n 掃描（主要推薦）
+  // ✅ 1) data-i18n（推薦）
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.getAttribute("data-i18n");
-    const text = dict[key] ?? I18N.en[key];
+    const text = (dict && dict[key]) ?? (I18N.en && I18N.en[key]);
     if (text != null) el.textContent = text;
   });
 
-  // ✅ 2) 兼容你原本用 id 的寫法（如果還想用也行）
+  // ✅ 2) 兼容 id = key（你舊版也能繼續用）
   Object.keys(dict).forEach((key) => {
     const el = document.getElementById(key);
     if (el) el.textContent = dict[key];
   });
 
-  // ✅ placeholders
+  // ✅ placeholders（保留）
   const email = document.getElementById("inline-auth-email");
   const pass = document.getElementById("inline-auth-password");
   if (email) email.placeholder = use === "zh" ? "Email（帳號）" : "Email (username)";

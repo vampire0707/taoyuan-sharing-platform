@@ -16,18 +16,21 @@ const __dirname = path.dirname(__filename);
 import authRoutes from "./routes/auth.js";
 import donationRoutes from "./routes/donations.js";
 import userRoutes from "./routes/users.js";
+import aiRoutes from "./routes/ai.js"; // ✅ 只新增這行
 
 const app = express();
+console.log("✅ LOADED server.js", new Date().toISOString());
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use("/api/ai", aiRoutes);
+
 
 // ===============================
 // Static files
 // ===============================
 app.use(express.static(__dirname));
-
 
 app.use((req, res, next) => {
   res.setHeader("X-Content-Type-Options", "nosniff");

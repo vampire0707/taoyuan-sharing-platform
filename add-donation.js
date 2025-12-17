@@ -1,5 +1,5 @@
 // ===============================
-// add-donation.js (EN FINAL + Image Upload)
+// add-donation.js (EN FINAL + Image Upload + AI Auto Classify)
 // ===============================
 const API_BASE = ""; // same domain
 
@@ -32,12 +32,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const areaEl = document.getElementById("area");
   const pickupEl = document.getElementById("pickup_location");
 
-  // ✅ Image upload elements (from add-donation.html)
+  // ✅ Image upload elements
   const imageFileEl = document.getElementById("image_file");
   const uploadMsgEl = document.getElementById("upload_msg");
   const previewEl = document.getElementById("img_preview");
 
   const descEl = document.getElementById("description");
+
+  // ✅ AI elements
+  const btnAuto = document.getElementById("btnAutoClassify");
+  const aiBadge = document.getElementById("aiBadge");
+  const aiCategoryEl = document.getElementById("aiCategory");
+  const aiConfidenceEl = document.getElementById("aiConfidence");
+  const aiReasonEl = document.getElementById("aiReason");
 
   // ✅ must be logged in
   const user = getLoggedInUser();
@@ -49,7 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (form) {
       Array.from(form.querySelectorAll("input, select, textarea, button")).forEach((el) => {
-        // 讓「回首頁」那種 a 不受影響，這裡只 disable 表單內控制項
         if (el.id !== "btn-submit") el.disabled = true;
       });
     }
@@ -60,7 +66,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (loginWarning) loginWarning.style.display = "none";
 
-  // ✅ Optional: show preview immediately when selecting file
+  // ===============================
+  // AI classify helpers
+  // ===============================
+  async function aiClassify() {
+    const item_name = (itemNameEl?.value || "").trim();
+    const description = (descEl?.value || "").trim();
+
+    if (!item_name && !description) {
+      throw new Error("Please enter item name or description first.");
+    }
+
+    if (aiReasonEl) setMessage(aiReasonEl, "AI classifying...", "info");
+
+    const res = await fetch(`${API_BASE}/api/ai/classify`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ item_name, description }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.ok) throw new Error(data.error || "AI classify failed.");
+
+    // ✅ write back to select
+    if (categoryEl) {
+      const exists = Array.from(categoryEl.options).some((o) => o.value === data.category);
+      if (!exists) throw new Error(`AI returned "${data.category}" but category list has no such option.`);
+      categoryEl.value = data.category;
+      categoryEl.setCustomValidity("");
+    }
+
+    // ✅ badge UI
+    if (aiBadge) aiBadge.style.display = "inline-flex";
+    if (aiCategoryEl) aiCategoryEl.textContent = data.category;
+    if (aiConfidenceEl) aiConfidenceEl.textContent = String(data.confidence ?? "");
+    if (aiReasonEl) setMessage(aiReasonEl, data.scam_risk ? `scam_risk: ${data.scam_risk}` : "✅ AI classified", "info");
+
+    return data;
+  }
+
+  function wireAiButton() {
+    if (!btnAuto) return;
+    btnAuto.addEventListener("click", async () => {
+      try {
+        btnAuto.disabled = true;
+        await aiClassify();
+      } catch (err) {
+        console.error(err);
+        if (aiReasonEl) setMessage(aiReasonEl, "❌ " + (err?.message || "AI failed."), "error");
+      } finally {
+        btnAuto.disabled = false;
+      }
+    });
+  }
+
+  wireAiButton();
+
+  // ===============================
+  // Image preview
+  // ===============================
   if (imageFileEl && previewEl) {
     imageFileEl.addEventListener("change", () => {
       const file = imageFileEl.files?.[0];
@@ -76,6 +140,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // ===============================
+  // Upload image API
+  // ===============================
   async function uploadImageIfAny() {
     const file = imageFileEl?.files?.[0];
     if (!file) return null;
@@ -95,7 +162,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     setMessage(uploadMsgEl, "✅ Image uploaded!", "success");
 
-    // server returns: { image_url: "/uploads/xxx.jpg" }
     if (previewEl && data.image_url) {
       previewEl.src = data.image_url;
       previewEl.style.display = "block";
@@ -104,19 +170,31 @@ document.addEventListener("DOMContentLoaded", () => {
     return data.image_url || null;
   }
 
+  // ===============================
+  // Submit form
+  // ===============================
   form?.addEventListener("submit", async (e) => {
     e.preventDefault();
     setMessage(msg, "", "info");
 
-    const category = categoryEl?.value || "";
     const item_name = (itemNameEl?.value || "").trim();
     const quantity = Number(qtyEl?.value || 0);
-
     const area = (areaEl?.value || "").trim();
     const pickup_location = (pickupEl?.value || "").trim();
     const descriptionRaw = (descEl?.value || "").trim();
 
-    if (!category) return setMessage(msg, "❌ Please select a category.", "error");
+    // ✅ If category not selected, try AI auto classify first
+    let category = categoryEl?.value || "";
+    if (!category) {
+      try {
+        await aiClassify();
+        category = categoryEl?.value || "";
+      } catch (err) {
+        setMessage(msg, "❌ Please select a category (AI failed).", "error");
+        return;
+      }
+    }
+
     if (!item_name) return setMessage(msg, "❌ Item name is required.", "error");
     if (!quantity || quantity < 1) return setMessage(msg, "❌ Quantity must be at least 1.", "error");
 
@@ -125,6 +203,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       if (btnSubmit) btnSubmit.disabled = true;
+      if (btnAuto) btnAuto.disabled = true;
       setMessage(msg, "Submitting...", "info");
 
       // ✅ 1) upload image first (if any)
@@ -160,6 +239,12 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if (uploadMsgEl) setMessage(uploadMsgEl, "", "info");
 
+      // reset AI badge
+      if (aiBadge) aiBadge.style.display = "none";
+      if (aiCategoryEl) aiCategoryEl.textContent = "";
+      if (aiConfidenceEl) aiConfidenceEl.textContent = "";
+      if (aiReasonEl) setMessage(aiReasonEl, "", "info");
+
       setTimeout(() => {
         window.location.href = "/index.html";
       }, 800);
@@ -169,6 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setMessage(msg, "❌ " + (err?.message || "Operation failed."), "error");
     } finally {
       if (btnSubmit) btnSubmit.disabled = false;
+      if (btnAuto) btnAuto.disabled = false;
     }
   });
 });

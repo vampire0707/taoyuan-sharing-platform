@@ -1,50 +1,42 @@
 // db.js (ESM)
+import mysql from "mysql2/promise";
 import dotenv from "dotenv";
+
+// 本機用 .env，Railway 沒有也沒關係
 dotenv.config();
 
-import mysql from "mysql2/promise";
-
-function pick(...keys) {
-  for (const k of keys) {
-    const v = process.env[k];
-    if (v !== undefined && v !== null && String(v).trim() !== "") return v;
+function createPool() {
+  // Railway / 雲端：直接用 MYSQL_URL（最穩）
+  if (process.env.MYSQL_URL) {
+    console.log("[DB] Using MYSQL_URL");
+    return mysql.createPool(process.env.MYSQL_URL);
   }
-  return null;
-}
 
-// ✅ 1) Railway 常用：MYSQL_URL / MYSQL_PUBLIC_URL / MYSQL_URL
-const mysqlUrl = pick("MYSQL_URL", "MYSQL_PUBLIC_URL", "MYSQLPRIVATE_URL", "MYSQLDATABASE_URL", "DATABASE_URL");
+  // 本機 fallback
+  const host = process.env.DB_HOST || process.env.MYSQLHOST;
+  const user = process.env.DB_USER || process.env.MYSQLUSER;
+  const password = process.env.DB_PASSWORD || process.env.MYSQLPASSWORD;
+  const database = process.env.DB_NAME || process.env.MYSQLDATABASE;
+  const port = Number(process.env.DB_PORT || process.env.MYSQLPORT || 3306);
 
-// ✅ 2) 走參數：Railway 的 MYSQLHOST/MYSQLUSER/... 或你原本 DB_HOST/DB_USER/...
-const host = pick("MYSQLHOST", "DB_HOST");
-const user = pick("MYSQLUSER", "DB_USER");
-const password = pick("MYSQLPASSWORD", "DB_PASSWORD");
-const database = pick("MYSQLDATABASE", "MYSQL_DATABASE", "DB_NAME");
-const portRaw = pick("MYSQLPORT", "DB_PORT");
-
-let pool;
-
-if (mysqlUrl) {
-  // mysql://user:pass@host:port/db
-  pool = mysql.createPool(mysqlUrl);
-} else {
-  if (!host || !user || !database) {
+  if (!host || !user || !password || !database) {
     throw new Error(
-      `[DB] Missing env vars. Provide MYSQL_URL (recommended) OR ` +
-      `MYSQLHOST/MYSQLUSER/MYSQLPASSWORD/MYSQLDATABASE (or DB_HOST/DB_USER/DB_PASSWORD/DB_NAME).`
+      "[DB] Missing env vars. Need MYSQL_URL or DB_HOST/DB_USER/DB_PASSWORD/DB_NAME"
     );
   }
 
-  pool = mysql.createPool({
+  console.log("[DB] Using discrete MySQL env vars");
+  return mysql.createPool({
     host,
     user,
-    password: password || "",
+    password,
     database,
-    port: Number(portRaw || 3306),
+    port,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0,
   });
 }
+
+const pool = createPool();
 
 export default pool;

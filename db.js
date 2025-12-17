@@ -1,124 +1,76 @@
-    at processParams (/app/node_modules/router/index.js:582:12)
-取得捐贈列表錯誤： Error
-    at next (/app/node_modules/router/index.js:291:5) {
-    at PromisePool.query (/app/node_modules/mysql2/lib/promise/pool.js:36:22)
-  code: 'ECONNREFUSED',
-    at file:///app/routes/donations.js:136:29
-  errno: undefined,
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-  sql: undefined,
-    at next (/app/node_modules/router/lib/route.js:157:13)
-  sqlState: undefined,
-    at Route.dispatch (/app/node_modules/router/lib/route.js:117:3)
-  sqlMessage: undefined
-    at handle (/app/node_modules/router/index.js:435:11)
+// db.js (ESM)
+import mysql from "mysql2/promise";
+
+function maskUrl(u) {
+  return String(u || "").replace(/\/\/(.*?):(.*?)@/, "//***:***@");
 }
-取得排行榜錯誤： Error
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at PromisePool.query (/app/node_modules/mysql2/lib/promise/pool.js:36:22)
-    at /app/node_modules/router/index.js:295:15
-    at file:///app/routes/donations.js:109:29
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at next (/app/node_modules/router/lib/route.js:157:13)
-    at Route.dispatch (/app/node_modules/router/lib/route.js:117:3)
-    at PromisePool.query (/app/node_modules/mysql2/lib/promise/pool.js:36:22)
-    at file:///app/routes/users.js:17:29
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at next (/app/node_modules/router/lib/route.js:157:13)
-    at requireUser (file:///app/routes/users.js:11:3)
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at next (/app/node_modules/router/lib/route.js:157:13)
-    at Route.dispatch (/app/node_modules/router/lib/route.js:117:3)
-    at handle (/app/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17) {
-  code: 'ECONNREFUSED',
-    at handle (/app/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at /app/node_modules/router/index.js:295:15
-    at processParams (/app/node_modules/router/index.js:582:12)
-    at next (/app/node_modules/router/index.js:291:5) {
-  code: 'ECONNREFUSED',
-  errno: undefined,
-  sql: undefined,
-  sqlState: undefined,
-  sqlMessage: undefined
+
+function env(name) {
+  return process.env[name];
 }
-GET /users/me error: Error
+
+function pickDbName() {
+  return env("MYSQLDATABASE") || env("MYSQL_DATABASE") || env("MYSQL_DATABASE_NAME");
 }
-  errno: undefined,
-取得捐贈列表錯誤： Error
-  sql: undefined,
-  sqlState: undefined,
-  sqlMessage: undefined
+
+function buildPoolOptions() {
+  // ✅ Railway 同專案內，最穩的是 MYSQL_URL（通常是 mysql.railway.internal:3306）
+  const url = env("MYSQL_URL") || env("DATABASE_URL");
+  if (url) {
+    console.log("[DB] MODE=url");
+    console.log("[DB] MYSQL_URL =", maskUrl(url));
+    return {
+      uri: url,
+      connectionLimit: Number(env("DB_POOL_SIZE") || 10),
+      waitForConnections: true,
+      enableKeepAlive: true,
+      keepAliveInitialDelay: 0,
+    };
+  }
+
+  const host = env("MYSQLHOST");
+  const user = env("MYSQLUSER");
+  const password = env("MYSQLPASSWORD");
+  const database = pickDbName();
+  const port = Number(env("MYSQLPORT") || 3306);
+
+  if (!host || !user || !password || !database) {
+    throw new Error(
+      "[DB] Missing env vars. Provide MYSQL_URL (recommended) OR MYSQLHOST/MYSQLUSER/MYSQLPASSWORD/MYSQLDATABASE."
+    );
+  }
+
+  console.log("[DB] MODE=vars");
+  console.log("[DB] HOST =", host);
+  console.log("[DB] PORT =", port);
+  console.log("[DB] DB   =", database);
+  console.log("[DB] USER =", user);
+
+  return {
+    host,
+    user,
+    password,
+    database,
+    port,
+    connectionLimit: Number(env("DB_POOL_SIZE") || 10),
+    waitForConnections: true,
+    enableKeepAlive: true,
+    keepAliveInitialDelay: 0,
+  };
 }
-取得我的商品錯誤： Error
-    at PromisePool.query (/app/node_modules/mysql2/lib/promise/pool.js:36:22)
-    at file:///app/routes/donations.js:226:29
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at next (/app/node_modules/router/lib/route.js:157:13)
-    at requireLogin (file:///app/routes/donations.js:91:3)
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at next (/app/node_modules/router/lib/route.js:157:13)
-    at Route.dispatch (/app/node_modules/router/lib/route.js:117:3)
-    at handle (/app/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17) {
-    at PromisePool.query (/app/node_modules/mysql2/lib/promise/pool.js:36:22)
-  code: 'ECONNREFUSED',
-  errno: undefined,
-  sql: undefined,
-  sqlState: undefined,
-  sqlMessage: undefined
-  sqlMessage: undefined
-}
-取得排行榜錯誤： Error
-    at PromisePool.query (/app/node_modules/mysql2/lib/promise/pool.js:36:22)
-    at file:///app/routes/donations.js:109:29
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at next (/app/node_modules/router/lib/route.js:157:13)
-    at Route.dispatch (/app/node_modules/router/lib/route.js:117:3)
-    at handle (/app/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at file:///app/routes/donations.js:136:29
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at next (/app/node_modules/router/lib/route.js:157:13)
-    at Route.dispatch (/app/node_modules/router/lib/route.js:117:3)
-    at handle (/app/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at /app/node_modules/router/index.js:295:15
-    at processParams (/app/node_modules/router/index.js:582:12)
-    at next (/app/node_modules/router/index.js:291:5) {
-  code: 'ECONNREFUSED',
-  errno: undefined,
-  sql: undefined,
-  sqlState: undefined,
-    at /app/node_modules/router/index.js:295:15
-    at processParams (/app/node_modules/router/index.js:582:12)
-    at next (/app/node_modules/router/index.js:291:5) {
-  code: 'ECONNREFUSED',
-  errno: undefined,
-  sql: undefined,
-  sqlState: undefined,
-  sqlMessage: undefined
-}
-    at Route.dispatch (/app/node_modules/router/lib/route.js:117:3)
-    at handle (/app/node_modules/router/index.js:435:11)
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at /app/node_modules/router/index.js:295:15
-    at processParams (/app/node_modules/router/index.js:582:12)
-    at next (/app/node_modules/router/index.js:291:5) {
-  code: 'ECONNREFUSED',
-取得捐贈列表錯誤： Error
-  errno: undefined,
-    at PromisePool.query (/app/node_modules/mysql2/lib/promise/pool.js:36:22)
-  sql: undefined,
-    at file:///app/routes/donations.js:136:29
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-  sqlState: undefined,
-    at next (/app/node_modules/router/lib/route.js:157:13)
-  sqlMessage: undefined
-}
-取得排行榜錯誤： Error
-    at PromisePool.query (/app/node_modules/mysql2/lib/promise/pool.js:36:22)
-    at file:///app/routes/donations.js:109:29
-    at Layer.handleRequest (/app/node_modules/router/lib/layer.js:152:17)
-    at next (/app/node_modules/router/lib/route.js:157:13)
+
+const pool = mysql.createPool(buildPoolOptions());
+
+// ✅ 開機測試（不會讓程式崩潰，只印出錯誤）
+(async () => {
+  try {
+    const c = await pool.getConnection();
+    await c.ping();
+    c.release();
+    console.log("[DB] ✅ Connected & ping OK");
+  } catch (e) {
+    console.error("[DB] ❌ Connect/Ping failed:", e?.code || e?.message, e);
+  }
+})();
+
+export default pool;

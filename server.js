@@ -28,6 +28,12 @@ app.use(express.urlencoded({ extended: true }));
 // ===============================
 app.use(express.static(__dirname));
 
+
+app.use((req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  next();
+});
+
 // ===============================
 // Upload API (save files to /uploads, DB stores path)
 // ===============================

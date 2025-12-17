@@ -3,30 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register - Taoyuan Sharing Platform</title>
+  <title data-i18n="auth_register_title">Register - Taoyuan Sharing Platform</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
+
 <body class="page-center">
   <div class="container" style="max-width:520px;display:block;">
     <div class="highlight-box">
-      <h2 style="margin-top:0;">Register</h2>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <h2 data-i18n="auth_register_h2" style="margin-top:0;">Register</h2>
+        <button type="button" class="nav-btn" id="langToggle">中 / EN</button>
+      </div>
 
       <form id="registerPageForm">
-        <label>Email</label>
+        <label data-i18n="auth_email_label">Email</label>
         <input type="email" id="reg_username" required />
 
-        <label>Password</label>
+        <label data-i18n="auth_password_label">Password</label>
         <input type="password" id="reg_password" required />
 
-        <button type="submit">Register</button>
-        <p style="margin:0;opacity:.8;">Already have an account? <a href="/login.html">Login</a></p>
-        <p style="margin:0;opacity:.8;"><a href="/">Back to Home</a></p>
+        <button type="submit" data-i18n="auth_register_btn">Register</button>
+
+        <p style="margin:0;opacity:.8;">
+          <span data-i18n="auth_have_account">Already have an account?</span>
+          <a href="/login.html" data-i18n="auth_login_link">Login</a>
+        </p>
+
+        <p style="margin:0;opacity:.8;">
+          <a href="/" data-i18n="auth_back_home">Back to Home</a>
+        </p>
 
         <div id="msg" style="margin-top:10px;"></div>
       </form>
     </div>
   </div>
 
-  <script src="auth-pages.js"></script>
+  <!-- i18n -->
+  <script src="/i18n.js"></script>
+  <script src="/auth-pages.js"></script>
+  <script src="/i18n-pages.js"></script>
 </body>
 </html>

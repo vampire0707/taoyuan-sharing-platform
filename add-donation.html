@@ -1,205 +1,104 @@
-// add-donation.js
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="addDonation_title">Add Donation</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
 
-const form = document.getElementById("donationForm");
-const msg = document.getElementById("msg");
+<body class="page-center">
+  <div class="container" style="max-width: 760px;">
+    <div class="highlight-box" style="width:100%; padding:22px; border-radius:16px;">
 
-const loginWarning = document.getElementById("login-warning");
-const btnSubmit = document.getElementById("btn-submit");
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px;">
+        <h1 data-i18n="addDonation_title" style="margin:0; text-align:center; flex:1;">Add Donation Item</h1>
+        <button type="button" class="nav-btn" id="langToggle">中 / EN</button>
+      </div>
 
-const elCategory = document.getElementById("category");
-const elItemName = document.getElementById("item_name");
-const elQuantity = document.getElementById("quantity");
-const elArea = document.getElementById("area");
-const elPickup = document.getElementById("pickup_location");
-const elDesc = document.getElementById("description");
+      <!-- Not logged in warning -->
+      <div id="login-warning" style="display:none; margin: 0 0 12px; padding: 10px 12px; border-radius: 10px; background:#fff3e8;">
+        <strong data-i18n="addDonation_loginWarn" style="color:#b00020;">❌ You are not logged in. You cannot post a donation.</strong>
+        <div style="margin-top:8px; display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="nav-btn" href="/login.html" data-i18n="addDonation_goLogin">Go to Login</a>
+          <a class="nav-btn" href="/index.html" data-i18n="addDonation_backHome">Back to Home</a>
+        </div>
+      </div>
 
-const imageFile = document.getElementById("image_file");
-const uploadMsg = document.getElementById("upload_msg");
-const imgPreview = document.getElementById("img_preview");
+      <form id="donationForm">
+        <div class="form-group">
+          <label for="category" data-i18n="addDonation_category">Category *</label>
 
-const btnAuto = document.getElementById("btnAutoClassify");
-const aiBadge = document.getElementById("aiBadge");
-const aiCategory = document.getElementById("aiCategory");
-const aiConfidence = document.getElementById("aiConfidence");
-const aiReason = document.getElementById("aiReason");
+          <!-- ⚠️ option 不塞 span，翻譯由 i18n-pages.js 改 option.textContent -->
+          <select id="category" required>
+            <option value="" selected disabled>Select a category</option>
+            <option value="food">🍎 Food</option>
+            <option value="clothes">👕 Clothes</option>
+            <option value="books">📚 Books</option>
+            <option value="furniture">🪑 Furniture</option>
+            <option value="household">🏠 Household</option>
+            <option value="others">✨ Others</option>
+          </select>
 
-let uploadedImageUrl = null;
-let aiResult = null;
+          <!-- AI Auto Classify -->
+          <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <button type="button" id="btnAutoClassify" class="nav-btn" data-i18n="addDonation_aiBtn">🤖 AI Auto Classify</button>
+            <span id="aiBadge" style="display:none; padding:6px 10px; border-radius:999px; background:#1b1b2a; border:1px solid rgba(255,255,255,.12);">
+              <span data-i18n="addDonation_aiLabel">AI</span>:
+              <b id="aiCategory"></b> |
+              <span data-i18n="addDonation_confLabel">conf</span>:
+              <b id="aiConfidence"></b>
+            </span>
+          </div>
+          <div id="aiReason" class="message" style="min-height:18px; margin-top:6px;"></div>
+        </div>
 
-function getLoggedInUser() {
-  try {
-    return JSON.parse(localStorage.getItem("user") || "null");
-  } catch {
-    return null;
-  }
-}
+        <div class="form-group">
+          <label for="item_name" data-i18n="addDonation_itemName">Item Name *</label>
+          <input id="item_name" required />
+        </div>
 
-function setMessage(text, ok = false) {
-  msg.textContent = text || "";
-  msg.style.color = ok ? "#7CFCB2" : "#ffb4a2";
-}
+        <div class="form-group">
+          <label for="quantity" data-i18n="addDonation_quantity">Quantity *</label>
+          <input id="quantity" type="number" min="1" step="1" value="1" required />
+        </div>
 
-function setUploadMessage(text, ok = false) {
-  uploadMsg.textContent = text || "";
-  uploadMsg.style.color = ok ? "#7CFCB2" : "#ffb4a2";
-}
+        <div class="form-group">
+          <label for="area" data-i18n="addDonation_area">Area</label>
+          <input id="area" data-i18n-ph="addDonation_area_ph" placeholder="e.g., Taoyuan / Zhongli" />
+        </div>
 
-function showAI(data) {
-  aiResult = data;
-  aiBadge.style.display = "inline-block";
-  aiCategory.textContent = data.category;
-  aiConfidence.textContent = data.confidence;
-  aiReason.textContent = data.reason || "";
+        <div class="form-group">
+          <label for="pickup_location" data-i18n="addDonation_pickup">Pickup Location</label>
+          <input id="pickup_location" data-i18n-ph="addDonation_pickup_ph" placeholder="e.g., Zhongli Station / YZU Main Gate" />
+        </div>
 
-  // auto fill category if option exists
-  const opt = Array.from(elCategory.options).some((o) => o.value === data.category);
-  if (opt) elCategory.value = data.category;
-}
+        <div class="form-group">
+          <label for="image_file" data-i18n="addDonation_image">Image Upload</label>
+          <input id="image_file" type="file" accept="image/*" />
+          <div id="upload_msg" class="message" style="min-height:18px; margin-top:6px;"></div>
+          <img id="img_preview" alt="preview" style="display:none; max-width:220px; border-radius:12px; margin-top:10px;" />
+        </div>
 
-// ---------------
-// Auth check
-// ---------------
-const user = getLoggedInUser();
-if (!user?.user_id) {
-  loginWarning.style.display = "block";
-  btnSubmit.disabled = true;
-  form.querySelectorAll("input, select, textarea, button").forEach((el) => {
-    if (el.id !== "btnAutoClassify") el.disabled = true;
-  });
-} else {
-  loginWarning.style.display = "none";
-}
+        <div class="form-group">
+          <label for="description" data-i18n="addDonation_desc">Description</label>
+          <textarea id="description" data-i18n-ph="addDonation_desc_ph" placeholder="Condition, size, notes..."></textarea>
+        </div>
 
-// ---------------
-// Image upload on change
-// ---------------
-imageFile?.addEventListener("change", async () => {
-  const file = imageFile.files?.[0];
-  if (!file) return;
+        <button id="btn-submit" type="submit" data-i18n="addDonation_submit">Submit</button>
 
-  setUploadMessage("Uploading image...", true);
+        <div id="msg" class="message" style="min-height:18px;"></div>
 
-  try {
-    const fd = new FormData();
-    fd.append("image", file); // server.js expects key = "image"
+        <div style="margin-top:10px; display:flex; gap:10px; flex-wrap:wrap;">
+          <a class="nav-btn" href="/index.html" data-i18n="addDonation_back">⬅ Back to Home</a>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    const res = await fetch("/api/upload", {
-      method: "POST",
-      body: fd,
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data?.message || "Upload failed");
-
-    uploadedImageUrl = data.image_url;
-    setUploadMessage("✅ Upload success", true);
-
-    imgPreview.src = uploadedImageUrl;
-    imgPreview.style.display = "block";
-  } catch (e) {
-    console.error(e);
-    uploadedImageUrl = null;
-    imgPreview.style.display = "none";
-    setUploadMessage("❌ Upload failed: " + (e.message || "unknown error"));
-  }
-});
-
-// ---------------
-// AI Auto Classify
-// ---------------
-btnAuto?.addEventListener("click", async () => {
-  const item_name = elItemName.value.trim();
-  const description = elDesc.value.trim();
-
-  if (!item_name && !description) {
-    aiReason.textContent = "Please enter item name or description first.";
-    return;
-  }
-
-  aiReason.textContent = "Classifying...";
-  aiBadge.style.display = "none";
-
-  try {
-    const res = await fetch("/api/donations/classify", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ item_name, description }),
-    });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data?.message || "Classify failed");
-
-    showAI(data);
-  } catch (e) {
-    console.error(e);
-    aiReason.textContent = "❌ Classify failed: " + (e.message || "unknown error");
-  }
-});
-
-// ---------------
-// Submit donation
-// ---------------
-form?.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  setMessage("");
-
-  const user = getLoggedInUser();
-  if (!user?.user_id) {
-    setMessage("❌ You are not logged in.");
-    return;
-  }
-
-  const payload = {
-    donor_id: Number(user.user_id),
-    item_name: elItemName.value.trim(),
-    quantity: Number(elQuantity.value || 1),
-    area: elArea.value.trim() || null,
-    pickup_location: elPickup.value.trim() || null,
-    description: elDesc.value.trim() || null,
-    image_url: uploadedImageUrl || null,
-
-    // AI fields (optional)
-    category: aiResult?.category || elCategory.value || null,
-    ai_confidence: aiResult?.confidence ?? null,
-    ai_reason: aiResult?.reason || null,
-  };
-
-  if (!payload.item_name || !payload.quantity) {
-    setMessage("❌ Item Name and Quantity are required.");
-    return;
-  }
-
-  // category is required in HTML select, so ensure it has a value
-  if (!payload.category) {
-    setMessage("❌ Category is required (you can choose manually or use AI Auto Classify).");
-    return;
-  }
-
-  try {
-    const res = await fetch("/api/donations", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data?.message || "Create failed");
-
-    setMessage("✅ Donation posted successfully!", true);
-
-    // If backend also returns ai, reflect it
-    if (data?.ai?.category) showAI(data.ai);
-
-    // optional: reset
-    form.reset();
-    uploadedImageUrl = null;
-    imgPreview.style.display = "none";
-    setUploadMessage("");
-    // keep AI view cleared
-    aiResult = null;
-    aiBadge.style.display = "none";
-    aiReason.textContent = "";
-  } catch (e) {
-    console.error(e);
-    setMessage("❌ Submit failed: " + (e.message || "unknown error"));
-  }
-});
+  <!-- scripts 放底部 -->
+  <script src="/i18n.js"></script>
+  <script src="/add-donation.js"></script>
+  <script src="/i18n-pages.js"></script>
+</body>
+</html>

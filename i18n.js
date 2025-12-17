@@ -139,6 +139,76 @@ const I18N = {
     geolocation_not_supported: "Geolocation is not supported by your browser.",
     location_failed: "Unable to retrieve your location.",
     no_items_category: "No items in this category yet.",
+
+    // ===== pages: common / addDonation / profile (NEW) =====
+    common_home: "Home",
+    common_back: "Back",
+
+    addDonation_title: "Add Donation Item",
+    addDonation_loginWarn: "❌ You are not logged in. You cannot post a donation.",
+    addDonation_goLogin: "Go to Login",
+    addDonation_backHome: "Back to Home",
+    addDonation_category: "Category *",
+    addDonation_category_placeholder: "Select a category",
+    addDonation_aiBtn: "🤖 AI Auto Classify",
+    addDonation_aiLabel: "AI",
+    addDonation_confLabel: "conf",
+    addDonation_itemName: "Item Name *",
+    addDonation_quantity: "Quantity *",
+    addDonation_area: "Area",
+    addDonation_area_ph: "e.g., Taoyuan / Zhongli",
+    addDonation_pickup: "Pickup Location",
+    addDonation_pickup_ph: "e.g., Zhongli Station / YZU Main Gate",
+    addDonation_image: "Image Upload",
+    addDonation_desc: "Description",
+    addDonation_desc_ph: "Condition, size, notes...",
+    addDonation_submit: "Submit",
+    addDonation_back: "⬅ Back to Home",
+
+    profile_title: "My Profile",
+    profile_header: "👤 My Profile",
+    profile_stats: "📊 My Stats",
+    profile_myDonations: "📦 My Donations",
+    profile_phone: "Phone",
+    profile_phone_ph: "Your phone",
+    profile_address: "Address",
+    profile_address_ph: "Your address",
+    profile_bio: "Bio / Self-intro",
+    profile_bio_ph: "Introduce yourself...",
+    profile_save: "Save",
+    profile_xp: "XP",
+    profile_totalListings: "Total Listings",
+    profile_totalQty: "Total Qty",
+    profile_table_id: "ID",
+    profile_table_name: "Name",
+    profile_table_qty: "Qty",
+    profile_table_area: "Area",
+    profile_table_pickup: "Pickup",
+    profile_table_actions: "Actions",
+    profile_edit: "✏️ Edit Donation",
+    profile_close: "Close",
+    profile_edit_name: "Item Name",
+    profile_edit_qty: "Qty",
+    profile_edit_area: "Area",
+    profile_edit_pickup: "Pickup Location",
+    profile_edit_img: "Image URL",
+    profile_edit_desc: "Description",
+    profile_edit_save: "Save Changes",
+    // ===== auth pages (login/register) =====
+    auth_login_title: "Login - Taoyuan Sharing Platform",
+    auth_login_h2: "Login",
+    auth_login_btn: "Login",
+    auth_register_title: "Register - Taoyuan Sharing Platform",
+    auth_register_h2: "Register",
+    auth_register_btn: "Register",
+    auth_email_label: "Email",
+    auth_password_label: "Password",
+    auth_have_account: "Already have an account?",
+    auth_login_link: "Login",
+    auth_no_account: "No account?",
+    auth_register_link: "Register",
+    auth_back_home: "Back to Home",
+    
   },
 
   zh: {
@@ -277,6 +347,76 @@ const I18N = {
     geolocation_not_supported: "你的瀏覽器不支援定位功能。",
     location_failed: "無法取得你的定位。",
     no_items_category: "此分類目前沒有物資。",
+
+    // ===== pages: common / addDonation / profile (NEW) =====
+    common_home: "首頁",
+    common_back: "返回",
+
+    addDonation_title: "新增捐贈商品",
+    addDonation_loginWarn: "❌ 尚未登入，無法發佈捐贈。",
+    addDonation_goLogin: "前往登入",
+    addDonation_backHome: "回到首頁",
+    addDonation_category: "分類 *",
+    addDonation_category_placeholder: "請選擇分類",
+    addDonation_aiBtn: "🤖 AI 自動分類",
+    addDonation_aiLabel: "AI",
+    addDonation_confLabel: "信心",
+    addDonation_itemName: "品名 *",
+    addDonation_quantity: "數量 *",
+    addDonation_area: "區域",
+    addDonation_area_ph: "例：桃園 / 中壢",
+    addDonation_pickup: "取貨地點",
+    addDonation_pickup_ph: "例：中壢車站 / 元智大學校門口",
+    addDonation_image: "上傳圖片",
+    addDonation_desc: "描述",
+    addDonation_desc_ph: "狀況、尺寸、備註…",
+    addDonation_submit: "送出",
+    addDonation_back: "⬅ 返回首頁",
+
+    profile_title: "個人資料",
+    profile_header: "👤 我的個人資料",
+    profile_stats: "📊 我的統計",
+    profile_myDonations: "📦 我的捐贈",
+    profile_phone: "電話",
+    profile_phone_ph: "請輸入電話",
+    profile_address: "地址",
+    profile_address_ph: "請輸入地址",
+    profile_bio: "自我介紹",
+    profile_bio_ph: "簡單介紹一下你自己…",
+    profile_save: "儲存",
+    profile_xp: "經驗值",
+    profile_totalListings: "上架數",
+    profile_totalQty: "總數量",
+    profile_table_id: "編號",
+    profile_table_name: "名稱",
+    profile_table_qty: "數量",
+    profile_table_area: "區域",
+    profile_table_pickup: "取貨",
+    profile_table_actions: "操作",
+    profile_edit: "✏️ 編輯捐贈",
+    profile_close: "關閉",
+    profile_edit_name: "品名",
+    profile_edit_qty: "數量",
+    profile_edit_area: "區域",
+    profile_edit_pickup: "取貨地點",
+    profile_edit_img: "圖片網址",
+    profile_edit_desc: "描述",
+    profile_edit_save: "儲存變更",
+    // ===== auth pages (login/register) =====
+    auth_login_title: "登入 - 桃園共享平台",
+    auth_login_h2: "登入",
+    auth_login_btn: "登入",
+    auth_register_title: "註冊 - 桃園共享平台",
+    auth_register_h2: "註冊",
+    auth_register_btn: "註冊",
+    auth_email_label: "Email（帳號）",
+    auth_password_label: "密碼",
+    auth_have_account: "已經有帳號？",
+    auth_login_link: "登入",
+    auth_no_account: "還沒有帳號？",
+    auth_register_link: "註冊",
+    auth_back_home: "返回首頁",
+
   },
 };
 
@@ -301,26 +441,27 @@ function applyLang(lang) {
   const use = I18N[lang] ? lang : "en";
   const dict = I18N[use];
 
-  // ✅ 1) data-i18n（推薦）
+  // ✅ 1) data-i18n
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.getAttribute("data-i18n");
     const text = (dict && dict[key]) ?? (I18N.en && I18N.en[key]);
     if (text != null) el.textContent = text;
   });
 
-  // ✅ 2) 兼容 id = key（你舊版也能繼續用）
+  // ✅ 2) 兼容 id = key（舊版仍可用）
   Object.keys(dict).forEach((key) => {
     const el = document.getElementById(key);
     if (el) el.textContent = dict[key];
   });
 
-  // ✅ placeholders（保留）
-  const email = document.getElementById("inline-auth-email");
-  const pass = document.getElementById("inline-auth-password");
-  if (email) email.placeholder = use === "zh" ? "Email（帳號）" : "Email (username)";
-  if (pass) pass.placeholder = use === "zh" ? "密碼" : "Password";
+  // ✅ 3) placeholders（通用：data-i18n-ph）
+  document.querySelectorAll("[data-i18n-ph]").forEach((el) => {
+    const key = el.getAttribute("data-i18n-ph");
+    const text = (dict && dict[key]) ?? (I18N.en && I18N.en[key]);
+    if (text != null) el.placeholder = text;
+  });
 
-  // ✅ 通知 script.js 重畫動態內容
+  // ✅ 4) 通知 script.js / 其他頁重畫動態內容
   document.dispatchEvent(new CustomEvent("languageChange", { detail: { lang: use } }));
 }
 

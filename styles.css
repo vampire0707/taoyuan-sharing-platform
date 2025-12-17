@@ -926,3 +926,18 @@ body.page-center {
   width: 100%;
 }
 
+select option {
+  color: #222 !important;
+  background: #fff;
+}
+
+header, .feature-card, .highlight-box, form, #item-modal .modal-content,
+.services-box, .events-box, .about-box, .wrapper {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.logo {
+  -webkit-user-select: none;
+  user-select: none;
+}

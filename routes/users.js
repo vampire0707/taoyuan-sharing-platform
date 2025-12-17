@@ -11,16 +11,25 @@ function requireUser(req, res, next) {
   next();
 }
 
+// 取得個人資料
 router.get("/me", requireUser, async (req, res) => {
   try {
     const [rows] = await db.query(
-      `SELECT user_id, username, email,
-              phone, address, bio
+      `SELECT
+         user_id,
+         username,
+         phone,
+         address,
+         bio
        FROM users
        WHERE user_id=?`,
       [req.userId]
     );
-    if (!rows.length) return res.status(404).json({ message: "User not found" });
+
+    if (!rows.length) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
     res.json(rows[0]);
   } catch (err) {
     console.error("GET /users/me error:", err);
@@ -28,6 +37,7 @@ router.get("/me", requireUser, async (req, res) => {
   }
 });
 
+// 更新個人資料
 router.put("/me", requireUser, async (req, res) => {
   try {
     const { phone, address, bio } = req.body;
@@ -46,6 +56,7 @@ router.put("/me", requireUser, async (req, res) => {
   }
 });
 
+// 個人統計
 router.get("/me/stats", requireUser, async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -57,6 +68,7 @@ router.get("/me/stats", requireUser, async (req, res) => {
        WHERE donor_id=?`,
       [req.userId]
     );
+
     res.json(rows[0] || { listings: 0, total_qty: 0, xp: 0 });
   } catch (err) {
     console.error("GET /users/me/stats error:", err);

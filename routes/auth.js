@@ -1,4 +1,4 @@
-// routes/auth.js
+// routes/auth.js (ESM)
 import express from "express";
 import bcrypt from "bcrypt";
 import db from "../db.js";
@@ -10,18 +10,17 @@ const router = express.Router();
 // =======================
 router.post("/register", async (req, res) => {
   try {
-    const { username, password, identity, student_id } = req.body;
+    const username = String(req.body?.username || "").trim();
+    const password = String(req.body?.password || "");
+    const identity = (req.body?.identity || "external")?.toString();
+    const student_id = req.body?.student_id ?? null;
 
     if (!username || !password) {
       return res.status(400).json({ message: "Username and password are required." });
     }
 
     // 1) 檢查帳號是否已存在
-    const [existing] = await db.query(
-      "SELECT user_id FROM users WHERE username = ?",
-      [username]
-    );
-
+    const [existing] = await db.query("SELECT user_id FROM users WHERE username = ?", [username]);
     if (existing.length > 0) {
       return res.status(409).json({ message: "Account already exists." });
     }
@@ -29,7 +28,7 @@ router.post("/register", async (req, res) => {
     // 2) 密碼加密
     const hashed = await bcrypt.hash(password, 10);
 
-    // 3) 寫入 users 資料表
+    // 3) 寫入 users
     const [result] = await db.query(
       `INSERT INTO users (username, password, identity, student_id)
        VALUES (?, ?, ?, ?)`,
@@ -55,7 +54,8 @@ router.post("/register", async (req, res) => {
 // =======================
 router.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const username = String(req.body?.username || "").trim();
+    const password = String(req.body?.password || "");
 
     if (!username || !password) {
       return res.status(400).json({ message: "Username and password are required." });
@@ -95,4 +95,3 @@ router.post("/login", async (req, res) => {
 });
 
 export default router;
-

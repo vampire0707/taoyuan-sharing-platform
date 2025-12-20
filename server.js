@@ -1,11 +1,19 @@
-import dotenv from "dotenv";
-dotenv.config();
-
 import express from "express";
 import path from "path";
 import cors from "cors";
 import multer from "multer";
 import fs from "fs";
+import requestRoutes from "./routes/requests.js";
+import dotenv from "dotenv";
+
+console.log("✅ RUNNING server.js from:", new URL(import.meta.url).pathname);
+dotenv.config();
+
+
+console.log("✅ mounting /api/requests");
+console.log("✅ requestRoutes type:", typeof requestRoutes);
+
+
 
 // ESM 下沒有 __dirname，要自己做
 import { fileURLToPath } from "url";
@@ -25,6 +33,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use("/api/ai", aiRoutes);
+app.use("/api/requests", requestRoutes);
+
 
 
 // ===============================

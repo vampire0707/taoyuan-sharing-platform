@@ -34,6 +34,38 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
+/**
+ * ✅ Safe fetch JSON helper
+ * - 避免 404/500 回 HTML 卻 res.json() 爆炸
+ * - 會把錯誤印在 console
+ */
+async function safeFetchJson(url, options = {}) {
+  const res = await fetch(url, options);
+  const contentType = res.headers.get("content-type") || "";
+  const isJson = contentType.includes("application/json");
+
+  const rawText = await res.text();
+  let data = null;
+
+  if (isJson) {
+    try {
+      data = rawText ? JSON.parse(rawText) : null;
+    } catch (e) {
+      console.error("❌ JSON parse failed:", url, rawText);
+      throw new Error("Invalid JSON from server");
+    }
+  } else {
+    data = { message: rawText };
+  }
+
+  if (!res.ok) {
+    console.error("❌ API error:", res.status, url, data);
+    throw new Error(data?.message || `HTTP ${res.status}`);
+  }
+
+  return data;
+}
+
 // -----------------------
 // Elements
 // -----------------------
@@ -75,20 +107,12 @@ async function loadProfileAndStats() {
   }
 
   try {
-    // 1) Profile
-    const res1 = await fetch("/api/users/me", { headers: authHeaders() });
-    const data1 = await res1.json();
-    if (!res1.ok) throw new Error(data1?.message || "Load profile failed");
-
+    const data1 = await safeFetchJson("/api/users/me", { headers: authHeaders() });
     pfPhone.value = data1.phone || "";
     pfAddress.value = data1.address || "";
     pfBio.value = data1.bio || "";
 
-    // 2) Stats
-    const res2 = await fetch("/api/users/me/stats", { headers: authHeaders() });
-    const data2 = await res2.json();
-    if (!res2.ok) throw new Error(data2?.message || "Load stats failed");
-
+    const data2 = await safeFetchJson("/api/users/me/stats", { headers: authHeaders() });
     stXp.textContent = data2.xp ?? 0;
     stListings.textContent = data2.listings ?? 0;
     stQty.textContent = data2.total_qty ?? 0;
@@ -119,14 +143,11 @@ async function saveProfile(e) {
       bio: pfBio.value.trim(),
     };
 
-    const res = await fetch("/api/users/me", {
+    await safeFetchJson("/api/users/me", {
       method: "PUT",
       headers: authHeaders(),
       body: JSON.stringify(payload),
     });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data?.message || "Save failed");
 
     setText(msgProfile, "✅ Profile saved.", true);
     await loadProfileAndStats();
@@ -171,11 +192,9 @@ async function loadMyItems() {
   setText(msgMyItems, "Loading...", true);
 
   try {
-    const res = await fetch("/api/donations/mine", {
+    const data = await safeFetchJson("/api/donations/mine", {
       headers: { "x-user-id": String(user.user_id) },
     });
-    const data = await res.json();
-    if (!res.ok) throw new Error(data?.message || "Load my items failed");
 
     if (!Array.isArray(data) || data.length === 0) {
       renderMyItems([]);
@@ -214,11 +233,10 @@ function closeEditModal() {
 
 async function getMineMapById() {
   const user = getLoggedInUser();
-  const res = await fetch("/api/donations/mine", {
+  const data = await safeFetchJson("/api/donations/mine", {
     headers: { "x-user-id": String(user?.user_id || "") },
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data?.message || "Load mine failed");
+
   const map = new Map();
   data.forEach((x) => map.set(Number(x.donation_id), x));
   return map;
@@ -243,12 +261,10 @@ async function handleTableClick(e) {
       if (!confirm("Delete this item?")) return;
 
       const user = getLoggedInUser();
-      const res = await fetch(`/api/donations/${id}`, {
+      await safeFetchJson(`/api/donations/${id}`, {
         method: "DELETE",
         headers: { "x-user-id": String(user?.user_id || "") },
       });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || "Delete failed");
 
       await loadMyItems();
     }
@@ -278,14 +294,11 @@ async function submitEdit(e) {
       description: edDesc.value.trim() || null,
     };
 
-    const res = await fetch(`/api/donations/${id}`, {
+    await safeFetchJson(`/api/donations/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json", "x-user-id": String(user.user_id) },
       body: JSON.stringify(payload),
     });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data?.message || "Update failed");
 
     setText(editMsg, "✅ Updated.", true);
     closeEditModal();
@@ -296,16 +309,150 @@ async function submitEdit(e) {
   }
 }
 
-// -----------------------
-// Init
-// -----------------------
-document.getElementById("profile-form")?.addEventListener("submit", saveProfile);
-tbody?.addEventListener("click", handleTableClick);
-editClose?.addEventListener("click", closeEditModal);
-editModal?.addEventListener("click", (e) => {
-  if (e.target === editModal) closeEditModal();
-});
-editForm?.addEventListener("submit", submitEdit);
+// ===============================
+// NEW: Request / Claim features
+// (APPENDED - do not remove existing code)
+// ===============================
 
-loadProfileAndStats();
-loadMyItems();
+// DOM elements (optional: only render if exists)
+const myClaimsList = document.getElementById("my-claims");
+const myItemRequestsList = document.getElementById("my-item-requests");
+
+// -------------------------------
+// My Claims (Requester)
+// -------------------------------
+async function loadMyClaims() {
+  if (!myClaimsList) return;
+  const user = getLoggedInUser();
+  if (!user?.user_id) return;
+
+  try {
+    const data = await safeFetchJson(`/api/requests/me/claims?user_id=${user.user_id}`, {
+      headers: authHeaders(),
+    });
+
+    myClaimsList.innerHTML =
+      Array.isArray(data) && data.length
+        ? data
+            .map(
+              (r) => `
+              <li style="margin:6px 0;">
+                ${escapeHtml(r.item_name)} —
+                <b>${escapeHtml(r.status)}</b>
+              </li>
+            `
+            )
+            .join("")
+        : "<li>No claims yet.</li>";
+  } catch (e) {
+    console.error(e);
+    myClaimsList.innerHTML = "<li>Failed to load claims.</li>";
+  }
+}
+
+// -------------------------------
+// My Item Requests (Donor)
+// -------------------------------
+async function loadMyItemRequests() {
+  if (!myItemRequestsList) return;
+  const user = getLoggedInUser();
+  if (!user?.user_id) return;
+
+  try {
+    const data = await safeFetchJson(`/api/requests/me/item-requests?user_id=${user.user_id}`, {
+      headers: authHeaders(),
+    });
+
+    myItemRequestsList.innerHTML =
+      Array.isArray(data) && data.length
+        ? data
+            .map((r) => {
+              const disabled = r.status !== "pending" ? "disabled" : "";
+              const note =
+                r.status === "approved"
+                  ? "✅ approved"
+                  : r.status === "rejected"
+                  ? "❌ rejected"
+                  : "⏳ pending";
+
+              return `
+                <li style="margin:10px 0; line-height:1.5;">
+                  <div>
+                    ${escapeHtml(r.item_name)} — requested by <b>${escapeHtml(r.requester_name || "")}</b>
+                    <span style="margin-left:8px; opacity:.85;">(${escapeHtml(note)})</span>
+                  </div>
+
+                  <div style="margin-top:6px; display:flex; gap:8px;">
+                    <!-- ✅ 重點：type=button，避免觸發 profile-form submit -->
+                    <button type="button"
+                      data-reqid="${r.request_id}"
+                      data-status="approved"
+                      ${disabled}
+                    >Approve</button>
+
+                    <button type="button"
+                      data-reqid="${r.request_id}"
+                      data-status="rejected"
+                      ${disabled}
+                    >Reject</button>
+                  </div>
+                </li>
+              `;
+            })
+            .join("")
+        : "<li>No requests yet.</li>";
+  } catch (e) {
+    console.error(e);
+    myItemRequestsList.innerHTML = "<li>Failed to load item requests.</li>";
+  }
+}
+
+// -------------------------------
+// Click handler (event delegation)
+// -------------------------------
+async function onRequestActionClick(e) {
+  const btn = e.target.closest("button[data-reqid][data-status]");
+  if (!btn) return;
+
+  const requestId = Number(btn.getAttribute("data-reqid"));
+  const status = btn.getAttribute("data-status");
+
+  // 防呆
+  if (!requestId || !status) return;
+
+  // 先 disable，避免連點
+  btn.disabled = true;
+
+  try {
+    const user = getLoggedInUser();
+    console.log("✅ click update:", { requestId, status, userId: user?.user_id });
+
+    // ✅ 用 safeFetchJson（避免回傳非 JSON 時爆炸）
+    await safeFetchJson(`/api/requests/${requestId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "x-user-id": String(user?.user_id || ""),
+      },
+      body: JSON.stringify({ status }),
+    });
+
+    // ✅ 更新成功後重刷
+    await loadMyItemRequests();
+    await loadMyClaims();
+  } catch (err) {
+    console.error("❌ update failed:", err);
+    alert("Update failed: " + (err?.message || "unknown"));
+    btn.disabled = false;
+  }
+}
+
+// 綁事件（有區塊才綁）
+myItemRequestsList?.addEventListener("click", onRequestActionClick);
+
+// -------------------------------
+// Init (append-only)
+// -------------------------------
+loadMyClaims();
+loadMyItemRequests();
+

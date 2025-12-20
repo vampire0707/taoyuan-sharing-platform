@@ -1,7 +1,11 @@
 // ===============================
-// add-donation.js (EN FINAL + Image Upload + AI Auto Classify)
+// add-donation.js (EN FINAL + Image Upload + AI Auto Classify + i18n)
 // ===============================
 const API_BASE = ""; // same domain
+
+function T(key) {
+  return window.i18n?.t?.(key) || key;
+}
 
 function getLoggedInUser() {
   try {
@@ -21,6 +25,15 @@ function setMessage(el, text, type = "info") {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+
+  // ⭐⭐⭐ 這一段就是「把 add-donation 接回 i18n 的家」
+  if (window.i18n?.applyLang) {
+    window.i18n.applyLang(window.i18n.getLang());
+  }
+
+  // 下面才是你原本的程式
+  });
+
   const form = document.getElementById("donationForm");
   const msg = document.getElementById("msg");
   const btnSubmit = document.getElementById("btn-submit");
@@ -60,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    setMessage(msg, "Please login first to post a donation.", "error");
+    setMessage(msg, T("addDonation_login_first"), "error");
     return;
   }
 
@@ -74,10 +87,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const description = (descEl?.value || "").trim();
 
     if (!item_name && !description) {
-      throw new Error("Please enter item name or description first.");
+      throw new Error(T("addDonation_ai_need_input"));
     }
 
-    if (aiReasonEl) setMessage(aiReasonEl, "AI classifying...", "info");
+    if (aiReasonEl) setMessage(aiReasonEl, T("addDonation_ai_classifying"), "info");
 
     const res = await fetch(`${API_BASE}/api/ai/classify`, {
       method: "POST",
@@ -86,12 +99,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.ok) throw new Error(data.error || "AI classify failed.");
+    if (!res.ok || !data.ok) throw new Error(data.error || T("addDonation_ai_failed"));
 
     // ✅ write back to select
     if (categoryEl) {
       const exists = Array.from(categoryEl.options).some((o) => o.value === data.category);
-      if (!exists) throw new Error(`AI returned "${data.category}" but category list has no such option.`);
+      if (!exists) throw new Error(`${T("addDonation_ai_bad_category")} ${data.category}`);
       categoryEl.value = data.category;
       categoryEl.setCustomValidity("");
     }
@@ -100,24 +113,33 @@ document.addEventListener("DOMContentLoaded", () => {
     if (aiBadge) aiBadge.style.display = "inline-flex";
     if (aiCategoryEl) aiCategoryEl.textContent = data.category;
     if (aiConfidenceEl) aiConfidenceEl.textContent = String(data.confidence ?? "");
-    if (aiReasonEl) setMessage(aiReasonEl, data.scam_risk ? `scam_risk: ${data.scam_risk}` : "✅ AI classified", "info");
+    if (aiReasonEl) {
+      setMessage(
+        aiReasonEl,
+        data.scam_risk ? `scam_risk: ${data.scam_risk}` : T("addDonation_ai_ok"),
+        "info"
+      );
+      return data;
+    }
 
     return data;
   }
 
   function wireAiButton() {
     if (!btnAuto) return;
-    btnAuto.addEventListener("click", async () => {
-      try {
-        btnAuto.disabled = true;
-        await aiClassify();
-      } catch (err) {
-        console.error(err);
-        if (aiReasonEl) setMessage(aiReasonEl, "❌ " + (err?.message || "AI failed."), "error");
-      } finally {
-        btnAuto.disabled = false;
-      }
-    });
+    if (btnAuto) {
+      btnAuto.addEventListener("click", async () => {
+        try {
+          btnAuto.disabled = true;
+          await aiClassify();
+        } catch (err) {
+          console.error(err);
+          if (aiReasonEl) setMessage(aiReasonEl, "❌ " + (err?.message || T("addDonation_ai_failed")), "error");
+        } finally {
+          btnAuto.disabled = false;
+        }
+      });
+    }
   }
 
   wireAiButton();
@@ -136,7 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       previewEl.src = URL.createObjectURL(file);
       previewEl.style.display = "block";
-      if (uploadMsgEl) setMessage(uploadMsgEl, "Image selected (will upload on submit).", "info");
+      if (uploadMsgEl) setMessage(uploadMsgEl, T("addDonation_image_selected"), "info");
     });
   }
 
@@ -147,28 +169,22 @@ document.addEventListener("DOMContentLoaded", () => {
     const file = imageFileEl?.files?.[0];
     if (!file) return null;
 
-    setMessage(uploadMsgEl, "Uploading image...", "info");
+    setMessage(uploadMsgEl, T("addDonation_image_uploading"), "info");
 
     const fd = new FormData();
     fd.append("image", file);
 
     const res = await fetch(`${API_BASE}/api/upload`, {
       method: "POST",
-      body: fd,
-    });
-
+      body: fd,})
+      
     const data = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(data.message || "Image upload failed.");
-
-    setMessage(uploadMsgEl, "✅ Image uploaded!", "success");
-
+    if (!res.ok) throw new Error(data.message || T("addDonation_image_upload_failed"));
+    setMessage(uploadMsgEl, T("addDonation_image_upload_ok"), "success");
     if (previewEl && data.image_url) {
       previewEl.src = data.image_url;
       previewEl.style.display = "block";
-    }
-
-    return data.image_url || null;
-  }
+    return data.image_url || null;}
 
   // ===============================
   // Submit form
@@ -190,13 +206,13 @@ document.addEventListener("DOMContentLoaded", () => {
         await aiClassify();
         category = categoryEl?.value || "";
       } catch (err) {
-        setMessage(msg, "❌ Please select a category (AI failed).", "error");
+        setMessage(msg, T("addDonation_need_category"), "error");
         return;
       }
     }
 
-    if (!item_name) return setMessage(msg, "❌ Item name is required.", "error");
-    if (!quantity || quantity < 1) return setMessage(msg, "❌ Quantity must be at least 1.", "error");
+    if (!item_name) return setMessage(msg, T("addDonation_need_item_name"), "error");
+    if (!quantity || quantity < 1) return setMessage(msg, T("addDonation_need_qty"), "error");
 
     // ✅ keep category tag for stable filtering on home page
     const description = `[${category}] ${descriptionRaw}`.trim();
@@ -204,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       if (btnSubmit) btnSubmit.disabled = true;
       if (btnAuto) btnAuto.disabled = true;
-      setMessage(msg, "Submitting...", "info");
+      setMessage(msg, T("addDonation_submitting"), "info");
 
       // ✅ 1) upload image first (if any)
       const image_url = await uploadImageIfAny();
@@ -227,9 +243,9 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.message || "Failed to create donation.");
+      if (!res.ok) throw new Error(data.message || T("addDonation_create_failed"));
 
-      setMessage(msg, "✅ Posted successfully!", "success");
+      setMessage(msg, T("addDonation_post_ok"), "success");
       form.reset();
 
       // reset preview & upload message
@@ -251,10 +267,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     } catch (err) {
       console.error(err);
-      setMessage(msg, "❌ " + (err?.message || "Operation failed."), "error");
+      setMessage(msg, "❌ " + (err?.message || T("addDonation_operation_failed")), "error");
     } finally {
       if (btnSubmit) btnSubmit.disabled = false;
       if (btnAuto) btnAuto.disabled = false;
     }
   });
-});
+
+  // ✅ 語言切換後：把動態訊息也翻譯（可選，但加了更完整）
+  document.addEventListener("languageChange", () => {
+    // 這裡不強制重畫整個頁面（避免你輸入中的內容被影響）
+    // 只更新「如果目前 msg 顯示的是固定英文句子」這類訊息
+    // 你也可以留空不做，功能不會壞
+  });
+
+}

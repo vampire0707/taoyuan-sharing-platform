@@ -2,7 +2,7 @@
 // Config
 // ===============================
 const API_BASE =
-  (location.hostname === "127.0.0.1" || location.hostname === "localhost") && location.port === "5500"
+  (location.hostname === "127.0.0.1" || location.hostname === "localhost")
     ? "http://localhost:3000"
     : "";
 
@@ -436,9 +436,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  if (btnPopup) {
-    btnPopup.addEventListener("click", () => openAuthPopup("login"));
-  }
 
   if (iconClose) {
     iconClose.addEventListener("click", closeAuthPopup);
@@ -639,9 +636,74 @@ document.addEventListener("DOMContentLoaded", () => {
   const dStatus = document.getElementById("detail-status");
   const dArea = document.getElementById("detail-area");
   const dDonor = document.getElementById("detail-donor");
+  const btnRequestItem = document.getElementById("btn-request-item");
+  const requestMsgEl = document.getElementById("request-msg"); // 如果你沒有這個元素也沒關係
 
   let donationsCache = [];
   let currentCat = "food";
+  let selectedDonation = null; // ✅ 記住目前選到的物品
+  // ===============================
+  // ✅ Request Item (apply for donation)
+  // ===============================
+  function setRequestMsg(text, type = "info") {
+    if (!requestMsgEl) return;
+    requestMsgEl.textContent = text || "";
+    requestMsgEl.style.color =
+      type === "success" ? "green" :
+      type === "error" ? "#b00020" :
+      "#4a2c12";
+  }
+
+  async function requestItem() {
+  const u = getLoggedInUser();
+  if (!u?.user_id) {
+    alert(T("request_login_first") || "請先登入才可以申請物品");
+    return;
+  }
+
+  if (!selectedDonation) {
+    alert("請先點選一個物品");
+    return;
+  }
+
+  if (Number(selectedDonation.donor_id) === Number(u.user_id)) {
+    alert(T("request_own_item") || "你不能申請自己上架的物品");
+    return;
+  }
+
+  const donationId = selectedDonation.donation_id ?? selectedDonation.id;
+  if (!donationId) {
+    alert("找不到 donation_id（請檢查 donations API 回傳欄位）");
+    return;
+  }
+
+  const ok = confirm(`確定要申請：${selectedDonation.item_name || ""} ?`);
+  if (!ok) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/api/requests`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        donation_id: Number(donationId),
+        requester_id: Number(u.user_id),
+      }),
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(data?.message || `Request failed (${res.status})`);
+
+    alert(T("request_success") || "✅ 已送出申請！");
+  } catch (err) {
+    console.error(err);
+    alert((T("request_failed") || "❌ 申請失敗") + "：" + (err?.message || "unknown"));
+  }
+}
+
+if (btnRequestItem) {
+  btnRequestItem.addEventListener("click", requestItem);
+}
+
 
   function renderGridByCategory(cat) {
     currentCat = cat;
@@ -671,6 +733,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function showDonationDetail(d) {
+
+    selectedDonation = d;
     if (!detailBox) return;
     detailBox.classList.remove("hidden");
 

@@ -1,0 +1,119 @@
+[33mcommit 686e15da8f40efc7afb4f1f1a943d1c91a1285f4[m
+Author: Daisy <a0970331543@gmail.com>
+Date:   Tue Dec 16 16:09:53 2025 +0800
+
+    feat: add AI auto classification for donation items
+
+[1mdiff --git a/server.js b/server.js[m
+[1mindex 3dcf2a7..e2646a1 100644[m
+[1m--- a/server.js[m
+[1m+++ b/server.js[m
+[36m@@ -1,13 +1,21 @@[m
+[31m-// server.js (CommonJS)[m
+[31m-require("dotenv").config();[m
+[32m+[m[32mimport dotenv from "dotenv";[m
+[32m+[m[32mdotenv.config();[m
+ [m
+[31m-const express = require("express");[m
+[31m-const path = require("path");[m
+[31m-const cors = require("cors");[m
+[32m+[m[32mimport express from "express";[m
+[32m+[m[32mimport path from "path";[m
+[32m+[m[32mimport cors from "cors";[m
+[32m+[m[32mimport multer from "multer";[m
+[32m+[m[32mimport fs from "fs";[m
+ [m
+[31m-const authRoutes = require("./routes/auth");[m
+[31m-const donationRoutes = require("./routes/donations");[m
+[31m-const userRoutes = require("./routes/users");[m
+[32m+[m[32m// ESM 下沒有 __dirname，要自己做[m
+[32m+[m[32mimport { fileURLToPath } from "url";[m
+[32m+[m[32mconst __filename = fileURLToPath(import.meta.url);[m
+[32m+[m[32mconst __dirname = path.dirname(__filename);[m
+[32m+[m
+[32m+[m[32m// API routes (ESM)[m
+[32m+[m[32mimport authRoutes from "./routes/auth.js";[m
+[32m+[m[32mimport donationRoutes from "./routes/donations.js";[m
+[32m+[m[32mimport userRoutes from "./routes/users.js";[m
+ [m
+ const app = express();[m
+ [m
+[36m@@ -15,28 +23,67 @@[m [mapp.use(cors());[m
+ app.use(express.json());[m
+ app.use(express.urlencoded({ extended: true }));[m
+ [m
+[31m-// 靜態檔案（index.html / styles.css / script.js / i18n.js / profile.html / profile.css...）[m
+[32m+[m[32m// ===============================[m
+[32m+[m[32m// Static files[m
+[32m+[m[32m// ===============================[m
+ app.use(express.static(__dirname));[m
+ [m
+[31m-// 讓 / 直接回首頁（保險）[m
+[32m+[m[32m// ===============================[m
+[32m+[m[32m// Upload API (save files to /uploads, DB stores path)[m
+[32m+[m[32m// ===============================[m
+[32m+[m[32mconst uploadDir = path.join(__dirname, "uploads");[m
+[32m+[m[32mif (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });[m
+[32m+[m
+[32m+[m[32m// 讓 /uploads/xxx 可以被瀏覽器讀到[m
+[32m+[m[32mapp.use("/uploads", express.static(uploadDir));[m
+[32m+[m
+[32m+[m[32mconst storage = multer.diskStorage({[m
+[32m+[m[32m  destination: (req, file, cb) => cb(null, uploadDir),[m
+[32m+[m[32m  filename: (req, file, cb) => {[m
+[32m+[m[32m    const ext = path.extname(file.originalname || "").toLowerCase();[m
+[32m+[m[32m    const safeExt = [".jpg", ".jpeg", ".png", ".webp"].includes(ext) ? ext : ".jpg";[m
+[32m+[m[32m    cb(null, `img_${Date.now()}_${Math.random().toString(16).slice(2)}${safeExt}`);[m
+[32m+[m[32m  },[m
+[32m+[m[32m});[m
+[32m+[m
+[32m+[m[32mconst upload = multer({[m
+[32m+[m[32m  storage,[m
+[32m+[m[32m  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB[m
+[32m+[m[32m});[m
+[32m+[m
+[32m+[m[32m// 測試用：確認 upload 路由存在[m
+[32m+[m[32mapp.get("/api/upload/ping", (req, res) => res.json({ ok: true }));[m
+[32m+[m
+[32m+[m[32m// 真正上傳：POST /api/upload  (FormData key 必須叫 image)[m
+[32m+[m[32mapp.post("/api/upload", upload.single("image"), (req, res) => {[m
+[32m+[m[32m  console.log("✅ hit POST /api/upload", !!req.file, req.file?.originalname);[m
+[32m+[m
+[32m+[m[32m  if (!req.file) return res.status(400).json({ message: "No file uploaded" });[m
+[32m+[m
+[32m+[m[32m  const image_url = `/uploads/${req.file.filename}`;[m
+[32m+[m[32m  res.json({ message: "Upload success", image_url });[m
+[32m+[m[32m});[m
+[32m+[m
+[32m+[m[32m// ===============================[m
+[32m+[m[32m// Pages routing (optional insurance)[m
+[32m+[m[32m// ===============================[m
+ app.get("/", (req, res) => {[m
+   res.sendFile(path.join(__dirname, "index.html"));[m
+ });[m
+ [m
+[31m-// add-donation[m
+ app.get(["/add-donation", "/add-donation.html"], (req, res) => {[m
+   res.sendFile(path.join(__dirname, "add-donation.html"));[m
+ });[m
+ [m
+[31m-// profile[m
+ app.get(["/profile", "/profile.html"], (req, res) => {[m
+   res.sendFile(path.join(__dirname, "profile.html"));[m
+ });[m
+ [m
+[32m+[m[32m// ===============================[m
+ // API routes[m
+[32m+[m[32m// ===============================[m
+ app.use("/api/auth", authRoutes);[m
+ app.use("/api/donations", donationRoutes);[m
+[31m-[m
+ app.use("/api/users", userRoutes);[m
+ [m
+ // health check（Railway 很愛用）[m
+[36m@@ -54,4 +101,5 @@[m [mfunction getPublicUrl() {[m
+ [m
+ app.listen(PORT, () => {[m
+   console.log(`🚀 Server running at ${getPublicUrl()}`);[m
+[32m+[m[32m  console.log("OPENAI KEY:", process.env.OPENAI_API_KEY?.slice(0, 8) || "(not set)");[m
+ });[m

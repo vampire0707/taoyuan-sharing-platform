@@ -9,7 +9,6 @@ const I18N = {
     nav_members: "Members",
     nav_login: "Login",
     nav_register: "Register",
-    nav_popup_login: "Popup Login",
     nav_profile: "My Profile", // ✅ NEW
 
     // hero
@@ -220,7 +219,6 @@ const I18N = {
     nav_members: "成員",
     nav_login: "登入",
     nav_register: "註冊",
-    nav_popup_login: "彈窗登入",
     nav_profile: "個人頁面", // ✅ NEW
 
     // hero

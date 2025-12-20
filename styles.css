@@ -102,25 +102,6 @@ header{
   transform: scaleX(1);
 }
 
-/* new index 使用的登入按鈕 */
-.navigation .btnLogin-popup{
-  width: 130px;
-  height: 46px;
-  background: transparent;
-  border: 2px solid rgba(255,255,255,0.9);
-  outline:none;
-  border-radius: 10px;
-  cursor:pointer;
-  font-size: 0.98rem;
-  color:#fff;
-  font-weight: 600;
-  transition: .35s ease;
-}
-
-.navigation .btnLogin-popup:hover{
-  background:#fff;
-  color: var(--brand);
-}
 
 /* old index 的 nav-btn + lang-toggle 也要好看 */
 .nav-btn{

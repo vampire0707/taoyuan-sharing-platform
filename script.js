@@ -394,7 +394,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const wrapper = document.querySelector(".wrapper");
   const loginLink = document.querySelector(".login-link");
   const registerLink = document.querySelector(".register-link");
-  const btnPopup = document.querySelector(".btnLogin-popup");
   const iconClose = document.querySelector(".icon-close");
 
   const modalLoginForm = document.getElementById("modal-login-form");
@@ -408,13 +407,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalRegisterPassword = document.getElementById("modal-register-password");
   const modalRegisterMsg = document.getElementById("modal-register-msg");
 
-  function openAuthPopup(mode /* "login" | "register" */) {
-    if (!wrapper) return;
-    wrapper.classList.add("active-popup");
-    if (mode === "register") wrapper.classList.add("active");
-    else wrapper.classList.remove("active");
-    wrapper.setAttribute("aria-hidden", "false");
-  }
 
   function closeAuthPopup() {
     if (!wrapper) return;

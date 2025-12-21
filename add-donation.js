@@ -25,14 +25,10 @@ function setMessage(el, text, type = "info") {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-
-  // ⭐⭐⭐ 這一段就是「把 add-donation 接回 i18n 的家」
+  // ⭐ 把 add-donation 接回 i18n
   if (window.i18n?.applyLang) {
     window.i18n.applyLang(window.i18n.getLang());
   }
-
-  // 下面才是你原本的程式
-  });
 
   const form = document.getElementById("donationForm");
   const msg = document.getElementById("msg");
@@ -74,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     setMessage(msg, T("addDonation_login_first"), "error");
-    return;
+    return; // ✅ 現在在 function 裡，合法
   }
 
   if (loginWarning) loginWarning.style.display = "none";
@@ -119,30 +115,24 @@ document.addEventListener("DOMContentLoaded", () => {
         data.scam_risk ? `scam_risk: ${data.scam_risk}` : T("addDonation_ai_ok"),
         "info"
       );
-      return data;
     }
 
     return data;
   }
 
-  function wireAiButton() {
-    if (!btnAuto) return;
-    if (btnAuto) {
-      btnAuto.addEventListener("click", async () => {
-        try {
-          btnAuto.disabled = true;
-          await aiClassify();
-        } catch (err) {
-          console.error(err);
-          if (aiReasonEl) setMessage(aiReasonEl, "❌ " + (err?.message || T("addDonation_ai_failed")), "error");
-        } finally {
-          btnAuto.disabled = false;
-        }
-      });
-    }
+  if (btnAuto) {
+    btnAuto.addEventListener("click", async () => {
+      try {
+        btnAuto.disabled = true;
+        await aiClassify();
+      } catch (err) {
+        console.error(err);
+        if (aiReasonEl) setMessage(aiReasonEl, "❌ " + (err?.message || T("addDonation_ai_failed")), "error");
+      } finally {
+        btnAuto.disabled = false;
+      }
+    });
   }
-
-  wireAiButton();
 
   // ===============================
   // Image preview
@@ -176,15 +166,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const res = await fetch(`${API_BASE}/api/upload`, {
       method: "POST",
-      body: fd,})
-      
+      body: fd,
+    });
+
     const data = await res.json().catch(() => ({}));
     if (!res.ok) throw new Error(data.message || T("addDonation_image_upload_failed"));
+
     setMessage(uploadMsgEl, T("addDonation_image_upload_ok"), "success");
+
     if (previewEl && data.image_url) {
       previewEl.src = data.image_url;
       previewEl.style.display = "block";
-    return data.image_url || null;}
+    }
+
+    return data.image_url || null;
+  }
 
   // ===============================
   // Submit form
@@ -205,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
       try {
         await aiClassify();
         category = categoryEl?.value || "";
-      } catch (err) {
+      } catch {
         setMessage(msg, T("addDonation_need_category"), "error");
         return;
       }
@@ -214,7 +210,6 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!item_name) return setMessage(msg, T("addDonation_need_item_name"), "error");
     if (!quantity || quantity < 1) return setMessage(msg, T("addDonation_need_qty"), "error");
 
-    // ✅ keep category tag for stable filtering on home page
     const description = `[${category}] ${descriptionRaw}`.trim();
 
     try {
@@ -274,11 +269,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ✅ 語言切換後：把動態訊息也翻譯（可選，但加了更完整）
-  document.addEventListener("languageChange", () => {
-    // 這裡不強制重畫整個頁面（避免你輸入中的內容被影響）
-    // 只更新「如果目前 msg 顯示的是固定英文句子」這類訊息
-    // 你也可以留空不做，功能不會壞
-  });
-
-}
+  // 語言切換事件（可留空）
+  document.addEventListener("languageChange", () => {});
+});

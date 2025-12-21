@@ -223,12 +223,13 @@ document.addEventListener("DOMContentLoaded", () => {
       // ✅ 2) create donation with image_url
       const payload = {
         donor_id: donorId,
+        category, 
         item_name,
         quantity,
         area: area || null,
         pickup_location: pickup_location || null,
         image_url: image_url || null,
-        description: description || null,
+        description: descriptionRaw || null,
       };
 
       const res = await fetch(`${API_BASE}/api/donations`, {

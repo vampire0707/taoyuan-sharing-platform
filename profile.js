@@ -169,7 +169,7 @@ function renderMyItems(rows) {
         <tr style="border-bottom:1px solid rgba(255,255,255,.08);">
           <td style="padding:10px;">${escapeHtml(d.donation_id)}</td>
           <td style="padding:10px;">${escapeHtml(d.item_name)}</td>
-          <td style="padding:10px;">${escapeHtml(d.amount)}</td>
+          <td style="padding:10px;">${escapeHtml(d.quantity ?? d.amount ?? "")}</td>
           <td style="padding:10px;">${escapeHtml(d.area || "")}</td>
           <td style="padding:10px;">${escapeHtml(d.pickup_location || "")}</td>
           <td style="padding:10px; display:flex; gap:8px; flex-wrap:wrap;">
@@ -217,7 +217,7 @@ function openEditModal(row) {
   if (!editModal) return;
   edId.value = row.donation_id;
   edName.value = row.item_name || "";
-  edQty.value = row.amount || 1;
+  edQty.value = row.quantity ?? row.amount ?? 1;
   edArea.value = row.area || "";
   edPickup.value = row.pickup_location || "";
   edImg.value = row.image_url || "";
@@ -451,8 +451,45 @@ async function onRequestActionClick(e) {
 myItemRequestsList?.addEventListener("click", onRequestActionClick);
 
 // -------------------------------
-// Init (append-only)
+// Init (FIXED)
 // -------------------------------
-loadMyClaims();
-loadMyItemRequests();
+document.addEventListener("DOMContentLoaded", () => {
+  // 1) load profile + stats
+  loadProfileAndStats();
+
+  // 2) load my items
+  loadMyItems();
+
+  // 3) bind events (避免你 edit/delete 沒反應)
+  const profileForm = document.getElementById("profile-form");
+  profileForm?.addEventListener("submit", saveProfile);
+
+  tbody?.addEventListener("click", handleTableClick);
+
+  editClose?.addEventListener("click", closeEditModal);
+  editModal?.addEventListener("click", (e) => {
+    if (e.target === editModal) closeEditModal();
+  });
+  editForm?.addEventListener("submit", submitEdit);
+
+  // 4) request/claim
+  loadMyClaims();
+  loadMyItemRequests();
+  myItemRequestsList?.addEventListener("click", onRequestActionClick);
+});
+
+// GET /api/donations/mine
+router.get("/donations/mine", async (req, res) => {
+  const userId = req.headers["x-user-id"];
+  if (!userId) return res.status(401).json({ message: "Not logged in" });
+
+  const [rows] = await db.query(
+    "SELECT * FROM donations WHERE donor_id = ? ORDER BY created_at DESC",
+    [userId]
+  );
+
+  res.json(rows);
+});
+
+
 

@@ -18,6 +18,9 @@
 <!-- ✅ 首頁不要 page-center，page-center 留給 login/register/add-donation 那些表單頁 -->
 <body>
   <header>
+    <img src="image/donate beard.png" alt="Mascot" id="mascot" />
+
+
     <h2 class="logo">
       <a href="#welcome-section" style="color:inherit;text-decoration:none;" data-i18n="nav_home">🏠 Home</a>
     </h2>
@@ -43,6 +46,7 @@
   <!-- ✅ Welcome -->
   <section id="welcome-section">
     <div class="welcome-content">
+        <img src="image/hello.png" alt="Right Mascot" id="right-mascot" />
       <h1 id="main-title" data-i18n="main_title">Welcome to Taoyuan Sharing Community</h1>
       <hr class="welcome-divider" />
       <p id="main-mission" data-i18n="main_mission">
@@ -168,18 +172,26 @@
   </div>
 
   <!-- ✅ About -->
-  <section id="about-section" style="padding:80px 20px;">
-    <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
-      <div class="orange-bar" id="about-bar" data-i18n="about_bar">🌿 About</div>
-      <p style="opacity:.9;line-height:1.7;margin-top:12px;" data-i18n="about_text">
-        Taoyuan Sharing Platform is a student-friendly community website for exchanging food, clothes, books, and useful items.
-        We aim to reduce waste and help students save money.
-      </p>
-      <div style="margin-top:12px;">
-        <button id="about-btn" class="nav-btn" type="button" data-i18n="about_open">Open About Popup</button>
+<section id="about-section" style="padding:80px 20px;">
+  <div class="highlight-box" style="max-width:1100px;margin:0 auto;">
+    <div class="about-wrapper">
+      <div class="about-image">
+        <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?" alt="Sharing Image" />
       </div>
-    </div>
-  </section>
+      <div class="about-content">
+        <h2 data-i18n="about_popup_title">🌿 About Taoyuan Sharing</h2>
+          Taoyuan Sharing is a convenient and trustworthy community platform designed for citizens of Taoyuan City to share food, clothes, books, 
+          and useful items — helping you easily share and find another home for your items.
+          
+        </p>
+          Our mission is to promote sustainability by reducing waste and encouraging the reuse of resources, while fostering connections and support among local residents. 
+          By actively embracing the global movement for environmental sustainability, 
+          we aim to inspire responsible consumption and a greener lifestyle. Together, we build a greener, more caring Taoyuan.
+        </p>
+      </div>
+    </div> 
+  </div> <!-- close highlight-box -->
+</section>
 
   <!-- ✅ Services -->
   <section id="services-section" style="padding:80px 20px;">
@@ -239,28 +251,6 @@
 
   <!-- ========================= POPUPS ========================= -->
 
-  <!-- About Popup -->
-  <div class="about-popup">
-    <div class="about-box">
-      <span class="about-close"><ion-icon name="close"></ion-icon></span>
-
-      <div class="about-wrapper">
-        <div class="about-image">
-          <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?" alt="Sharing Image">
-        </div>
-        <div class="about-content">
-          <h2 data-i18n="about_popup_title">🌿 About Taoyuan Sharing</h2>
-          <p data-i18n="about_popup_p1">
-            Welcome to Taoyuan Share! Our platform helps students exchange items, services, and support each other in a friendly, safe community.
-          </p>
-          <p data-i18n="about_popup_p2">
-            Our mission is to reduce waste, save money, and build strong connections between local and international students.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Services Popup -->
   <div class="services-popup">
     <div class="services-box">
@@ -292,6 +282,7 @@
               <p><strong data-i18n="label_pickup_area">Pickup Area:</strong> <span id="detail-area"></span></p>
               <p><strong data-i18n="label_donor">Donor:</strong> <span id="detail-donor"></span></p>
               <button id="btn-request-item" class="nav-btn" style="margin-top:14px;" data-i18n="request_item">Request this item</button>
+            
             </div>
           </div>
         </section>

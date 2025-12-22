@@ -176,6 +176,66 @@ hr.welcome-divider{
   margin: 10px auto 20px;
   border-radius: 5px;
 }
+#mascot {
+  position: fixed;
+  top: 500px;
+  left: 50px;
+  width: 180px;
+  height: auto;
+  z-index: 1000;
+  pointer-events: none;
+
+  animation: bounce 3s ease-in-out infinite;
+}
+
+/* Định nghĩa animation bounce nhẹ */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px); /* lên trên 15px */
+  }
+}
+main {
+  position: relative; /* tạo cơ sở cho position absolute bên trong */
+}
+
+#profile-mascot {
+  position: absolute;  /* vị trí tuyệt đối trong main */
+  top: 100px;           /* cách trên 20px */
+  right: -300px;       /* dịch sang phải 120px để không che nội dung, bạn chỉnh phù hợp */
+  width:250px;        /* kích thước mascot */
+  height: auto;
+  pointer-events: none; /* không ảnh hưởng chuột */
+  animation: bounce 3s ease-in-out infinite;
+  z-index: 10;
+}
+
+/* hiệu ứng nhún nhảy lên xuống */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+#welcome-section {
+  position: relative; /* tạo gốc cho position absolute */
+  padding-right: 140px; /* tạo khoảng trống bên phải cho ảnh */
+}
+
+#right-mascot {
+  position: absolute;
+  top: 40%; /* căn giữa theo chiều dọc */
+  right: 10px; /* cách lề phải 10px */
+  transform: translateY(-50%);
+  width: 1px; /* chỉnh kích thước ảnh */
+  height: auto;
+  pointer-events: none; /* không ảnh hưởng tương tác chuột */
+  user-select: none;
+}
 
 /* old index 的 feature cards */
 .feature-card{
@@ -683,13 +743,17 @@ tbody td{
 .about-content{
   flex: 1 1 320px;
   color: rgba(255,255,255,0.92);
+  text-align: justify; 
+    margin-top: 20px;
+
 }
 
 .about-content h2{
   font-family: 'Playfair Display', serif;
   font-size: 1.9rem;
   font-weight: 800;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  text-align: justify; 
 }
 
 .about-content p{ line-height: 1.55; color: rgba(255,255,255,0.82); }

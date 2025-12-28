@@ -244,6 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setMessage(msg, T("addDonation_post_ok"), "success");
       form.reset();
 
+
       // reset preview & upload message
       if (previewEl) {
         previewEl.style.display = "none";
@@ -269,6 +270,22 @@ document.addEventListener("DOMContentLoaded", () => {
       if (btnAuto) btnAuto.disabled = false;
     }
   });
+
+  const fileInput = document.querySelector("#image");
+
+  async function uploadImageToCloudinary() {
+    const fd = new FormData();
+    fd.append("image", fileInput.files[0]);
+
+    const resp = await fetch("/api/upload", {
+      method: "POST",
+      body: fd
+    });
+
+    const data = await resp.json();
+    return data.image_url; // 這會是 Cloudinary URL
+  }
+
 
   // 語言切換事件（可留空）
   document.addEventListener("languageChange", () => {});

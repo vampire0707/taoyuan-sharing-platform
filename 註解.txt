@@ -24,3 +24,99 @@ form button {
   cursor: pointer;
   font-weight: 700;
 }
+
+
+SERVER.JS
+// ===============================
+// Upload API (save files to /uploads, DB stores path)
+// ===============================
+const uploadDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+// 讓 /uploads/xxx 可以被瀏覽器讀到
+app.use("/uploads", express.static(uploadDir));
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname || "").toLowerCase();
+    const safeExt = [".jpg", ".jpeg", ".png", ".webp"].includes(ext) ? ext : ".jpg";
+    cb(null, `img_${Date.now()}_${Math.random().toString(16).slice(2)}${safeExt}`);
+  },
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+});
+
+// 測試用：確認 upload 路由存在
+app.get("/api/upload/ping", (req, res) => res.json({ ok: true }));
+
+// 真正上傳：POST /api/upload  (FormData key 必須叫 image)
+app.post("/api/upload", upload.single("image"), (req, res) => {
+  console.log("✅ hit POST /api/upload", !!req.file, req.file?.originalname);
+
+  if (!req.file) return res.status(400).json({ message: "No file uploaded" });
+
+  const image_url = `/uploads/${req.file.filename}`;
+  res.json({ message: "Upload success", image_url });
+});
+
+profile.js
+// GET /api/donations/mine
+router.get("/donations/mine", async (req, res) => {
+  const userId = req.headers["x-user-id"];
+  if (!userId) return res.status(401).json({ message: "Not logged in" });
+
+  const [rows] = await db.query(
+    "SELECT * FROM donations WHERE donor_id = ? ORDER BY created_at DESC",
+    [userId]
+  );
+
+  res.json(rows);
+});
+
+
+// -----------------------
+// Save profile
+// -----------------------
+async function saveProfile(e) {
+  e.preventDefault();
+
+  const user = getLoggedInUser();
+  if (!user?.user_id) {
+    setText(msgProfile, "❌ Not logged in.");
+    return;
+  }
+
+  try {
+    // ✅ 如果有選新圖：先上傳拿到新 URL
+    const newImageUrl = await uploadEditImageIfAny();
+    const payload = {
+      item_name: edName.value.trim(),
+      amount: Number(edQty.value || 1),
+      area: edArea.value.trim(),
+      pickup_location: edPickup.value.trim(),
+      image_url: (newImageUrl ?? edImg.value.trim()) || null, // ⭐ 有新圖就覆蓋
+      description: edDesc.value.trim() || null,
+    };
+
+    if (edImageFile) edImageFile.value = "";
+    if (edImgPreview) { edImgPreview.style.display = "none"; edImgPreview.src = ""; }
+    setText(edUploadMsg, "");
+
+
+    await safeFetchJson("/api/users/me", {
+      method: "PUT",
+      headers: authHeaders(),
+      body: JSON.stringify(payload),
+    });
+
+    setText(msgProfile, "✅ Profile saved.", true);
+    await loadProfileAndStats();
+  } catch (e) {
+    console.error(e);
+    setText(msgProfile, "❌ Save failed. Check server / API.", false);
+  }
+}

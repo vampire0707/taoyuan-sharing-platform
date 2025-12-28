@@ -1,14 +1,16 @@
+import dotenv from "dotenv";
+dotenv.config({ override: true });
+
 import express from "express";
 import path from "path";
 import cors from "cors";
 import multer from "multer";
 import fs from "fs";
 import requestRoutes from "./routes/requests.js";
-import dotenv from "dotenv";
+import uploadRoutes from "./routes/upload.js";
+
 
 console.log("✅ RUNNING server.js from:", new URL(import.meta.url).pathname);
-dotenv.config();
-
 
 console.log("✅ mounting /api/requests");
 console.log("✅ requestRoutes type:", typeof requestRoutes);
@@ -35,7 +37,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/ai", aiRoutes);
 app.use("/api/requests", requestRoutes);
 
-
+app.get("/api/debug/cloudinary", (req, res) => {
+  res.json({
+    cloudinary_url: process.env.CLOUDINARY_URL ? "set" : null,
+  });
+});
 
 // ===============================
 // Static files
@@ -47,41 +53,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// ===============================
-// Upload API (save files to /uploads, DB stores path)
-// ===============================
-const uploadDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-// 讓 /uploads/xxx 可以被瀏覽器讀到
-app.use("/uploads", express.static(uploadDir));
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, uploadDir),
-  filename: (req, file, cb) => {
-    const ext = path.extname(file.originalname || "").toLowerCase();
-    const safeExt = [".jpg", ".jpeg", ".png", ".webp"].includes(ext) ? ext : ".jpg";
-    cb(null, `img_${Date.now()}_${Math.random().toString(16).slice(2)}${safeExt}`);
-  },
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-});
-
-// 測試用：確認 upload 路由存在
-app.get("/api/upload/ping", (req, res) => res.json({ ok: true }));
-
-// 真正上傳：POST /api/upload  (FormData key 必須叫 image)
-app.post("/api/upload", upload.single("image"), (req, res) => {
-  console.log("✅ hit POST /api/upload", !!req.file, req.file?.originalname);
-
-  if (!req.file) return res.status(400).json({ message: "No file uploaded" });
-
-  const image_url = `/uploads/${req.file.filename}`;
-  res.json({ message: "Upload success", image_url });
-});
+app.use("/api/upload", uploadRoutes);
 
 // ===============================
 // Pages routing (optional insurance)

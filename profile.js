@@ -96,6 +96,12 @@ const edPickup = document.getElementById("ed-pickup");
 const edImg = document.getElementById("ed-img");
 const edDesc = document.getElementById("ed-desc");
 
+// ✅ only keep ONE upload input/button/msg/preview
+const edImgFile = document.getElementById("ed-img-file");
+const btnReupload = document.getElementById("btn-reupload");
+const edUploadMsg = document.getElementById("ed-upload-msg");
+const edImgPreview = document.getElementById("ed-img-preview");
+
 // -----------------------
 // Load profile + stats
 // -----------------------
@@ -121,39 +127,6 @@ async function loadProfileAndStats() {
   } catch (e) {
     console.error(e);
     setText(msgProfile, "Failed to load profile. Check server / API.", false);
-  }
-}
-
-// -----------------------
-// Save profile
-// -----------------------
-async function saveProfile(e) {
-  e.preventDefault();
-
-  const user = getLoggedInUser();
-  if (!user?.user_id) {
-    setText(msgProfile, "❌ Not logged in.");
-    return;
-  }
-
-  try {
-    const payload = {
-      phone: pfPhone.value.trim(),
-      address: pfAddress.value.trim(),
-      bio: pfBio.value.trim(),
-    };
-
-    await safeFetchJson("/api/users/me", {
-      method: "PUT",
-      headers: authHeaders(),
-      body: JSON.stringify(payload),
-    });
-
-    setText(msgProfile, "✅ Profile saved.", true);
-    await loadProfileAndStats();
-  } catch (e) {
-    console.error(e);
-    setText(msgProfile, "❌ Save failed. Check server / API.", false);
   }
 }
 
@@ -215,6 +188,7 @@ async function loadMyItems() {
 // -----------------------
 function openEditModal(row) {
   if (!editModal) return;
+
   edId.value = row.donation_id;
   edName.value = row.item_name || "";
   edQty.value = row.quantity ?? row.amount ?? 1;
@@ -222,6 +196,7 @@ function openEditModal(row) {
   edPickup.value = row.pickup_location || "";
   edImg.value = row.image_url || "";
   edDesc.value = row.description || "";
+
   setText(editMsg, "");
   editModal.style.display = "flex";
 }
@@ -254,7 +229,17 @@ async function handleTableClick(e) {
       const map = await getMineMapById();
       const row = map.get(id);
       if (!row) return;
+
       openEditModal(row);
+
+      // ✅ reset upload ui
+      if (edImgFile) edImgFile.value = "";
+      if (edUploadMsg) edUploadMsg.textContent = "";
+
+      // ✅ show current preview
+      setPreview(row.image_url || "");
+
+      return;
     }
 
     if (act === "del") {
@@ -310,17 +295,11 @@ async function submitEdit(e) {
 }
 
 // ===============================
-// NEW: Request / Claim features
-// (APPENDED - do not remove existing code)
+// Request / Claim features (keep)
 // ===============================
-
-// DOM elements (optional: only render if exists)
 const myClaimsList = document.getElementById("my-claims");
 const myItemRequestsList = document.getElementById("my-item-requests");
 
-// -------------------------------
-// My Claims (Requester)
-// -------------------------------
 async function loadMyClaims() {
   if (!myClaimsList) return;
   const user = getLoggedInUser();
@@ -350,9 +329,6 @@ async function loadMyClaims() {
   }
 }
 
-// -------------------------------
-// My Item Requests (Donor)
-// -------------------------------
 async function loadMyItemRequests() {
   if (!myItemRequestsList) return;
   const user = getLoggedInUser();
@@ -383,7 +359,6 @@ async function loadMyItemRequests() {
                   </div>
 
                   <div style="margin-top:6px; display:flex; gap:8px;">
-                    <!-- ✅ 重點：type=button，避免觸發 profile-form submit -->
                     <button type="button"
                       data-reqid="${r.request_id}"
                       data-status="approved"
@@ -407,27 +382,18 @@ async function loadMyItemRequests() {
   }
 }
 
-// -------------------------------
-// Click handler (event delegation)
-// -------------------------------
 async function onRequestActionClick(e) {
   const btn = e.target.closest("button[data-reqid][data-status]");
   if (!btn) return;
 
   const requestId = Number(btn.getAttribute("data-reqid"));
   const status = btn.getAttribute("data-status");
-
-  // 防呆
   if (!requestId || !status) return;
 
-  // 先 disable，避免連點
   btn.disabled = true;
 
   try {
     const user = getLoggedInUser();
-    console.log("✅ click update:", { requestId, status, userId: user?.user_id });
-
-    // ✅ 用 safeFetchJson（避免回傳非 JSON 時爆炸）
     await safeFetchJson(`/api/requests/${requestId}`, {
       method: "PATCH",
       headers: {
@@ -437,7 +403,6 @@ async function onRequestActionClick(e) {
       body: JSON.stringify({ status }),
     });
 
-    // ✅ 更新成功後重刷
     await loadMyItemRequests();
     await loadMyClaims();
   } catch (err) {
@@ -447,22 +412,53 @@ async function onRequestActionClick(e) {
   }
 }
 
-// 綁事件（有區塊才綁）
 myItemRequestsList?.addEventListener("click", onRequestActionClick);
 
+// ===============================
+// ✅ FIX: Image preview + upload + save to DB (ONLY ONE SET)
+// ===============================
+function setPreview(url) {
+  if (!edImgPreview) return;
+
+  if (!url) {
+    edImgPreview.src = "";
+    edImgPreview.style.display = "none";
+    return;
+  }
+
+  // ✅ blob: 不能加 ?t=
+  if (url.startsWith("blob:")) {
+    edImgPreview.src = url;
+    edImgPreview.style.display = "block";
+    return;
+  }
+
+  // ✅ non-blob: cache busting
+  const bust = url.includes("?") ? "&" : "?";
+  edImgPreview.src = url + bust + "t=" + Date.now();
+  edImgPreview.style.display = "block";
+}
+
+async function uploadToServer(file) {
+  const fd = new FormData();
+  fd.append("image", file);
+
+  const res = await fetch("/api/upload", { method: "POST", body: fd });
+  const data = await res.json().catch(() => ({}));
+
+  if (!res.ok) throw new Error(data.message || "Upload failed");
+  if (!data.image_url) throw new Error("No image_url returned");
+  return data.image_url; // Cloudinary URL
+}
+
 // -------------------------------
-// Init (FIXED)
+// Init
 // -------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-  // 1) load profile + stats
   loadProfileAndStats();
-
-  // 2) load my items
   loadMyItems();
-
-  // 3) bind events (避免你 edit/delete 沒反應)
-  const profileForm = document.getElementById("profile-form");
-  profileForm?.addEventListener("submit", saveProfile);
+  loadMyClaims();
+  loadMyItemRequests();
 
   tbody?.addEventListener("click", handleTableClick);
 
@@ -472,24 +468,61 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   editForm?.addEventListener("submit", submitEdit);
 
-  // 4) request/claim
-  loadMyClaims();
-  loadMyItemRequests();
-  myItemRequestsList?.addEventListener("click", onRequestActionClick);
+  // ✅ file change -> local preview
+  edImgFile?.addEventListener("change", () => {
+    const f = edImgFile.files?.[0];
+    if (!f) {
+      setPreview(edImg.value.trim());
+      if (edUploadMsg) edUploadMsg.textContent = "";
+      return;
+    }
+    setPreview(URL.createObjectURL(f));
+    if (edUploadMsg) edUploadMsg.textContent = "Image selected.";
+  });
+
+  // ✅ button click -> upload -> PUT -> refresh
+  btnReupload?.addEventListener("click", async () => {
+    const file = edImgFile?.files?.[0];
+    const id = Number(edId?.value);
+    const user = getLoggedInUser();
+
+    if (!file) return alert("Please choose an image first.");
+    if (!id) return alert("Missing donation id.");
+    if (!user?.user_id) return alert("Not logged in.");
+
+    try {
+      btnReupload.disabled = true;
+      if (edUploadMsg) edUploadMsg.textContent = "Uploading...";
+
+      const newUrl = await uploadToServer(file);
+
+      // update input + preview
+      edImg.value = newUrl;
+      setPreview(newUrl);
+
+      // immediately update DB
+      const payload = {
+        item_name: edName.value.trim(),
+        amount: Number(edQty.value || 1),
+        area: edArea.value.trim(),
+        pickup_location: edPickup.value.trim(),
+        image_url: newUrl,
+        description: edDesc.value.trim() || null,
+      };
+
+      await safeFetchJson(`/api/donations/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "x-user-id": String(user.user_id) },
+        body: JSON.stringify(payload),
+      });
+
+      if (edUploadMsg) edUploadMsg.textContent = "✅ Image uploaded & saved.";
+      await loadMyItems();
+    } catch (e) {
+      console.error(e);
+      if (edUploadMsg) edUploadMsg.textContent = "❌ " + (e?.message || "Upload failed");
+    } finally {
+      btnReupload.disabled = false;
+    }
+  });
 });
-
-// GET /api/donations/mine
-router.get("/donations/mine", async (req, res) => {
-  const userId = req.headers["x-user-id"];
-  if (!userId) return res.status(401).json({ message: "Not logged in" });
-
-  const [rows] = await db.query(
-    "SELECT * FROM donations WHERE donor_id = ? ORDER BY created_at DESC",
-    [userId]
-  );
-
-  res.json(rows);
-});
-
-
-

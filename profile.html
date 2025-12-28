@@ -118,18 +118,65 @@
 
         <form id="edit-form" style="display:grid; gap:10px; margin-top:12px;">
           <input id="ed-id" type="hidden" />
-          <label><div data-i18n="profile_edit_name">Item Name</div><input id="ed-name" required/></label>
-          <label><div data-i18n="profile_edit_qty">Qty</div><input id="ed-qty" type="number" min="1" required/></label>
-          <label><div data-i18n="profile_edit_area">Area</div><input id="ed-area"/></label>
-          <label><div data-i18n="profile_edit_pickup">Pickup Location</div><input id="ed-pickup"/></label>
-          <label><div data-i18n="profile_edit_img">Image URL</div><input id="ed-img"/></label>
-          <label><div data-i18n="profile_edit_desc">Description</div><textarea id="ed-desc" rows="3"></textarea></label>
 
-          <button class="nav-btn" type="submit" style="width:fit-content;" data-i18n="profile_edit_save">Save Changes</button>
+          <label>
+            <div data-i18n="profile_edit_name">Item Name</div>
+            <input id="ed-name" required />
+          </label>
+
+          <label>
+            <div data-i18n="profile_edit_qty">Qty</div>
+            <input id="ed-qty" type="number" min="1" required />
+          </label>
+
+          <label>
+            <div data-i18n="profile_edit_area">Area</div>
+            <input id="ed-area" />
+          </label>
+
+          <label>
+            <div data-i18n="profile_edit_pickup">Pickup Location</div>
+            <input id="ed-pickup" />
+          </label>
+
+          <!-- Image URL -->
+          <label>
+            <div data-i18n="profile_edit_img">Image URL</div>
+            <input id="ed-img" placeholder="https://... or /uploads/..." />
+          </label>
+
+          <!-- Re-upload -->
+          <label>
+            <div>Re-upload Image</div>
+            <input id="ed-img-file" type="file" accept="image/*" />
+          </label>
+
+          <div id="ed-upload-msg" style="min-height:18px; opacity:.85;"></div>
+
+          <img
+            id="ed-img-preview"
+            src=""
+            alt="preview"
+            style="display:none; width:180px; border-radius:10px; border:1px solid rgba(255,255,255,.12);"
+          />
+
+          <button type="button" class="nav-btn" id="btn-reupload">Upload New Image</button>
+
+
+          <label>
+            <div data-i18n="profile_edit_desc">Description</div>
+            <textarea id="ed-desc" rows="3"></textarea>
+          </label>
+
+          <button class="nav-btn" type="submit" style="width:fit-content;" data-i18n="profile_edit_save">
+            Save Changes
+          </button>
+
           <div id="edit-msg" style="min-height:18px; opacity:.85;"></div>
         </form>
       </div>
     </div>
+
 
   </main>
 

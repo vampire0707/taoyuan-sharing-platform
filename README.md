@@ -1,7 +1,7 @@
-# Taoyuan Sharing Platform
+This project is a web-based donation sharing platform developed as a course assignment.
+The system allows users to upload donation items, browse available donations, and manage donation-related information.
 
-This is a group final project.
+The frontend is responsible for user interaction and page rendering, while the backend handles request processing, business logic, and database operations.
+Donation data is stored in a cloud-based MySQL database deployed on Railway, and image files are managed using Cloudinary.
 
-It is a web-based donation and request platform.
-
-You can access the system via the deployed website link.
+The system is deployed online, and all functions can be accessed directly through a web browser without requiring local installation.
